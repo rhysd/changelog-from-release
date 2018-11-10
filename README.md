@@ -1,5 +1,7 @@
 ChangeLog Generator via GitHub Releases
 =======================================
+[![macOS/Linux CI Status][travisci-badge]][travisci]
+[![Windows CI Status][appveyor-badge]][appveyor]
 
 This is a small command line tool to generate `CHANGELOG.md` at current directory.
 It fetches releases of repoisitory of current directory and generates `CHANGELOG.md` with them.
@@ -26,3 +28,8 @@ $ cat CHANGELOG.md
 ## License
 
 [MIT License](LICENSE.txt)
+
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/di0fr3r75afkrpkh?svg=true
+[appveyor]: https://ci.appveyor.com/project/rhysd/changelog-from-release
+[travisci-badge]: https://travis-ci.org/rhysd/changelog-from-release.svg?branch=master
+[travisci]: https://travis-ci.org/rhysd/changelog-from-release
