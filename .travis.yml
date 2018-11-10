@@ -4,6 +4,8 @@ os:
     - osx
 install:
     - go get -t -d -v ./...
+    - git checkout $TRAVIS_BRANCH
+    - git branch --set-upstream-to=origin/$TRAVIS_BRANCH
 script:
     - go build ./
     - go test -v

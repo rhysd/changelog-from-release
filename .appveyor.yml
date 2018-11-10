@@ -9,6 +9,8 @@ install:
     - go version
     - go env
     - go get -v -t -d ./...
+    - git checkout %APPVEYOR_REPO_BRANCH%
+    - git branch --set-upstream-to=origin/%APPVEYOR_REPO_BRANCH%
 build: off
 test_script:
     - go build ./
