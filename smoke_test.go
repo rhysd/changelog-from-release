@@ -22,10 +22,16 @@ func TestSmoke(t *testing.T) {
 		t.Fatal("Test did not run at root of repository")
 	}
 
-	b, err := exec.Command(filepath.Join(".", exe)).CombinedOutput()
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	p := filepath.Join(cwd, exe)
+	b, err := exec.Command(p).CombinedOutput()
 	out := string(b)
 	if err != nil {
-		t.Fatal(err, out)
+		t.Fatal(err, out, p)
 	}
 	if out != "" {
 		t.Fatalf("Should output nothing %#v", out)
