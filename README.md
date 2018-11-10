@@ -4,6 +4,8 @@ ChangeLog Generator via GitHub Releases
 This is a small command line tool to generate `CHANGELOG.md` at current directory.
 It fetches releases of repoisitory of current directory and generates `CHANGELOG.md` with them.
 
+Real-world example is [notes-cli's CHANGELOG.md](https://github.com/rhysd/notes-cli/blob/master/CHANGELOG.md).
+
 ## Installation
 
 Download binary from [release page](https://github.com/rhysd/changelog-from-release/releases) or
