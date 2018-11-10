@@ -3,11 +3,17 @@ package main
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"testing"
 )
 
 func TestSmoke(t *testing.T) {
 	exe := "changelog-from-release"
+	if runtime.GOOS == "windows" {
+		exe = exe + ".exe"
+	}
+
 	if _, err := os.Stat(exe); err != nil {
 		t.Fatal("Executable not found:", exe)
 	}
@@ -16,7 +22,7 @@ func TestSmoke(t *testing.T) {
 		t.Fatal("Test did not run at root of repository")
 	}
 
-	b, err := exec.Command(exe).CombinedOutput()
+	b, err := exec.Command(filepath.Join(".", exe)).CombinedOutput()
 	out := string(b)
 	if err != nil {
 		t.Fatal(err, out)
