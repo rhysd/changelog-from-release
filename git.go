@@ -60,7 +60,7 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	}
 
 	if strings.HasPrefix(s, "git@github.com:") {
-		s = "https://github.com/" + s[len("git@github.com:"):]
+		s = "https://github.com/" + strings.TrimPrefix(s, "git@github.com:")
 	}
 
 	u, err := url.Parse(s)

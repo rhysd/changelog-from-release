@@ -75,11 +75,5 @@ func NewChangeLog(dir string, u *url.URL) (*ChangeLog, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Cannot create changelog file")
 	}
-
-	s := u.String()
-	if strings.HasSuffix(s, ".git") {
-		s = s[:len(s)-4]
-	}
-
-	return &ChangeLog{s, f}, nil
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), f}, nil
 }

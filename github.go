@@ -31,11 +31,8 @@ func GitHubFromURL(u *url.URL) (*GitHub, error) {
 		return nil, errors.Errorf("Only 'github.com' is supported but got '%s'", u.String())
 	}
 
-	// '/owner/name.git'
-	path := u.Path
-	if strings.HasSuffix(path, ".git") {
-		path = path[:len(path)-4]
-	}
+	// '/owner/name'
+	path := strings.TrimSuffix(u.Path, ".git")
 	slug := strings.Split(path, "/")
 	if len(slug) != 3 {
 		return nil, errors.Errorf("Invalid slug of GitHub repo: %s", path)
