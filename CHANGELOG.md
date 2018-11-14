@@ -1,7 +1,15 @@
+<a name="v1.1.1"></a>
+# [v1.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.1) - 14 Nov 2018
+
+- **Fix:** Fix emphasizing item header with bold, not italic
+
+[Changes][v1.1.1]
+
+
 <a name="v1.1.0"></a>
 # [v1.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.0) - 14 Nov 2018
 
-- *Improve:* Emphasize list item headers like `- *Fix:* Fix something`
+- **Improve:** Emphasize list item headers like `- *Fix:* Fix something`
 
 [Changes][v1.1.0]
 
@@ -14,6 +22,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v1.1.1]: https://github.com/rhysd/changelog-from-release/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/rhysd/changelog-from-release/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/rhysd/changelog-from-release/tree/v1.0.0
 
