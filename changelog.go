@@ -9,8 +9,15 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
+
+var reItemHeader = regexp.MustCompile(`(?m)^- ([[:alpha:]]+:)`)
+
+func emphasizeItemHeaders(body string) string {
+	return reItemHeader.ReplaceAllString(body, "- *$1*")
+}
 
 type link struct {
 	name string
@@ -55,7 +62,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
 		fmt.Fprintf(out, "# [%s](%s) - %s\n\n", title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
-		fmt.Fprint(out, strings.Replace(rel.GetBody(), "\r", "", -1))
+		fmt.Fprint(out, emphasizeItemHeaders(strings.Replace(rel.GetBody(), "\r", "", -1)))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		relLinks = append(relLinks, link{tag, compareURL})

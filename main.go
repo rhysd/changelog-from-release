@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-var version = "v1.0.0"
+var version = "v1.1.0"
 
 func help(code int) {
 	fmt.Println(`Usage: changelog-from-release`)
