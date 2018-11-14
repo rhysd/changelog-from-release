@@ -5,9 +5,11 @@ import (
 	"os"
 )
 
+var version = "v1.0.0"
+
 func help(code int) {
 	fmt.Println(`Usage: changelog-from-release`)
-	os.Exit(111)
+	os.Exit(code)
 }
 
 func exit(err error) {
@@ -19,6 +21,11 @@ func exit(err error) {
 }
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--version" {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
 	if len(os.Args) != 1 {
 		help(111)
 	}
