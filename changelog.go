@@ -16,7 +16,7 @@ import (
 var reItemHeader = regexp.MustCompile(`(?m)^- ([[:alpha:]]+:)`)
 
 func emphasizeItemHeaders(body string) string {
-	return reItemHeader.ReplaceAllString(body, "- *$1*")
+	return reItemHeader.ReplaceAllString(body, "- **$1**")
 }
 
 type link struct {
