@@ -55,7 +55,9 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		fmt.Fprintf(out, "<a name=\"%s\"></a>\n", tag)
 
 		title := rel.GetName()
-		if title != tag {
+		if title == "" {
+			title = tag
+		} else if title != tag {
 			title = fmt.Sprintf("%s (%s)", title, tag)
 		}
 
