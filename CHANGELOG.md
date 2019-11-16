@@ -1,3 +1,11 @@
+<a name="v1.1.2"></a>
+# [v1.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.2) - 16 Nov 2019
+
+- **Fix:** Codes in fences should not be modified
+
+[Changes][v1.1.2]
+
+
 <a name="v1.1.1"></a>
 # [v1.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.1) - 14 Nov 2018
 
@@ -22,6 +30,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v1.1.2]: https://github.com/rhysd/changelog-from-release/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/rhysd/changelog-from-release/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/rhysd/changelog-from-release/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/rhysd/changelog-from-release/tree/v1.0.0
