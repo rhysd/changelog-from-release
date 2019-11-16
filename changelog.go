@@ -13,10 +13,20 @@ import (
 	"strings"
 )
 
-var reItemHeader = regexp.MustCompile(`(?m)^- ([[:alpha:]]+:)`)
+var reItemHeader = regexp.MustCompile(`^- ([[:alpha:]]+:)`)
 
 func emphasizeItemHeaders(body string) string {
-	return reItemHeader.ReplaceAllString(body, "- **$1**")
+	lines := strings.Split(body, "\n")
+	inFence := false
+	for i, l := range lines {
+		if strings.HasPrefix(l, "```") {
+			inFence = !inFence
+		}
+		if !inFence && strings.HasPrefix(l, "- ") {
+			lines[i] = reItemHeader.ReplaceAllString(l, "- **$1**")
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 type link struct {
