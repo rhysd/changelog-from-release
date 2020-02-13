@@ -8,7 +8,7 @@ import (
 var version = "v1.1.2"
 
 func help(code int) {
-	fmt.Println(`Usage: changelog-from-release`)
+	fmt.Println("Usage: changelog-from-release")
 	os.Exit(code)
 }
 
@@ -48,6 +48,9 @@ func main() {
 	rels, err := gh.Releases()
 	if err != nil {
 		exit(err)
+	}
+	if len(rels) == 0 {
+		exit(fmt.Errorf("No release was found at %s", url))
 	}
 
 	cl, err := NewChangeLog(git.root, url)
