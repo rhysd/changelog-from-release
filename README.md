@@ -1,12 +1,18 @@
-ChangeLog Generator via GitHub Releases
-=======================================
+Tiny ChangeLog Generator via GitHub Releases
+============================================
 [![macOS/Linux CI Status][travisci-badge]][travisci]
 [![Windows CI Status][appveyor-badge]][appveyor]
 
-This is a small command line tool to generate `CHANGELOG.md` at current directory.
-It fetches releases of repository of current directory and generates `CHANGELOG.md` with them.
+`changelog-from-release` is a small command line tool to generate `CHANGELOG.md` at current directory.
+It fetches releases of repository from GitHub API and generates `CHANGELOG.md`.
 
-Real-world example is [notes-cli's CHANGELOG.md](https://github.com/rhysd/notes-cli/blob/master/CHANGELOG.md).
+- From: [the releases page][releases]
+- To: [CHANGELOG.md](./CHANGELOG.md)
+
+Real-world examples:
+
+- https://github.com/rhysd/notes-cli/blob/master/CHANGELOG.md
+- https://github.com/rhysd/git-brws/blob/master/CHANGELOG.md
 
 ## Installation
 
@@ -27,9 +33,10 @@ $ cat CHANGELOG.md
 
 ## License
 
-[MIT License](LICENSE.txt)
+[the MIT License](LICENSE.txt)
 
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/di0fr3r75afkrpkh?svg=true
 [appveyor]: https://ci.appveyor.com/project/rhysd/changelog-from-release
 [travisci-badge]: https://travis-ci.org/rhysd/changelog-from-release.svg?branch=master
 [travisci]: https://travis-ci.org/rhysd/changelog-from-release
+[releases]: https://github.com/rhysd/changelog-from-release/releases
