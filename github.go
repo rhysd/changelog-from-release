@@ -19,11 +19,17 @@ type GitHub struct {
 }
 
 func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
-	rels, _, err := gh.api.Repositories.ListReleases(gh.apiCtx, gh.owner, gh.repoName, nil)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Cannot get releases from repository %s/%s via GitHub API", gh.owner, gh.repoName)
+	rels := []*github.RepositoryRelease{}
+	for {
+		rs, res, err := gh.api.Repositories.ListReleases(gh.apiCtx, gh.owner, gh.repoName, nil)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Cannot get releases from repository %s/%s via GitHub API", gh.owner, gh.repoName)
+		}
+		rels = append(rels, rs...)
+		if res.NextPage == 0 {
+			return rels, nil
+		}
 	}
-	return rels, nil
 }
 
 func GitHubFromURL(u *url.URL) (*GitHub, error) {
