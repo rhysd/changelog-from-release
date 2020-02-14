@@ -15,4 +15,7 @@ jobs:
         run: |
           go get -t -d -v ./...
           go build ./
-      - run: go test -v
+      - name: Run smoke tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: go test -v
