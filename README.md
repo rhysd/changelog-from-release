@@ -1,7 +1,6 @@
 Tiny ChangeLog Generator via GitHub Releases
 ============================================
-[![macOS/Linux CI Status][travisci-badge]][travisci]
-[![Windows CI Status][appveyor-badge]][appveyor]
+[![CI][ci-badge]][ci]
 
 `changelog-from-release` is a small command line tool to generate `CHANGELOG.md` at current directory.
 It fetches releases of repository from GitHub API and generates `CHANGELOG.md`.
@@ -35,8 +34,6 @@ $ cat CHANGELOG.md
 
 [the MIT License](LICENSE.txt)
 
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/di0fr3r75afkrpkh?svg=true
-[appveyor]: https://ci.appveyor.com/project/rhysd/changelog-from-release
-[travisci-badge]: https://travis-ci.org/rhysd/changelog-from-release.svg?branch=master
-[travisci]: https://travis-ci.org/rhysd/changelog-from-release
 [releases]: https://github.com/rhysd/changelog-from-release/releases
+[ci]: https://github.com/rhysd/changelog-from-release/actions?query=workflow%3ACI+branch%3Amaster
+[ci-badge]: https://github.com/rhysd/changelog-from-release/workflows/CI/badge.svg?branch=master&event=push

@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// GitHub implements GitHub API v3 client
 type GitHub struct {
 	api      *github.Client
 	apiCtx   context.Context
@@ -18,6 +19,7 @@ type GitHub struct {
 	repoName string
 }
 
+// Releases fetches releases information. When no release is found, this method returns an error
 func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 	rels := []*github.RepositoryRelease{}
 	for {
@@ -32,6 +34,7 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 	}
 }
 
+// GitHubFromURL creates GitHub instance from given repository URL
 func GitHubFromURL(u *url.URL) (*GitHub, error) {
 	if u.Host != "github.com" {
 		return nil, errors.Errorf("Only 'github.com' is supported but got '%s'", u.String())

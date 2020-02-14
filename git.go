@@ -46,6 +46,7 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 	return string(b), err
 }
 
+// TrackingRemoteURL returns a URL which the current repository is tracking as remote
 func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	s, err := git.Exec("rev-parse", "--abbrev-ref", "--symbolic", "@{u}")
 	if err != nil {
@@ -72,7 +73,7 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	return u, nil
 }
 
-// NewGit creates Git instance from Config value. Home directory is assumed to be a root of Git repository
+// NewGitForCwd creates Git instance from Config value. Home directory is assumed to be a root of Git repository
 func NewGitForCwd() (*Git, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
