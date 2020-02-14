@@ -46,6 +46,7 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 	return string(b), err
 }
 
+// TrackingRemoteURL returns a URL which the current repository is tracking as remote
 func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	s, err := git.Exec("rev-parse", "--abbrev-ref", "--symbolic", "@{u}")
 	if err != nil {
