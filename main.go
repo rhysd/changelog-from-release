@@ -21,6 +21,7 @@ func fail(err error) {
 func main() {
 	flag.Usage = usage
 	ver := flag.Bool("version", false, "Output version to stdout")
+	commit := flag.Bool("commit", false, "Create a new commit")
 	flag.Parse()
 
 	if *ver {
@@ -36,6 +37,12 @@ func main() {
 	git, err := NewGitForCwd()
 	if err != nil {
 		fail(err)
+	}
+
+	if *commit {
+		if err := git.CheckClean(); err != nil {
+			fail(err)
+		}
 	}
 
 	url, err := git.TrackingRemoteURL()
@@ -63,5 +70,15 @@ func main() {
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)
+	}
+
+	if *commit {
+		if err := git.Add(cl.filePath); err != nil {
+			fail(err)
+		}
+		m := fmt.Sprintf("Update changelog for %s", rels[0].GetTagName())
+		if err := git.Commit(m); err != nil {
+			fail(err)
+		}
 	}
 }

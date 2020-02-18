@@ -33,10 +33,10 @@ $ cat CHANGELOG.md
 If you want to make a commit quickly for the changelog updates,
 
 ```
-$ git commit -m "Update changelog for $(changelog-from-release -t)"
+$ changelog-from-release -commit
 ```
 
-`-t` outputs the latest tag name to stdout.
+`-commit` option creates adds the changelog updates and creates a new commit automatically.
 
 Please see `changelog-from-release -h` for all options.
 

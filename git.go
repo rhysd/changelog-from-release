@@ -73,6 +73,29 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	return u, nil
 }
 
+// CheckClean checks if the working tree and index are not dirty
+func (git *Git) CheckClean() error {
+	if _, err := git.Exec("diff", "--quiet"); err != nil {
+		return errors.New("Git working tree is dirty. Please ensure all changes are committed")
+	}
+	if _, err := git.Exec("diff", "--cached", "--quiet"); err != nil {
+		return errors.New("Git index is dirty. Please ensure all changes are added and committed")
+	}
+	return nil
+}
+
+// Add adds given file to Git index tree
+func (git *Git) Add(file string) error {
+	_, err := git.Exec("add", file)
+	return err
+}
+
+// Commit creates a new Git commit with given message
+func (git *Git) Commit(msg string) error {
+	_, err := git.Exec("commit", "-m", msg)
+	return err
+}
+
 // NewGitForCwd creates Git instance from Config value. Home directory is assumed to be a root of Git repository
 func NewGitForCwd() (*Git, error) {
 	cwd, err := os.Getwd()

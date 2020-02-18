@@ -36,8 +36,9 @@ type link struct {
 
 // ChangeLog is a struct to generate changelog output from given repository URL
 type ChangeLog struct {
-	repoURL string
-	out     io.Writer
+	repoURL  string
+	out      io.Writer
+	filePath string
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
@@ -93,9 +94,10 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 // NewChangeLog creates a new ChangeLog instance. This creates a file to output changelog
 func NewChangeLog(dir string, u *url.URL) (*ChangeLog, error) {
-	f, err := os.Create(filepath.Join(dir, "CHANGELOG.md"))
+	p := filepath.Join(dir, "CHANGELOG.md")
+	f, err := os.Create(p)
 	if err != nil {
 		return nil, errors.Wrap(err, "Cannot create changelog file")
 	}
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), f}, nil
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), f, p}, nil
 }

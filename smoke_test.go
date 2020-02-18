@@ -60,8 +60,8 @@ func TestSmoke(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if out, err = git.Exec("diff", "--quiet"); err != nil {
-				t.Fatal("Repository should not be dirty:", out, err)
+			if err = git.CheckClean(); err != nil {
+				t.Fatal("Repository should not be dirty:", err)
 			}
 		})
 	}
