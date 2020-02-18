@@ -1,62 +1,72 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
 var version = "v1.1.3"
 
-func help(code int) {
-	fmt.Println("Usage: changelog-from-release")
-	os.Exit(code)
+func usage() {
+	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags]\n\n")
+	flag.PrintDefaults()
 }
 
-func exit(err error) {
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		os.Exit(111)
-	}
-	os.Exit(0)
+func fail(err error) {
+	fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+	os.Exit(111)
 }
 
 func main() {
-	if len(os.Args) == 2 && os.Args[1] == "--version" {
+	flag.Usage = usage
+	ver := flag.Bool("v", false, "Output version to stdout")
+	tag := flag.Bool("t", false, "Output the latest tag value to stdout after generating changelog")
+	flag.Parse()
+
+	if *ver {
 		fmt.Println(version)
 		os.Exit(0)
 	}
 
-	if len(os.Args) != 1 {
-		help(111)
+	if flag.NArg() != 0 {
+		usage()
+		os.Exit(111)
 	}
 
 	git, err := NewGitForCwd()
 	if err != nil {
-		exit(err)
+		fail(err)
 	}
 
 	url, err := git.TrackingRemoteURL()
 	if err != nil {
-		exit(err)
+		fail(err)
 	}
 
 	gh, err := GitHubFromURL(url)
 	if err != nil {
-		exit(err)
+		fail(err)
 	}
 
 	rels, err := gh.Releases()
 	if err != nil {
-		exit(err)
+		fail(err)
 	}
 	if len(rels) == 0 {
-		exit(fmt.Errorf("No release was found at %s", url))
+		fail(fmt.Errorf("No release was found at %s", url))
 	}
 
 	cl, err := NewChangeLog(git.root, url)
 	if err != nil {
-		exit(err)
+		fail(err)
 	}
 
-	exit(cl.Generate(rels))
+	if err := cl.Generate(rels); err != nil {
+		fail(err)
+	}
+
+	if *tag {
+		fmt.Println(rels[0].GetTagName())
+	}
 }

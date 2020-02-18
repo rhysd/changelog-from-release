@@ -30,6 +30,16 @@ $ changelog-from-release
 $ cat CHANGELOG.md
 ```
 
+If you want to make a commit quickly for the changelog updates,
+
+```
+$ git commit -m "Update changelog for $(changelog-from-release -t)"
+```
+
+`-t` outputs the latest tag name to stdout.
+
+Please see `changelog-from-release -h` for all options.
+
 ## License
 
 [the MIT License](LICENSE.txt)
