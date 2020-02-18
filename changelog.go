@@ -36,9 +36,9 @@ type link struct {
 
 // ChangeLog is a struct to generate changelog output from given repository URL
 type ChangeLog struct {
-	repoURL  string
-	out      io.Writer
-	filePath string
+	repoURL string
+	out     io.Writer
+	file    string
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer

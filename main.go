@@ -73,7 +73,10 @@ func main() {
 	}
 
 	if *commit {
-		if err := git.Add(cl.filePath); err != nil {
+		if err := git.CheckClean(); err == nil {
+			fail(fmt.Errorf("Changelog file is up-to-date. Nothing to commit: %s", cl.file))
+		}
+		if err := git.Add(cl.file); err != nil {
 			fail(err)
 		}
 		m := fmt.Sprintf("Update changelog for %s", rels[0].GetTagName())
