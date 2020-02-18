@@ -1,3 +1,11 @@
+<a name="v1.2.0"></a>
+# [v1.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.2.0) - 18 Feb 2020
+
+- **New:** `-commit` option was added to make a new commit for the changelog updates automatically
+
+[Changes][v1.2.0]
+
+
 <a name="v1.1.3"></a>
 # [v1.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.3) - 13 Feb 2020
 
@@ -39,6 +47,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v1.2.0]: https://github.com/rhysd/changelog-from-release/compare/v1.1.3...v1.2.0
 [v1.1.3]: https://github.com/rhysd/changelog-from-release/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/rhysd/changelog-from-release/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/rhysd/changelog-from-release/compare/v1.1.0...v1.1.1
