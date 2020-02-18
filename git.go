@@ -35,15 +35,18 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 	}
 
 	// Make output in oneline in error cases
-	if err != nil {
-		for i := range b {
-			if b[i] == '\n' {
-				b[i] = ' '
-			}
+	for i, c := range b {
+		if c == '\n' {
+			b[i] = ' '
 		}
 	}
+	out := string(b)
 
-	return string(b), err
+	if err != nil {
+		return "", errors.Wrapf(err, "Git command %q %v failed with output %q", subcmd, args, out)
+	}
+
+	return out, nil
 }
 
 // TrackingRemoteURL returns a URL which the current repository is tracking as remote
