@@ -20,8 +20,7 @@ func fail(err error) {
 
 func main() {
 	flag.Usage = usage
-	ver := flag.Bool("v", false, "Output version to stdout")
-	tag := flag.Bool("t", false, "Output the latest tag value to stdout after generating changelog")
+	ver := flag.Bool("version", false, "Output version to stdout")
 	flag.Parse()
 
 	if *ver {
@@ -64,9 +63,5 @@ func main() {
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)
-	}
-
-	if *tag {
-		fmt.Println(rels[0].GetTagName())
 	}
 }

@@ -38,11 +38,7 @@ func TestSmoke(t *testing.T) {
 			"",
 		},
 		{
-			[]string{"-t"},
-			`v\d+\.\d+\.\d+\n$`,
-		},
-		{
-			[]string{"-v"},
+			[]string{"-version"},
 			`v\d+\.\d+\.\d+\n$`,
 		},
 	} {
