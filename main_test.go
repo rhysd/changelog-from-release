@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -39,7 +40,7 @@ func TestGenerateChangelog(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	want := string(b)
+	want := strings.ReplaceAll(string(b), "\r\n", "\n") // Replace \r\n for Windows
 
 	b, err = exec.Command(exe).CombinedOutput()
 	have := string(b)
@@ -48,7 +49,7 @@ func TestGenerateChangelog(t *testing.T) {
 	}
 
 	if want != have {
-		t.Fatalf("Generated output was different from CHANGELOG.md\n\nOutput:\n'%s'\n\nCHANGELOG.md:\n'%s'", have, want)
+		t.Fatalf("Generated output was different from CHANGELOG.md\n\nOutput:\n'%#v'\n\nCHANGELOG.md:\n'%#v'", have, want)
 	}
 }
 
