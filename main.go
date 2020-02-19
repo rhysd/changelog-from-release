@@ -20,8 +20,7 @@ func fail(err error) {
 
 func main() {
 	flag.Usage = usage
-	ver := flag.Bool("version", false, "Output version to stdout")
-	commit := flag.Bool("commit", false, "Create a new commit")
+	ver := flag.Bool("v", false, "Output version to stdout")
 	flag.Parse()
 
 	if *ver {
@@ -37,12 +36,6 @@ func main() {
 	git, err := NewGitForCwd()
 	if err != nil {
 		fail(err)
-	}
-
-	if *commit {
-		if err := git.CheckClean(); err != nil {
-			fail(err)
-		}
 	}
 
 	url, err := git.TrackingRemoteURL()
@@ -63,25 +56,9 @@ func main() {
 		fail(fmt.Errorf("No release was found at %s", url))
 	}
 
-	cl, err := NewChangeLog(git.root, url)
-	if err != nil {
-		fail(err)
-	}
+	cl := NewChangeLog(os.Stdout, url)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)
-	}
-
-	if *commit {
-		if err := git.CheckClean(); err == nil {
-			fail(fmt.Errorf("Changelog file is up-to-date. Nothing to commit: %s", cl.file))
-		}
-		if err := git.Add(cl.file); err != nil {
-			fail(err)
-		}
-		m := fmt.Sprintf("Update changelog for %s", rels[0].GetTagName())
-		if err := git.Commit(m); err != nil {
-			fail(err)
-		}
 	}
 }

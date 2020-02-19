@@ -2,11 +2,10 @@ Tiny ChangeLog Generator via GitHub Releases
 ============================================
 [![CI][ci-badge]][ci]
 
-`changelog-from-release` is a small command line tool to generate `CHANGELOG.md` at current directory.
-It fetches releases of repository from GitHub API and generates `CHANGELOG.md`.
+`changelog-from-release` is a (too) small command line tool to generate changelog.
+It fetches releases of repository from GitHub API and generates changelog in Markdown format.
 
-- From: [the releases page][releases]
-- To: [CHANGELOG.md](./CHANGELOG.md)
+For example, [CHANGELOG.md](./CHANGELOG.md) is generated from [the releases page][releases].
 
 Real-world examples:
 
@@ -15,8 +14,8 @@ Real-world examples:
 
 ## Installation
 
-Download binary from [release page](https://github.com/rhysd/changelog-from-release/releases) or
-build from source with Go toolchain.
+Download binary from [the releases page](https://github.com/rhysd/changelog-from-release/releases) or
+build from sources with Go toolchain.
 
 ```
 $ go get github.com/rhysd/changelog-from-release
@@ -24,21 +23,14 @@ $ go get github.com/rhysd/changelog-from-release
 
 ## Usage
 
+Running `changelog-from-release` with no argument generates changelog in Markdown format and outputs
+it to stdout. Please redirect the output to your changelog file for updating.
+
 ```
 $ cd /path/to/repo
-$ changelog-from-release
+$ changelog-from-release > CHANGELOG.md
 $ cat CHANGELOG.md
 ```
-
-If you want to make a commit quickly for the changelog updates,
-
-```
-$ changelog-from-release -commit
-```
-
-`-commit` option creates adds the changelog updates and creates a new commit automatically.
-
-Please see `changelog-from-release -h` for all options.
 
 ## License
 

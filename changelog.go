@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/pkg/errors"
 	"io"
 	"net/url"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -38,14 +35,10 @@ type link struct {
 type ChangeLog struct {
 	repoURL string
 	out     io.Writer
-	file    string
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
-	if f, ok := cl.out.(*os.File); ok {
-		defer f.Close()
-	}
 	out := bufio.NewWriter(cl.out)
 
 	numRels := len(rels)
@@ -92,12 +85,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	return out.Flush()
 }
 
-// NewChangeLog creates a new ChangeLog instance. This creates a file to output changelog
-func NewChangeLog(dir string, u *url.URL) (*ChangeLog, error) {
-	p := filepath.Join(dir, "CHANGELOG.md")
-	f, err := os.Create(p)
-	if err != nil {
-		return nil, errors.Wrap(err, "Cannot create changelog file")
-	}
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), f, p}, nil
+// NewChangeLog creates a new ChangeLog instance
+func NewChangeLog(w io.Writer, u *url.URL) *ChangeLog {
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w}
 }
