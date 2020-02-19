@@ -1,3 +1,25 @@
+<a name="v2.0.0"></a>
+# [v2.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.0.0) - 19 Feb 2020
+
+I decided to keep this tool as simple as possible. This release drops some features for simplification.
+
+- **Breaking:** Instead of modifying `CHANGELOG.md`, this tool outputs a generated changelog to stdout. Please redirect the output to update your changelog file
+
+```
+$ changelog-from-release > CHANGELOG.md
+```
+
+- **Breaking:** Drop `-commit` flag. Please add and commit changes by yourself
+
+```
+$ changelog-from-release > CHANGELOG.md
+$ git add CHANGELOG.md
+$ git commit -m "Update changelog for $(git describe --tags)"
+```
+
+[Changes][v2.0.0]
+
+
 <a name="v1.2.0"></a>
 # [v1.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.2.0) - 18 Feb 2020
 
@@ -47,6 +69,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.0.0]: https://github.com/rhysd/changelog-from-release/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/rhysd/changelog-from-release/compare/v1.1.3...v1.2.0
 [v1.1.3]: https://github.com/rhysd/changelog-from-release/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/rhysd/changelog-from-release/compare/v1.1.1...v1.1.2
