@@ -77,7 +77,7 @@ git push origin "${minor_version}" --force
 git push origin "${major_version}" --force
 set +x
 
-./script/make-release.sh
+./scripts/make-release.sh
 
 if command -v open >/dev/null; then
     set -x
