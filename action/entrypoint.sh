@@ -5,8 +5,15 @@ set -e
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
-    git fetch --prune --depth=1 origin '+refs/tags/*:refs/tags/*'
-    INPUT_VERSION="$(git tag --list | tail -n 1)"
+    TAG_FROM_PAYLOAD="$(jq .release.tag_name < ${GITHUB_EVENT_PATH})"
+    if [ "$TAG_FROM_PAYLOAD" = "null" ]; then
+        git fetch --prune --depth=1 origin '+refs/tags/*:refs/tags/*'
+        INPUT_VERSION="$(git tag --list | tail -n 1)"
+        echo "::debug:: INPUT_VERSION was retrieved from git tags"
+    else
+        INPUT_VERSION="$TAG_FROM_PAYLOAD"
+        echo "::debug:: INPUT_VERSION was retrieved from event payload"
+    fi
 fi
 
 echo "::debug::Retrieved version: ${INPUT_VERSION}"
