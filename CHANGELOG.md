@@ -1,3 +1,34 @@
+<a name="v2.1.0"></a>
+# [v2.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.1.0) - 20 Feb 2020
+
+- **New:** [Action](https://github.com/rhysd/changelog-from-release/tree/master/action) for [GitHub Actions]() was added. Updating your changelog file following the new release now can be automated easily.
+
+Example workflow:
+
+```yaml
+name: Update changelog
+on:
+  release:
+    types: [published]
+
+jobs:
+  changelog:
+    name: Update changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - uses: rhysd/changelog-from-release/action@v2
+        with:
+          file: CHANGELOG.md
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+
+[Changes][v2.1.0]
+
+
 <a name="v2.0.0"></a>
 # [v2.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.0.0) - 19 Feb 2020
 
@@ -69,6 +100,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.1.0]: https://github.com/rhysd/changelog-from-release/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/rhysd/changelog-from-release/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/rhysd/changelog-from-release/compare/v1.1.3...v1.2.0
 [v1.1.3]: https://github.com/rhysd/changelog-from-release/compare/v1.1.2...v1.1.3
