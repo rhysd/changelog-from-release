@@ -1,0 +1,31 @@
+name: 'Run changelog-from-release'
+author: 'rhysd <https://rhysd.github.io>'
+description: >
+  Run changelog-from-release when new release is created on GitHub.
+  It updates (or creates if not existing) CHANGELOG.md file and push it to the remote.
+branding:
+  icon: 'edit'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: GitHub API token for pushing the commit to update changelog. Please pass secrets.GITHUB_TOKEN
+    required: true
+  file:
+    description: File path to the changelog file. Absolute path or relative path to the root directory of repository
+    required: true
+  version:
+    description: Version string for commit message of changelog update
+    required: false
+  commit:
+    description: >
+      Set 'true' to make a commit with change of changelog file. Otherwise this action only modifies the file.
+      Setting 'false' to this input implies setting 'false' to 'push' input also.
+    default: true
+  push:
+    description: Set 'true' to push a generated commit to the remote
+    default: true
+
+runs:
+  using: docker
+  image: Dockerfile

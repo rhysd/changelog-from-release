@@ -1,0 +1,15 @@
+name: Post release
+on:
+  release:
+    types: [published]
+
+jobs:
+  changelog:
+    name: Update changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: rhysd/changelog-from-release/action@v2
+        with:
+          file: CHANGELOG.md
+          github-token: ${{ secrets.GITHUB_TOKEN }}

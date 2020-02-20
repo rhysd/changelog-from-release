@@ -1,5 +1,11 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    tags-ignore:
+      - '*'
+    paths-ignore:
+      - README.md
+  pull_request:
 
 jobs:
   tests:
@@ -33,3 +39,16 @@ jobs:
       - name: Add $GOPATH/bin to $PATH
         run: echo "::add-path::$(go env GOPATH)/bin"
       - run: golint -set_exit_status
+  action:
+    name: Check action
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip action check]')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run action
+        uses: ./action/
+        with:
+          file: CHANGELOG2.md
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push: false
+      - run: diff CHANGELOG.md CHANGELOG2.md
