@@ -1,5 +1,11 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    tags-ignore:
+      - '*'
+    paths-ignore:
+      - README.md
+  pull_request:
 
 jobs:
   tests:
