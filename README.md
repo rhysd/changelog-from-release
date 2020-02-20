@@ -32,6 +32,21 @@ $ changelog-from-release > CHANGELOG.md
 $ cat CHANGELOG.md
 ```
 
+Automation with [GitHub Actions][gh-actions] is also offered.
+
+```yaml
+- uses: rhysd/changelog-from-release/action@v2
+  with:
+    file: CHANGELOG.md
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+`file` is a file path for changelog and `github-token` is a GitHub API token to retrieve releases.
+Please read [action.yml](action/action.yml) for more details.
+
+And ['Post release' job of this repository](.github/workflows/post-release.yml) is a real-world
+usage example of the action.
+
 ## License
 
 [the MIT License](LICENSE.txt)
@@ -39,3 +54,4 @@ $ cat CHANGELOG.md
 [releases]: https://github.com/rhysd/changelog-from-release/releases
 [ci]: https://github.com/rhysd/changelog-from-release/actions?query=workflow%3ACI+branch%3Amaster
 [ci-badge]: https://github.com/rhysd/changelog-from-release/workflows/CI/badge.svg?branch=master&event=push
+[gh-actions]: https://github.com/features/actions
