@@ -17,6 +17,11 @@ inputs:
   version:
     description: Version string for commit message of changelog update
     required: false
+  commit:
+    description: >
+      Set 'true' to make a commit with change of changelog file. Otherwise this action only modifies the file.
+      Setting 'false' to this input implies setting 'false' to 'push' input also.
+    default: true
   push:
     description: Set 'true' to push a generated commit to the remote
     default: true
