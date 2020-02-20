@@ -36,7 +36,7 @@ fi
 
 current_branch="$(git symbolic-ref --short HEAD)"
 if [[ "$current_branch" != "master" ]]; then
-    echo "Release must be created at master branch but current branch is ${$current_branch}" >&2
+    echo "Release must be created at master branch but current branch is ${current_branch}" >&2
     exit 1
 fi
 
@@ -57,11 +57,11 @@ files_include_version=( "main.go" "action/Dockerfile" )
 set -x
 go -v test
 
-# XXX: '.' matches to any character in $prev_version
-sed -i '' -E "s/${prev_version}/${pversion}/g" "${files_include_version[@]}"
+sed -i '' -E "s/${prev_version//\./\\.}/${version}/g" "${files_include_version[@]}"
 
 git add "${files_include_version[@]}"
-git commit -m "Bump up version: ${prev_version} -> ${version} [skip action check]"
+git commit -m "bump up version: ${prev_version} -> ${version} [skip action check]"
+git show HEAD
 
 git tag -d "$major_version" || true
 git tag "$major_version"
@@ -69,8 +69,7 @@ git tag -d "$minor_version" || true
 git tag "$minor_version"
 git tag "$version"
 
-# XXX: This script modifies Dockerfile and it tries to fetch a file which does not exist at this point.
-# It would cause CI failure.
+git push origin master
 git push origin "${version}"
 git push origin "${minor_version}" --force
 git push origin "${major_version}" --force
