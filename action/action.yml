@@ -18,7 +18,7 @@ inputs:
     description: Version string for commit message of changelog update
     required: false
   push:
-    description: Boolean value if it pushes a generated commit to remote
+    description: Set 'true' to push a generated commit to the remote
     default: true
 
 runs:

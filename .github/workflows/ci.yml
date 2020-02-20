@@ -44,4 +44,4 @@ jobs:
           file: CHANGELOG2.md
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: false
-      - run: git log -n 2
+      - run: diff CHANGELOG.md CHANGELOG2.md
