@@ -61,7 +61,7 @@ go -v test
 sed -i '' -E "s/${prev_version}/${pversion}/g" "${files_include_version[@]}"
 
 git add "${files_include_version[@]}"
-git commit -m "Bump up version: ${prev_version} -> ${version}"
+git commit -m "Bump up version: ${prev_version} -> ${version} [skip action check]"
 
 git tag -d "$major_version" || true
 git tag "$major_version"
@@ -71,10 +71,13 @@ git tag "$version"
 
 # XXX: This script modifies Dockerfile and it tries to fetch a file which does not exist at this point.
 # It would cause CI failure.
-git push origin master
 git push origin "${version}"
-git push origin "${minor_version}" --force-with-lease
-git push origin "${major_version}" --force-with-lease
+git push origin "${minor_version}" --force
+git push origin "${major_version}" --force
 set +x
 
-echo "Done. Please check 'git show' to verify changes. If ok, run this script with '--done' option like './prepare-release.sh vX.Y.Z --done'"
+if command -v open >/dev/null; then
+    open "https://github.com/rhysd/changelog-from-release/releases/new?tag=${version}"
+fi
+
+echo "Done."

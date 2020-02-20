@@ -42,6 +42,7 @@ jobs:
   action:
     name: Check action
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip action check]')"
     steps:
       - uses: actions/checkout@v2
       - name: Run action
