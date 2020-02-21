@@ -41,11 +41,7 @@ Automation with [GitHub Actions][gh-actions] is also offered.
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-`file` is a file path for changelog and `github-token` is a GitHub API token to retrieve releases.
-Please read [action.yml](action/action.yml) for more details.
-
-And ['Post release' job of this repository](.github/workflows/post-release.yml) is a real-world
-usage example of the action.
+Please read [action's README](./action/README.md) for more details.
 
 ## License
 
