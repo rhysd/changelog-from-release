@@ -53,5 +53,14 @@ func GitHubFromURL(u *url.URL) (*GitHub, error) {
 		src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 		client = oauth2.NewClient(ctx, src)
 	}
-	return &GitHub{github.NewClient(client), ctx, slug[1], slug[2]}, nil
+
+	api := github.NewClient(client)
+	if v := os.Getenv("GITHUB_API_BASE_URL"); v != "" {
+		u, err := url.Parse(v)
+		if err != nil {
+			return nil, errors.Wrap(err, "Invalid URL in $GITHUB_API_BASE_URL")
+		}
+		api.BaseURL = u
+	}
+	return &GitHub{api, ctx, slug[1], slug[2]}, nil
 }

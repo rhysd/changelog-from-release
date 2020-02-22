@@ -43,6 +43,12 @@ Automation with [GitHub Actions][gh-actions] is also offered.
 
 Please read [action's README](./action/README.md) for more details.
 
+For GitHub Enterprise, please set `GITHUB_API_BASE_URL` environment variable.
+
+```
+export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3
+```
+
 ## License
 
 [the MIT License](LICENSE.txt)
