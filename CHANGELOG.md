@@ -1,3 +1,16 @@
+<a name="v2.2.0"></a>
+# [v2.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.0) - 22 Feb 2020
+
+- **New:** Support `$GITHUB_API_BASE_URL` environment variable to configure API endpoint for GitHub Enterprise
+
+```sh
+export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3
+GITHUB_TOKEN=abcabcabcabcabcabcabc changelog-from-release > CHANGELOG.md
+```
+
+[Changes][v2.2.0]
+
+
 <a name="v2.1.0"></a>
 # [v2.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.1.0) - 20 Feb 2020
 
@@ -100,6 +113,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.2.0]: https://github.com/rhysd/changelog-from-release/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/rhysd/changelog-from-release/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/rhysd/changelog-from-release/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/rhysd/changelog-from-release/compare/v1.1.3...v1.2.0
