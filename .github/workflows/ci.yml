@@ -35,7 +35,7 @@ jobs:
       - run: ls -l $GOROOT
       - run: go get golang.org/x/lint/golint
       - name: Add $GOPATH/bin to $PATH
-        run: echo "::add-path::$(go env GOPATH)/bin"
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
       - run: golint -set_exit_status
   action:
     name: Check action
