@@ -22,10 +22,10 @@ jobs:
       - uses: rhysd/changelog-from-release/action@v2
         with:
           file: CHANGELOG.md
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-`file` is a file path for changelog and `github-token` is a GitHub API token to retrieve releases.
+`file` is a file path for changelog and `github_token` is a GitHub API token to retrieve releases.
 Please read [action.yml](action.yml) for more details.
 
 Note that `actions/checkout@v2` does not fetch branches by default. In above example, `ref: master`
