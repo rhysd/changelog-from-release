@@ -1,8 +1,6 @@
 name: CI
 on:
   push:
-    tags-ignore:
-      - '*'
     paths-ignore:
       - README.md
   pull_request:
@@ -37,7 +35,7 @@ jobs:
       - run: ls -l $GOROOT
       - run: go get golang.org/x/lint/golint
       - name: Add $GOPATH/bin to $PATH
-        run: echo "::add-path::$(go env GOPATH)/bin"
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
       - run: golint -set_exit_status
   action:
     name: Check action
@@ -49,6 +47,6 @@ jobs:
         uses: ./action/
         with:
           file: CHANGELOG2.md
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           push: false
       - run: diff CHANGELOG.md CHANGELOG2.md
