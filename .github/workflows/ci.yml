@@ -47,6 +47,6 @@ jobs:
         uses: ./action/
         with:
           file: CHANGELOG2.md
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           push: false
       - run: diff CHANGELOG.md CHANGELOG2.md
