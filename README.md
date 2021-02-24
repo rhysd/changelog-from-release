@@ -38,7 +38,7 @@ Automation with [GitHub Actions][gh-actions] is also offered.
 - uses: rhysd/changelog-from-release/action@v2
   with:
     file: CHANGELOG.md
-    github-token: ${{ secrets.GITHUB_TOKEN }}
+    github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Please read [action's README](./action/README.md) for more details.
