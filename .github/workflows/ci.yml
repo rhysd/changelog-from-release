@@ -1,8 +1,6 @@
 name: CI
 on:
   push:
-    tags-ignore:
-      - '*'
     paths-ignore:
       - README.md
   pull_request:
