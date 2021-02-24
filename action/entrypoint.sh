@@ -23,7 +23,7 @@ echo "::debug::Push to remote?: ${INPUT_PUSH}"
 echo "changelog-from-release version: $(/changelog-from-release -v)"
 
 set -x
-GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release > "${INPUT_FILE}"
+GITHUB_TOKEN="$INPUT_GITHUB-TOKEN" /changelog-from-release > "${INPUT_FILE}"
 set +x
 
 if [ "$INPUT_COMMIT" = 'true' ]; then
