@@ -3,6 +3,11 @@ on:
   push:
     paths-ignore:
       - README.md
+    tags-ignore:
+      - '**'
+    # This is necessary https://github.community/t/using-on-push-tags-ignore-and-paths-ignore-together/16931
+    branches:
+      - '**'
   pull_request:
 
 jobs:
