@@ -19,9 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v1
-        with:
-          go-version: 1.13
+      - uses: actions/setup-go@v2
       - name: Build sources
         run: |
           go version
@@ -32,16 +30,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: go test -v
   linter:
-    name: Golint
+    name: Run staticcheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v1
-      - run: ls -l $GOROOT
-      - run: go get golang.org/x/lint/golint
-      - name: Add $GOPATH/bin to $PATH
-        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
-      - run: golint -set_exit_status
+      - uses: actions/setup-go@v2
+      - name: Install staticcheck
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - run: staticcheck ./
   action:
     name: Check action
     runs-on: ubuntu-latest

@@ -53,6 +53,7 @@ func main() {
 		fail(err)
 	}
 	if len(rels) == 0 {
+		//lint:ignore ST1005 for compatibility
 		fail(fmt.Errorf("No release was found at %s", url))
 	}
 
