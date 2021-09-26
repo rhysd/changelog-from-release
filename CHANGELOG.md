@@ -1,3 +1,14 @@
+<a name="v2.2.3"></a>
+# [v2.2.3](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.3) - 26 Sep 2021
+
+- **Improve:** Introduce Go modules. Now this tool is installable via `go install`
+- **Improve:** Better footer comment (#7)
+- **Improve:** Build binaries with the latest Go toolchain v1.17
+- **Improve:** Release `darwin/arm64` and `linux/arm64` binaries
+
+[Changes][v2.2.3]
+
+
 <a name="v2.2.2"></a>
 # [v2.2.2](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.2) - 24 Feb 2021
 
@@ -121,6 +132,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.2.3]: https://github.com/rhysd/changelog-from-release/compare/v2.2.2...v2.2.3
 [v2.2.2]: https://github.com/rhysd/changelog-from-release/compare/v2.2.0...v2.2.2
 [v2.2.0]: https://github.com/rhysd/changelog-from-release/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/rhysd/changelog-from-release/compare/v2.0.0...v2.1.0
