@@ -10,6 +10,7 @@ fi
 
 rm -rf release
 gox -arch 'amd64' -os 'linux darwin windows freebsd openbsd netbsd' ./
+gox -arch 'arm64' -os 'linux darwin' ./
 mkdir -p release
 mv ${name}_* release/
 cd release
