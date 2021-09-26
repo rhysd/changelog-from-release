@@ -23,7 +23,6 @@ jobs:
       - name: Build sources
         run: |
           go version
-          go get -t -d -v ./...
           go build ./
       - name: Run smoke tests
         env:
@@ -37,7 +36,7 @@ jobs:
       - uses: actions/setup-go@v2
       - name: Install staticcheck
         run: |
-          go install honnef.co/go/tools/cmd/staticcheck@latest
+          go get honnef.co/go/tools/cmd/staticcheck@latest
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - run: staticcheck ./
   action:
