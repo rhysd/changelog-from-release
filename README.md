@@ -18,7 +18,7 @@ Download binary from [the releases page](https://github.com/rhysd/changelog-from
 build from sources with Go toolchain.
 
 ```
-$ go get github.com/rhysd/changelog-from-release
+$ go install github.com/rhysd/changelog-from-release@latest
 ```
 
 ## Usage
