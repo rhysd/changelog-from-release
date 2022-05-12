@@ -77,13 +77,4 @@ git push origin "${minor_version}" --force
 git push origin "${major_version}" --force
 set +x
 
-./scripts/make-release.sh
-
-if command -v open >/dev/null; then
-    set -x
-    open "https://github.com/rhysd/changelog-from-release/releases/new?tag=${version}"
-    open ./release
-    set +x
-fi
-
 echo "Done."
