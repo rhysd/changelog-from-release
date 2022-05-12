@@ -59,10 +59,13 @@ files_include_version=( "main.go" "action/Dockerfile" )
 set -x
 go test
 
-sed -i '' -E "s/${prev_version//\./\\.}/${version}/g" "${files_include_version[@]}"
+prev_version_pat="${prev_version//\./\\.}"
+sed -i '' -E "s/${prev_version_pat}/${version}/g" "${files_include_version[@]}"
+# Replace changelog-from-release_{prev}_{target}.zip -> changelog-from-release_{next}_{target}.zip
+sed -i '' -E "s/_${prev_version_pat#v}_/_${version#v}_/g" ./action/Dockerfile
 
 git add "${files_include_version[@]}"
-git commit -m "bump up version: ${prev_version} -> ${version} [skip action check]"
+git commit -m "bump up version: ${prev_version} -> ${version}"
 git show HEAD
 
 git tag -d "$major_version" || true
