@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var version = "v2.2.3"
+var version = "v2.2.4"
 
 func usage() {
 	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags]\n\n")
