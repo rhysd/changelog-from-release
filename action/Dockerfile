@@ -3,8 +3,8 @@ FROM alpine:latest
 RUN apk --no-cache add git curl jq \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -LO https://github.com/rhysd/changelog-from-release/releases/download/v2.2.3/changelog-from-release_2.2.3_linux_amd64.tar.gz \
-    && tar xf changelog-from-release_2.2.3_linux_amd64.tar.gz -C /
+RUN curl -LO https://github.com/rhysd/changelog-from-release/releases/download/v2.2.4/changelog-from-release_2.2.4_linux_amd64.tar.gz \
+    && tar xf changelog-from-release_2.2.4_linux_amd64.tar.gz -C /
 
 COPY entrypoint.sh /entrypoint.sh
 
