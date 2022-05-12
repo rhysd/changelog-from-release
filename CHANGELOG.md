@@ -1,3 +1,14 @@
+<a name="v2.2.4"></a>
+# [v2.2.4](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.4) - 12 May 2022
+
+- Strip credentials in repository URLs (#9).
+- Fix [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) fails due to permission error on accessing a workspace directory.
+- Update dependencies in `go.mod`.
+- Use [GoReleaser](https://goreleaser.com/) to make release binaries.
+
+[Changes][v2.2.4]
+
+
 <a name="v2.2.3"></a>
 # [v2.2.3](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.3) - 26 Sep 2021
 
@@ -132,6 +143,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.2.4]: https://github.com/rhysd/changelog-from-release/compare/v2.2.3...v2.2.4
 [v2.2.3]: https://github.com/rhysd/changelog-from-release/compare/v2.2.2...v2.2.3
 [v2.2.2]: https://github.com/rhysd/changelog-from-release/compare/v2.2.0...v2.2.2
 [v2.2.0]: https://github.com/rhysd/changelog-from-release/compare/v2.1.0...v2.2.0
