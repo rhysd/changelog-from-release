@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/google/go-github/github"
 	"io"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/google/go-github/github"
 )
 
 var reItemHeader = regexp.MustCompile(`^- ([[:alpha:]]+:)`)
@@ -87,5 +88,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 // NewChangeLog creates a new ChangeLog instance
 func NewChangeLog(w io.Writer, u *url.URL) *ChangeLog {
+	// Strip credentials in the repository URL (#9)
+	u.User = nil
 	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w}
 }
