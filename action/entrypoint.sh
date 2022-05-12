@@ -2,6 +2,10 @@
 
 set -e
 
+# GitHub workspace directory is owned by different user from root. Accessing it is not allowed by default.
+# https://github.blog/2022-04-12-git-security-vulnerability-announced/
+git config --global --add safe.directory /github/workspace
+
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
