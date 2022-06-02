@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"github.com/google/go-github/github"
-	"github.com/pkg/errors"
-	"golang.org/x/oauth2"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/google/go-github/github"
+	"github.com/pkg/errors"
+	"golang.org/x/oauth2"
 )
 
 // GitHub implements GitHub API v3 client
@@ -22,8 +23,13 @@ type GitHub struct {
 // Releases fetches releases information. When no release is found, this method returns an error
 func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 	rels := []*github.RepositoryRelease{}
+	page := 1
 	for {
-		rs, res, err := gh.api.Repositories.ListReleases(gh.apiCtx, gh.owner, gh.repoName, nil)
+		opts := github.ListOptions{
+			Page:    page,
+			PerPage: 100,
+		}
+		rs, res, err := gh.api.Repositories.ListReleases(gh.apiCtx, gh.owner, gh.repoName, &opts)
 		if err != nil {
 			return nil, errors.Wrapf(err, "Cannot get releases from repository %s/%s via GitHub API", gh.owner, gh.repoName)
 		}
@@ -31,6 +37,7 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 		if res.NextPage == 0 {
 			return rels, nil
 		}
+		page = res.NextPage
 	}
 }
 
