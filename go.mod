@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/google/go-github/v45 v45.0.0
-	github.com/pkg/errors v0.9.1
 	golang.org/x/oauth2 v0.0.0-20220524215830-622c5d57e401
 )
 

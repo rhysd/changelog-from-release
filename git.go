@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Git represents Git command for specific repository
@@ -43,7 +41,7 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 	out := string(b)
 
 	if err != nil {
-		return "", errors.Wrapf(err, "Git command %q %v failed with output %q", subcmd, args, out)
+		return "", fmt.Errorf("Git command %q %v failed with output %q: %w", subcmd, args, out, err)
 	}
 
 	return out, nil
@@ -53,14 +51,14 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	s, err := git.Exec("rev-parse", "--abbrev-ref", "--symbolic", "@{u}")
 	if err != nil {
-		return nil, errors.Wrapf(err, "Cannot retrieve remote name: %s", s)
+		return nil, fmt.Errorf("Cannot retrieve remote name: %s: %w", s, err)
 	}
 
 	// e.g. origin/master
 	ss := strings.Split(s, "/")
 
 	if s, err = git.Exec("config", fmt.Sprintf("remote.%s.url", ss[0])); err != nil {
-		return nil, errors.Wrapf(err, "Could not get URL of remote '%s': %s", ss[0], s)
+		return nil, fmt.Errorf("Could not get URL of remote '%s': %s: %w", ss[0], s, err)
 	}
 
 	if strings.HasPrefix(s, "git@github.com:") {
@@ -71,7 +69,7 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 
 	u, err := url.Parse(s)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Cannot parse tracking remote URL: %s", s)
+		return nil, fmt.Errorf("Cannot parse tracking remote URL: %s: %w", s, err)
 	}
 	return u, nil
 }
@@ -80,11 +78,11 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 func NewGitForCwd() (*Git, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, errors.Wrap(err, "Cannot get cwd")
+		return nil, fmt.Errorf("Cannot get cwd: %w", err)
 	}
 	exe, err := exec.LookPath("git")
 	if err != nil {
-		return nil, errors.Wrap(err, "'git' executable not found")
+		return nil, fmt.Errorf("'git' executable not found: %w", err)
 	}
 	return &Git{exe, cwd}, nil
 }
