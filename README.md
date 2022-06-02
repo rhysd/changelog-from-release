@@ -45,10 +45,23 @@ Automation with [GitHub Actions][gh-actions] is also offered.
 
 Please read [action's README](./action/README.md) for more details.
 
-For GitHub Enterprise, please set `GITHUB_API_BASE_URL` environment variable.
+## Environment variables
 
-```
+### `GITHUB_API_BASE_URL`
+
+For GitHub Enterprise, please set `GITHUB_API_BASE_URL` environment variable to configure API base URL.
+
+```sh
 export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3
+```
+
+### `GITHUB_TOKEN`
+
+If `changelog-from-release` reported API rate limit exceeded or no permission to access the repository,
+consider to specify [a personal access token][pat].
+
+```sh
+export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ## License
@@ -59,3 +72,4 @@ export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3
 [ci]: https://github.com/rhysd/changelog-from-release/actions?query=workflow%3ACI+branch%3Amaster
 [ci-badge]: https://github.com/rhysd/changelog-from-release/workflows/CI/badge.svg?branch=master&event=push
 [gh-actions]: https://github.com/features/actions
+[pat]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
