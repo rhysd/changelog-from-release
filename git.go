@@ -51,14 +51,14 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 	s, err := git.Exec("rev-parse", "--abbrev-ref", "--symbolic", "@{u}")
 	if err != nil {
-		return nil, fmt.Errorf("Cannot retrieve remote name: %s: %w", s, err)
+		return nil, fmt.Errorf("cannot retrieve remote name: %s: %w", s, err)
 	}
 
 	// e.g. origin/master
 	ss := strings.Split(s, "/")
 
 	if s, err = git.Exec("config", fmt.Sprintf("remote.%s.url", ss[0])); err != nil {
-		return nil, fmt.Errorf("Could not get URL of remote '%s': %s: %w", ss[0], s, err)
+		return nil, fmt.Errorf("could not get URL of remote '%s': %s: %w", ss[0], s, err)
 	}
 
 	if strings.HasPrefix(s, "git@github.com:") {
@@ -69,7 +69,7 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 
 	u, err := url.Parse(s)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot parse tracking remote URL: %s: %w", s, err)
+		return nil, fmt.Errorf("cannot parse tracking remote URL: %s: %w", s, err)
 	}
 	return u, nil
 }
@@ -78,7 +78,7 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 func NewGitForCwd() (*Git, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, fmt.Errorf("Cannot get cwd: %w", err)
+		return nil, fmt.Errorf("cannot get cwd: %w", err)
 	}
 	exe, err := exec.LookPath("git")
 	if err != nil {

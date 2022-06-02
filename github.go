@@ -31,7 +31,7 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 		}
 		rs, res, err := gh.api.Repositories.ListReleases(gh.apiCtx, gh.owner, gh.repoName, &opts)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot get releases from repository %s/%s via GitHub API: %w", gh.owner, gh.repoName, err)
+			return nil, fmt.Errorf("cannot get releases from repository %s/%s via GitHub API: %w", gh.owner, gh.repoName, err)
 		}
 		rels = append(rels, rs...)
 		if res.NextPage == 0 {
@@ -44,14 +44,14 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 // GitHubFromURL creates GitHub instance from given repository URL
 func GitHubFromURL(u *url.URL) (*GitHub, error) {
 	if u.Host != "github.com" {
-		return nil, fmt.Errorf("Only 'github.com' is supported but got '%s'", u.String())
+		return nil, fmt.Errorf("only 'github.com' is supported but got '%s'", u.String())
 	}
 
 	// '/owner/name'
 	path := strings.TrimSuffix(u.Path, ".git")
 	slug := strings.Split(path, "/")
 	if len(slug) != 3 {
-		return nil, fmt.Errorf("Invalid slug of GitHub repo: %s", path)
+		return nil, fmt.Errorf("invalid slug of GitHub repo: %s", path)
 	}
 
 	ctx := context.Background()
@@ -65,7 +65,7 @@ func GitHubFromURL(u *url.URL) (*GitHub, error) {
 	if v := os.Getenv("GITHUB_API_BASE_URL"); v != "" {
 		u, err := url.Parse(v)
 		if err != nil {
-			return nil, fmt.Errorf("Invalid URL in $GITHUB_API_BASE_URL: %w", err)
+			return nil, fmt.Errorf("invalid URL in $GITHUB_API_BASE_URL: %w", err)
 		}
 		api.BaseURL = u
 	}
