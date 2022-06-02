@@ -1,3 +1,11 @@
+<a name="v2.2.5"></a>
+# [v2.2.5](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.5) - 02 Jun 2022
+
+- Fix `changelog-from-release` command hangs when generating a changelog of repository which has more than 30 releases (#8, #10)
+
+[Changes][v2.2.5]
+
+
 <a name="v2.2.4"></a>
 # [v2.2.4](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.4) - 12 May 2022
 
@@ -143,6 +151,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v2.2.5]: https://github.com/rhysd/changelog-from-release/compare/v2.2.4...v2.2.5
 [v2.2.4]: https://github.com/rhysd/changelog-from-release/compare/v2.2.3...v2.2.4
 [v2.2.3]: https://github.com/rhysd/changelog-from-release/compare/v2.2.2...v2.2.3
 [v2.2.2]: https://github.com/rhysd/changelog-from-release/compare/v2.2.0...v2.2.2
