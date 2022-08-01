@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 
@@ -42,6 +43,11 @@ type ChangeLog struct {
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	out := bufio.NewWriter(cl.out)
 
+	baseURL := "https://github.com"
+	if v := os.Getenv("GITHUB_API_BASE_URL"); v != "" {
+		baseURL = v // This value is already validated in GitHubFromURL() so validation is unnnecessary here
+	}
+
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
 	for i, rel := range rels {
@@ -71,7 +77,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
 		fmt.Fprintf(out, "# [%s](%s) - %s\n\n", title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
-		fmt.Fprint(out, emphasizeItemHeaders(strings.Replace(rel.GetBody(), "\r", "", -1)))
+		fmt.Fprint(out, emphasizeItemHeaders(LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), baseURL)))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		relLinks = append(relLinks, link{tag, compareURL})
