@@ -1,7 +1,7 @@
 <a name="v2.2.5"></a>
 # [v2.2.5](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.5) - 02 Jun 2022
 
-- Fix `changelog-from-release` command hangs when generating a changelog of repository which has more than 30 releases (#8, #10)
+- Fix `changelog-from-release` command hangs when generating a changelog of repository which has more than 30 releases ([#8](https://github.com/issues/8), [#10](https://github.com/issues/10))
 
 [Changes][v2.2.5]
 
@@ -9,7 +9,7 @@
 <a name="v2.2.4"></a>
 # [v2.2.4](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.4) - 12 May 2022
 
-- Strip credentials in repository URLs (#9).
+- Strip credentials in repository URLs ([#9](https://github.com/issues/9)).
 - Fix [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) fails due to permission error on accessing a workspace directory.
 - Update dependencies in `go.mod`.
 - Use [GoReleaser](https://goreleaser.com/) to make release binaries.
@@ -21,7 +21,7 @@
 # [v2.2.3](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.3) - 26 Sep 2021
 
 - **Improve:** Introduce Go modules. Now this tool is installable via `go install`
-- **Improve:** Better footer comment (#7)
+- **Improve:** Better footer comment ([#7](https://github.com/issues/7))
 - **Improve:** Build binaries with the latest Go toolchain v1.17
 - **Improve:** Release `darwin/arm64` and `linux/arm64` binaries
 
@@ -31,7 +31,7 @@
 <a name="v2.2.2"></a>
 # [v2.2.2](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.2) - 24 Feb 2021
 
-- **Fix:** Rename `github-token` input to `github_token` since `-` is not available for input names (#4)
+- **Fix:** Rename `github-token` input to `github_token` since `-` is not available for input names ([#4](https://github.com/issues/4))
 
 [Changes][v2.2.2]
 
