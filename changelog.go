@@ -11,6 +11,23 @@ import (
 	"github.com/google/go-github/v45/github"
 )
 
+func homeURL() (string, error) {
+	v := os.Getenv("GITHUB_API_BASE_URL")
+	if v == "" {
+		return "https://github.com", nil
+	}
+
+	u, err := url.Parse(v)
+	if err != nil {
+		return "", fmt.Errorf("invalid URL in $GITHUB_API_BASE_URL: %w", err)
+	}
+
+	u.Path = ""
+	u.RawQuery = ""
+	u.Fragment = ""
+	return u.String(), nil
+}
+
 type link struct {
 	name string
 	url  string
@@ -26,9 +43,9 @@ type ChangeLog struct {
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	out := bufio.NewWriter(cl.out)
 
-	baseURL := "https://github.com"
-	if v := os.Getenv("GITHUB_API_BASE_URL"); v != "" {
-		baseURL = v // This value is already validated in GitHubFromURL() so validation is unnnecessary here
+	home, err := homeURL()
+	if err != nil {
+		return err
 	}
 
 	numRels := len(rels)
@@ -60,7 +77,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
 		fmt.Fprintf(out, "# [%s](%s) - %s\n\n", title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
-		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), baseURL))
+		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), home))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		relLinks = append(relLinks, link{tag, compareURL})

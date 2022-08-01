@@ -83,8 +83,8 @@ type Reflinker struct {
 	links []Reflink
 }
 
-func NewReflinker(baseURL string, src []byte) *Reflinker {
-	return &Reflinker{baseURL, src, nil}
+func NewReflinker(homeURL string, src []byte) *Reflinker {
+	return &Reflinker{homeURL, src, nil}
 }
 
 func (l *Reflinker) linkIssue(src []byte, begin, offset int) int {
@@ -156,11 +156,11 @@ func (l *Reflinker) Build() string {
 	return b.String()
 }
 
-func LinkRefs(input string, baseURL string) string {
+func LinkRefs(input string, homeURL string) string {
 	src := []byte(input)
 	md := goldmark.New(goldmark.WithExtensions(extension.GFM))
 	t := md.Parser().Parse(text.NewReader(src))
-	l := NewReflinker(baseURL, src)
+	l := NewReflinker(homeURL, src)
 
 	ast.Walk(t, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
