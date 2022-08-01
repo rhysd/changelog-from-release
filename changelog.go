@@ -6,27 +6,10 @@ import (
 	"io"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/google/go-github/v45/github"
 )
-
-var reItemHeader = regexp.MustCompile(`^- ([[:alpha:]]+:)`)
-
-func emphasizeItemHeaders(body string) string {
-	lines := strings.Split(body, "\n")
-	inFence := false
-	for i, l := range lines {
-		if strings.HasPrefix(l, "```") {
-			inFence = !inFence
-		}
-		if !inFence && strings.HasPrefix(l, "- ") {
-			lines[i] = reItemHeader.ReplaceAllString(l, "- **$1**")
-		}
-	}
-	return strings.Join(lines, "\n")
-}
 
 type link struct {
 	name string
@@ -77,7 +60,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
 		fmt.Fprintf(out, "# [%s](%s) - %s\n\n", title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
-		fmt.Fprint(out, emphasizeItemHeaders(LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), baseURL)))
+		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), baseURL))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		relLinks = append(relLinks, link{tag, compareURL})
