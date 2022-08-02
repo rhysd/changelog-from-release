@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -11,7 +12,7 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-type Reflink struct {
+type refLink struct {
 	start int
 	end   int
 	text  string
@@ -77,14 +78,29 @@ func lastIndexUserRef(src []byte, begin int) int {
 	return len(src)
 }
 
+// Reflinker detects all references in markdown text and replaces them with links.
 type Reflinker struct {
-	url   string
+	repo  string
+	home  string
 	src   []byte
-	links []Reflink
+	links []refLink
 }
 
-func NewReflinker(homeURL string, src []byte) *Reflinker {
-	return &Reflinker{homeURL, src, nil}
+// NewReflinker creates Reflinker instance. repoURL is a repository URL of the service like
+// https://github.com/user/repo.
+func NewReflinker(repoURL string, src []byte) *Reflinker {
+	u, err := url.Parse(repoURL)
+	if err != nil {
+		panic(err)
+	}
+	u.Path = ""
+
+	return &Reflinker{
+		repo:  repoURL,
+		home:  u.String(),
+		src:   src,
+		links: nil,
+	}
 }
 
 func (l *Reflinker) linkIssue(src []byte, begin, offset int) int {
@@ -94,10 +110,10 @@ func (l *Reflinker) linkIssue(src []byte, begin, offset int) int {
 	}
 
 	r := src[begin:e]
-	l.links = append(l.links, Reflink{
+	l.links = append(l.links, refLink{
 		start: offset + begin,
 		end:   offset + e,
-		text:  fmt.Sprintf("[%s](%s/issues/%s)", r, l.url, r[1:]),
+		text:  fmt.Sprintf("[%s](%s/issues/%s)", r, l.repo, r[1:]),
 	})
 
 	return e
@@ -110,15 +126,17 @@ func (l *Reflinker) linkUser(src []byte, begin, offset int) int {
 	}
 
 	u := src[begin:e]
-	l.links = append(l.links, Reflink{
+	l.links = append(l.links, refLink{
 		start: offset + begin,
 		end:   offset + e,
-		text:  fmt.Sprintf("[%s](%s/%s)", u, l.url, u[1:]),
+		text:  fmt.Sprintf("[%s](%s/%s)", u, l.home, u[1:]),
 	})
 
 	return e
 }
 
+// Link detects reference links in given markdown text and remembers them to replace all references
+// later.
 func (l *Reflinker) Link(t *ast.Text) {
 	s := l.src[t.Segment.Start:t.Segment.Stop]
 	o := 0
@@ -140,6 +158,8 @@ func (l *Reflinker) Link(t *ast.Text) {
 	}
 }
 
+// Build builds a markdown text where all references are replaced with links. The links were
+// detected by Link() method calls.
 func (l *Reflinker) Build() string {
 	if len(l.links) == 0 {
 		return string(l.src)
@@ -156,11 +176,12 @@ func (l *Reflinker) Build() string {
 	return b.String()
 }
 
-func LinkRefs(input string, homeURL string) string {
+// LinkRefs replaces all references in the given markdown text with actual links.
+func LinkRefs(input string, repoURL string) string {
 	src := []byte(input)
 	md := goldmark.New(goldmark.WithExtensions(extension.GFM))
 	t := md.Parser().Parse(text.NewReader(src))
-	l := NewReflinker(homeURL, src)
+	l := NewReflinker(repoURL, src)
 
 	ast.Walk(t, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
@@ -168,7 +189,9 @@ func LinkRefs(input string, homeURL string) string {
 		}
 
 		if n, ok := n.(*ast.Text); ok {
-			l.Link(n)
+			if _, ok := n.Parent().(*ast.CodeSpan); !ok {
+				l.Link(n)
+			}
 		}
 
 		return ast.WalkContinue, nil
