@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/google/go-github/v45 v45.2.0
+	github.com/yuin/goldmark v1.4.13
 	golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c
 )
 
