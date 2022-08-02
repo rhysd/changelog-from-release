@@ -18,8 +18,18 @@ type refLink struct {
 	text  string
 }
 
+// Note: '_' is actually not boundary. But it's hard to check if the '_' is a part of italic/bold
+// syntax.
+// For example, _#123_ should be linked because '_'s are part of italic syntax. But _#123 and #123_
+// should not be linked because '_'s are NOT part of italic syntax.
+// Checking if the parent node is Italic/Bold or not does not help to solve this issue. For example,
+// _foo_#1 should be linked. However #1 itself is not an italic text though the neighbor node is
+// Italic.
+// Fortunately this is very edge case. To keep our implementation simple, we compromise to treat '_'
+// as a boundary. For example, _#1 and #1_ are linked incorrectly, but I believe they are OK for our
+// use cases.
 func isBoundary(b byte) bool {
-	if '0' <= b && b <= '9' || 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '_' {
+	if '0' <= b && b <= '9' || 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' {
 		return false
 	}
 	return true
@@ -55,18 +65,8 @@ func NewReflinker(repoURL string, src []byte) *Reflinker {
 }
 
 func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
-	if begin > 0 {
-		// Ignore '_' to avoid hard edge case of GitHub's reference auto-linking behavior.
-		//   _#1 → not linked (though we link it)
-		//   _#1_ → linked
-		//   _#1 foo_ → linked
-		//   _foo_#1 → linked
-		//   foo_#1 → not linked
-		// We compromizes the first case so the behavior here is different from GitHub's behavior.
-		// But it is very edge case and hard to handle correctly even if we use a Markdown parser.
-		if b := l.src[begin-1]; b != '_' && !isBoundary(b) {
-			return -1 // Issue ref must follow a boundary (e.g. 'foo#bar')
-		}
+	if begin > 0 && !isBoundary(l.src[begin-1]) {
+		return -1 // Issue ref must follow a boundary (e.g. 'foo#bar')
 	}
 
 	for i := 1; begin+i < end; i++ {
@@ -80,7 +80,7 @@ func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
 		return begin + i
 	}
 
-	if end+1 < len(l.src) && !isBoundary(l.src[end+1]) {
+	if end < len(l.src) && !isBoundary(l.src[end]) {
 		return -1
 	}
 
@@ -104,18 +104,8 @@ func (l *Reflinker) linkIssue(begin, end int) int {
 }
 
 func (l *Reflinker) lastIndexUserRef(begin, end int) int {
-	if begin > 0 {
-		// Ignore '_' to avoid hard edge case of GitHub's reference auto-linking behavior.
-		//   _@x → not linked (though we link it)
-		//   _@x_ → linked
-		//   _@x foo_ → linked
-		//   _foo_@x → linked
-		//   foo_@x → not linked
-		// We compromizes the first case so the behavior here is different from GitHub's behavior.
-		// But it is very edge case and hard to handle correctly even if we use a Markdown parser.
-		if b := l.src[begin-1]; b != '_' && !isBoundary(b) {
-			return -1 // e.g. foo@bar, _@foo (-@foo is ok)
-		}
+	if begin > 0 && !isBoundary(l.src[begin-1]) {
+		return -1 // e.g. foo@bar, _@foo (-@foo is ok)
 	}
 
 	// Username may only contain alphanumeric characters or single hyphens, and cannot begin or end
@@ -136,7 +126,7 @@ func (l *Reflinker) lastIndexUserRef(begin, end int) int {
 		return begin + i
 	}
 
-	if l.src[end-1] == '-' || end+1 < len(l.src) && !isBoundary(l.src[end+1]) {
+	if l.src[end-1] == '-' || end < len(l.src) && !isBoundary(l.src[end]) {
 		return -1
 	}
 
