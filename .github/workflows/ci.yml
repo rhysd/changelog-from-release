@@ -19,8 +19,8 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
       - name: Build sources
         run: go build
         env:
@@ -34,8 +34,8 @@ jobs:
     name: Run staticcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
       - name: Install staticcheck
         run: |
           go get honnef.co/go/tools/cmd/staticcheck@latest
