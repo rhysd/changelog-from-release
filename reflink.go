@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -165,21 +164,26 @@ func (l *Reflinker) linkUser(begin, end int) int {
 	return e
 }
 
-var reHexDigits = regexp.MustCompile("^[0-9a-f]*")
-
 func (l *Reflinker) linkCommitSHA(begin, end int) int {
-	b := reHexDigits.Find(l.src[begin:end])
-
-	if len(b) != 40 || !l.isBoundaryAt(begin-1) || !l.isBoundaryAt(begin+40) {
-		// Since l.src[begin] is hex number, len(b) > 0. So we don't consider the case where len(b) == 0
-		return begin + len(b)
+	for i := 1; i < 40; i++ { // Since l.src[begin] was already checked, i starts from 1
+		if begin+i >= end {
+			return begin + i
+		}
+		b := l.src[begin+i]
+		if '0' <= b && b <= '9' || 'a' <= b && b <= 'f' {
+			continue
+		}
+		return begin + i
 	}
 
-	l.links = append(l.links, refLink{
-		start: begin,
-		end:   begin + len(b),
-		text:  fmt.Sprintf("[`%s`](%s/commit/%s)", b[:10], l.repo, b),
-	})
+	if l.isBoundaryAt(begin-1) && l.isBoundaryAt(begin+40) {
+		h := l.src[begin : begin+40]
+		l.links = append(l.links, refLink{
+			start: begin,
+			end:   begin + 40,
+			text:  fmt.Sprintf("[`%s`](%s/commit/%s)", h[:10], l.repo, h),
+		})
+	}
 
 	return begin + 40
 }
