@@ -52,7 +52,7 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 func (git *Git) FirstRemoteName() (string, error) {
 	s, err := git.Exec("remote")
 	if err != nil {
-		return "", fmt.Errorf("could not retrieve remote name: %s: %w", s, err)
+		return "", fmt.Errorf("could not retrieve remote name: %w", err)
 	}
 
 	s = strings.TrimSpace(s)
@@ -77,7 +77,7 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 
 	s, err := git.Exec("config", fmt.Sprintf("remote.%s.url", r))
 	if err != nil {
-		return nil, fmt.Errorf("could not get URL of remote '%s': %s: %w", r, s, err)
+		return nil, fmt.Errorf("could not get URL of remote %q: %w", r, err)
 	}
 
 	if strings.HasPrefix(s, "git@") && strings.ContainsRune(s, ':') {
@@ -94,7 +94,7 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 
 	u, err := url.Parse(s)
 	if err != nil {
-		return nil, fmt.Errorf("cannot parse tracking remote URL: %s: %w", s, err)
+		return nil, fmt.Errorf("cannot parse remote URL %q: %w", s, err)
 	}
 	return u, nil
 }
