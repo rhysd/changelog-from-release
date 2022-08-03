@@ -348,6 +348,31 @@ func TestLinkRefs(t *testing.T) {
 			input: "41608e5f4109208a6ab995c58266554e6071c5b2z",
 			want:  "41608e5f4109208a6ab995c58266554e6071c5b2z",
 		},
+		{
+			what:  "commit sha in link",
+			input: "[41608e5f4109208a6ab995c58266554e6071c5b2 is awesome](https://example.com)",
+			want:  "[[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) is awesome](https://example.com)",
+		},
+		{
+			what:  "commit sha in code span",
+			input: "`41608e5f4109208a6ab995c58266554e6071c5b2`",
+			want:  "`41608e5f4109208a6ab995c58266554e6071c5b2`",
+		},
+		{
+			what:  "commit sha in code fence",
+			input: "```\n41608e5f4109208a6ab995c58266554e6071c5b2\n```",
+			want:  "```\n41608e5f4109208a6ab995c58266554e6071c5b2\n```",
+		},
+		{
+			what:  "commit sha in <pre> html element",
+			input: "<pre>41608e5f4109208a6ab995c58266554e6071c5b2</pre>",
+			want:  "<pre>41608e5f4109208a6ab995c58266554e6071c5b2</pre>",
+		},
+		{
+			what:  "commit sha among multiple characters",
+			input: "いぬ41608e5f4109208a6ab995c58266554e6071c5b2🐶",
+			want:  "いぬ[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)🐶",
+		},
 	}
 
 	for _, tc := range tests {
