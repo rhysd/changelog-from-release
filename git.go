@@ -48,8 +48,7 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 }
 
 // FirstRemoteName returns remote name of current Git repository. When multiple remotes are
-// configured, the first one will be chosen. When no remote is configured, this method returns empty
-// string (no error is returned).
+// configured, the first one will be chosen.
 func (git *Git) FirstRemoteName() (string, error) {
 	s, err := git.Exec("remote")
 	if err != nil {
@@ -61,17 +60,19 @@ func (git *Git) FirstRemoteName() (string, error) {
 		s = s[:i]
 	}
 
+	if s == "" {
+		return "", fmt.Errorf("no remote is configured in this repository")
+	}
+
 	return s, nil
 }
 
-// RemoteURL returns a URL which the current repository is tracking as remote
-func (git *Git) RemoteURL() (*url.URL, error) {
+// FirstRemoteURL returns a URL of remote repository. When multiple remotes are configured, the
+// first one will be chosen.
+func (git *Git) FirstRemoteURL() (*url.URL, error) {
 	r, err := git.FirstRemoteName()
 	if err != nil {
-		return nil, err
-	}
-	if r == "" {
-		return nil, fmt.Errorf("could not get any remote URL since no remote is configured in this repository")
+		return nil, fmt.Errorf("could not get URL of remote repository: %w", err)
 	}
 
 	s, err := git.Exec("config", fmt.Sprintf("remote.%s.url", r))

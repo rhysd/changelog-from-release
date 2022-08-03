@@ -38,7 +38,7 @@ func main() {
 		fail(err)
 	}
 
-	url, err := git.RemoteURL()
+	url, err := git.FirstRemoteURL()
 	if err != nil {
 		fail(err)
 	}
