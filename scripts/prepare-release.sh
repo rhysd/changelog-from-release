@@ -57,6 +57,7 @@ echo "Releasing ${version}... (minor=${minor_version}, major=${major_version})"
 files_include_version=( "main.go" "action/Dockerfile" )
 
 set -x
+go build
 go test
 
 prev_version_pat="${prev_version//\./\\.}"
