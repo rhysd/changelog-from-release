@@ -9,7 +9,8 @@ For example, [CHANGELOG.md](./CHANGELOG.md) is generated from [the releases page
 
 Real-world examples:
 
-- https://github.com/rhysd/notes-cli/blob/master/CHANGELOG.md
+- https://github.com/rhysd/actionlint/blob/main/CHANGELOG.md
+- https://github.com/rhysd/hgrep/blob/main/CHANGELOG.md
 - https://github.com/rhysd/git-brws/blob/master/CHANGELOG.md
 
 ## Installation
