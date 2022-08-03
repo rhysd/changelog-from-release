@@ -49,6 +49,32 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
 ```
 
 
+## Reference auto linking
+
+References in a release note are automatically converted to links by `changelog-from-release`.
+
+- **Issue references** like `#123` are converted to links to the issue pages
+- **User references** like `@rhysd` are converted to links to the user profile pages
+- **Commit references** like `93e1af6ec49d23397baba466fba1e89cc8b6de39` are converted to linkes to the
+  commit pages. To avoid false-positives, only full-length (40 characters) commit hashes are converted.
+
+For example,
+
+```markdown
+Commit: 93e1af6ec49d23397baba466fba1e89cc8b6de39
+Author: @rhysd
+Issue:  #123
+```
+
+is converted to
+
+```markdown
+Commit: [`93e1af6ec4`](https://github.com/owner/repo/commit/93e1af6ec49d23397baba466fba1e89cc8b6de39)
+Author: [@rhysd](https://github.com/rhysd)
+Issue:  [#123](https://github.com/owner/repo/issues/123)
+```
+
+
 ## Environment variables
 
 ### `GITHUB_API_BASE_URL`
