@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/url"
 	"os"
@@ -24,27 +25,19 @@ func (git *Git) Command(subcmd string, args ...string) *exec.Cmd {
 
 // Exec runs runs given Git subcommand with given arguments
 func (git *Git) Exec(subcmd string, args ...string) (string, error) {
-	b, err := git.Command(subcmd, args...).CombinedOutput()
-
-	// Chop last newline
-	l := len(b)
-	if l > 0 && b[l-1] == '\n' {
-		b = b[:l-1]
-	}
-
-	// Make output in oneline in error cases
-	for i, c := range b {
-		if c == '\n' {
-			b[i] = ' '
-		}
-	}
-	out := string(b)
+	out, err := git.Command(subcmd, args...).CombinedOutput()
+	out = bytes.TrimSpace(out)
 
 	if err != nil {
-		return "", fmt.Errorf("Git command %q %v failed with output %q: %w", subcmd, args, out, err)
+		for i, c := range out {
+			if c == '\n' || c == '\r' {
+				out[i] = ' '
+			}
+		}
+		return "", fmt.Errorf("Git command %q  with args %v failed with output %q: %w", subcmd, args, out, err)
 	}
 
-	return out, nil
+	return string(out), nil
 }
 
 // FirstRemoteName returns remote name of current Git repository. When multiple remotes are
@@ -55,7 +48,6 @@ func (git *Git) FirstRemoteName() (string, error) {
 		return "", fmt.Errorf("could not retrieve remote name: %w", err)
 	}
 
-	s = strings.TrimSpace(s)
 	if i := strings.IndexAny(s, "\r\n"); i >= 0 {
 		s = s[:i]
 	}
@@ -96,6 +88,7 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse remote URL %q: %w", s, err)
 	}
+
 	return u, nil
 }
 
