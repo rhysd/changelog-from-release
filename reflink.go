@@ -108,8 +108,9 @@ func (l *Reflinker) lastIndexUserRef(begin, end int) int {
 		return -1 // e.g. foo@bar, _@foo (-@foo is ok)
 	}
 
-	// Username may only contain alphanumeric characters or single hyphens, and cannot begin or end
-	// with a hyphen: @foo-, @-foo
+	// Note: Username may only contain alphanumeric characters or single hyphens, and cannot begin
+	// or end with a hyphen: @foo-, @-foo
+	// Note: '/' just after user name like @foo/ is not allowed
 
 	if b := l.src[begin+1]; !isUserNameChar(b) || b == '-' {
 		return -1
@@ -120,14 +121,19 @@ func (l *Reflinker) lastIndexUserRef(begin, end int) int {
 		if isUserNameChar(b) {
 			continue
 		}
-		if !isBoundary(b) || l.src[begin+i-1] == '-' {
+		if !isBoundary(b) || b == '/' || l.src[begin+i-1] == '-' {
 			return -1
 		}
 		return begin + i
 	}
 
-	if l.src[end-1] == '-' || end < len(l.src) && !isBoundary(l.src[end]) {
+	if l.src[end-1] == '-' {
 		return -1
+	}
+	if end < len(l.src) {
+		if b := l.src[end]; !isBoundary(b) || b == '/' {
+			return -1
+		}
 	}
 
 	return end

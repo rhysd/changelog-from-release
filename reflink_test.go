@@ -293,6 +293,21 @@ func TestLinkRefs(t *testing.T) {
 			want:    "[@foo](https://github.some-company.com/foo)",
 			repoURL: "https://github.some-company.com/user/repo",
 		},
+		{
+			what:  "slash after user name",
+			input: "@foo/",
+			want:  "@foo/",
+		},
+		{
+			what:  "slash and something after user name",
+			input: "@foo/bar",
+			want:  "@foo/bar",
+		},
+		{
+			what:  "slash before user name",
+			input: "/@foo",
+			want:  "/[@foo](https://gh/foo)",
+		},
 	}
 
 	for _, tc := range tests {
