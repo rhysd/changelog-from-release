@@ -41,16 +41,16 @@ jobs:
           go get honnef.co/go/tools/cmd/staticcheck@latest
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - run: staticcheck ./
-  # action:
-  #   name: Check action
-  #   runs-on: ubuntu-latest
-  #   if: "!contains(github.event.head_commit.message, '[skip action check]')"
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Run action
-  #       uses: ./action/
-  #       with:
-  #         file: CHANGELOG2.md
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         push: false
-  #     - run: diff CHANGELOG.md CHANGELOG2.md
+  action:
+    name: Check action
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip action check]')"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run action
+        uses: ./action/
+        with:
+          file: CHANGELOG2.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          push: false
+      - run: diff CHANGELOG.md CHANGELOG2.md
