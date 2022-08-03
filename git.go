@@ -61,10 +61,16 @@ func (git *Git) TrackingRemoteURL() (*url.URL, error) {
 		return nil, fmt.Errorf("could not get URL of remote '%s': %s: %w", ss[0], s, err)
 	}
 
-	if strings.HasPrefix(s, "git@github.com:") {
-		s = "https://github.com/" + strings.TrimPrefix(s, "git@github.com:")
-	} else if strings.HasPrefix(s, "ssh://git@github.com/") {
-		s = "https://github.com/" + strings.TrimPrefix(s, "ssh://git@github.com/")
+	if strings.HasPrefix(s, "git@") && strings.ContainsRune(s, ':') {
+		// git@github.com:user/repo.git → https://github.com/user/repo.git
+		s = "https://" + strings.Replace(strings.TrimPrefix(s, "git@"), ":", "/", 1)
+	} else if strings.HasPrefix(s, "ssh://git@") {
+		// ssh://git@github.com/user/repo.git → https://github.com/user/repo.git
+		s = "https://" + strings.TrimPrefix(s, "ssh://git@")
+	}
+
+	if !strings.HasPrefix(s, "https://") && !strings.HasPrefix(s, "http://") {
+		return nil, fmt.Errorf("repository URL is neither HTTP nor HTTPS: %s", s)
 	}
 
 	u, err := url.Parse(s)
