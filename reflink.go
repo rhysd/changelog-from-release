@@ -67,8 +67,15 @@ func NewReflinker(repoURL string, src []byte) *Reflinker {
 	}
 }
 
+func (l *Reflinker) isBoundaryAt(idx int) bool {
+	if idx < 0 || len(l.src) <= idx {
+		return true
+	}
+	return isBoundary(l.src[idx])
+}
+
 func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
-	if begin > 0 && !isBoundary(l.src[begin-1]) {
+	if !l.isBoundaryAt(begin - 1) {
 		return -1 // Issue ref must follow a boundary (e.g. 'foo#bar')
 	}
 
@@ -83,7 +90,7 @@ func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
 		return begin + i
 	}
 
-	if end < len(l.src) && !isBoundary(l.src[end]) {
+	if !l.isBoundaryAt(end) {
 		return -1
 	}
 
@@ -107,7 +114,7 @@ func (l *Reflinker) linkIssue(begin, end int) int {
 }
 
 func (l *Reflinker) lastIndexUserRef(begin, end int) int {
-	if begin > 0 && !isBoundary(l.src[begin-1]) {
+	if !l.isBoundaryAt(begin - 1) {
 		return -1 // e.g. foo@bar, _@foo (-@foo is ok)
 	}
 
@@ -163,7 +170,7 @@ var reHexDigits = regexp.MustCompile("^[0-9a-f]*")
 func (l *Reflinker) linkCommitSHA(begin, end int) int {
 	b := reHexDigits.Find(l.src[begin:end])
 
-	if len(b) != 40 || begin > 0 && !isBoundary(l.src[begin-1]) || begin+40 < len(l.src) && !isBoundary(l.src[begin+40]) {
+	if len(b) != 40 || !l.isBoundaryAt(begin-1) || !l.isBoundaryAt(begin+40) {
 		// Since l.src[begin] is hex number, len(b) > 0. So we don't consider the case where len(b) == 0
 		return begin + len(b)
 	}
