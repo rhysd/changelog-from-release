@@ -47,18 +47,36 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 	return out, nil
 }
 
-// TrackingRemoteURL returns a URL which the current repository is tracking as remote
-func (git *Git) TrackingRemoteURL() (*url.URL, error) {
-	s, err := git.Exec("rev-parse", "--abbrev-ref", "--symbolic", "@{u}")
+// FirstRemoteName returns remote name of current Git repository. When multiple remotes are
+// configured, the first one will be chosen. When no remote is configured, this method returns empty
+// string (no error is returned).
+func (git *Git) FirstRemoteName() (string, error) {
+	s, err := git.Exec("remote")
 	if err != nil {
-		return nil, fmt.Errorf("cannot retrieve remote name: %s: %w", s, err)
+		return "", fmt.Errorf("could not retrieve remote name: %s: %w", s, err)
 	}
 
-	// e.g. origin/master
-	ss := strings.Split(s, "/")
+	s = strings.TrimSpace(s)
+	if i := strings.IndexAny(s, "\r\n"); i >= 0 {
+		s = s[:i]
+	}
 
-	if s, err = git.Exec("config", fmt.Sprintf("remote.%s.url", ss[0])); err != nil {
-		return nil, fmt.Errorf("could not get URL of remote '%s': %s: %w", ss[0], s, err)
+	return s, nil
+}
+
+// RemoteURL returns a URL which the current repository is tracking as remote
+func (git *Git) RemoteURL() (*url.URL, error) {
+	r, err := git.FirstRemoteName()
+	if err != nil {
+		return nil, err
+	}
+	if r == "" {
+		return nil, fmt.Errorf("could not get any remote URL since no remote is configured in this repository")
+	}
+
+	s, err := git.Exec("config", fmt.Sprintf("remote.%s.url", r))
+	if err != nil {
+		return nil, fmt.Errorf("could not get URL of remote '%s': %s: %w", r, s, err)
 	}
 
 	if strings.HasPrefix(s, "git@") && strings.ContainsRune(s, ':') {

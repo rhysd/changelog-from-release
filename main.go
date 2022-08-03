@@ -38,7 +38,7 @@ func main() {
 		fail(err)
 	}
 
-	url, err := git.TrackingRemoteURL()
+	url, err := git.RemoteURL()
 	if err != nil {
 		fail(err)
 	}
