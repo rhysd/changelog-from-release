@@ -308,6 +308,11 @@ func TestLinkRefs(t *testing.T) {
 			input: "/@foo",
 			want:  "/[@foo](https://gh/foo)",
 		},
+		{
+			what:  "commit sha",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b2",
+			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)",
+		},
 	}
 
 	for _, tc := range tests {
