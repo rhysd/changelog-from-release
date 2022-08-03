@@ -1,3 +1,13 @@
+<a name="v3.1.0"></a>
+# [v3.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.0) - 03 Aug 2022
+
+- Link commit references in release note automatically. For example, `85a7d9028ed70bc81224cb126e29e070dcc0aa1c` is converted to ``[`85a7d9028e`](https://github.com/owner/repo/commit/85a7d9028ed70bc81224cb126e29e070dcc0aa1c)``. Note that only full-length (40 characters) commit hashes are linked to avoid false positives.
+- Fix user references followed by `/` like `@foo/` are wrongly linked.
+- Describe how reference auto linking works in [README.md](https://github.com/rhysd/changelog-from-release/blob/master/README.md).
+
+[Changes][v3.1.0]
+
+
 <a name="v3.0.0"></a>
 # [v3.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.0.0) - 03 Aug 2022
 
@@ -170,6 +180,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.1.0]: https://github.com/rhysd/changelog-from-release/compare/v3.0.0...v3.1.0
 [v3.0.0]: https://github.com/rhysd/changelog-from-release/compare/v2.2.5...v3.0.0
 [v2.2.5]: https://github.com/rhysd/changelog-from-release/compare/v2.2.4...v2.2.5
 [v2.2.4]: https://github.com/rhysd/changelog-from-release/compare/v2.2.3...v2.2.4
