@@ -308,6 +308,46 @@ func TestLinkRefs(t *testing.T) {
 			input: "/@foo",
 			want:  "/[@foo](https://gh/foo)",
 		},
+		{
+			what:  "commit sha",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b2",
+			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)",
+		},
+		{
+			what:  "mutiple commit sha",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b2 41608e5f4109208a6ab995c58266554e6071c5b2 f7b60f34e0a60a0e67f2864f6cebdacc7e247e29",
+			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`f7b60f34e0`](https://gh/u/r/commit/f7b60f34e0a60a0e67f2864f6cebdacc7e247e29)",
+		},
+		{
+			what:  "commit sha shorter than 40 characters",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b",
+			want:  "41608e5f4109208a6ab995c58266554e6071c5b",
+		},
+		{
+			what:  "commit sha longer than 40 characters",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b2f",
+			want:  "41608e5f4109208a6ab995c58266554e6071c5b2f",
+		},
+		{
+			what:  "italic commit sha",
+			input: "_41608e5f4109208a6ab995c58266554e6071c5b2_ *41608e5f4109208a6ab995c58266554e6071c5b2*",
+			want:  "_[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)_ *[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)*",
+		},
+		{
+			what:  "bold commit sha",
+			input: "__41608e5f4109208a6ab995c58266554e6071c5b2__ **41608e5f4109208a6ab995c58266554e6071c5b2**",
+			want:  "__[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)__ **[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)**",
+		},
+		{
+			what:  "commit sha follows alphabets",
+			input: "z41608e5f4109208a6ab995c58266554e6071c5b2",
+			want:  "z41608e5f4109208a6ab995c58266554e6071c5b2",
+		},
+		{
+			what:  "commit sha followed by alphabets",
+			input: "41608e5f4109208a6ab995c58266554e6071c5b2z",
+			want:  "41608e5f4109208a6ab995c58266554e6071c5b2z",
+		},
 	}
 
 	for _, tc := range tests {

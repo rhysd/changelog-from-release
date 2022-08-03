@@ -1,9 +1,12 @@
 package main
 
+// Note: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls
+
 import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -64,8 +67,15 @@ func NewReflinker(repoURL string, src []byte) *Reflinker {
 	}
 }
 
+func (l *Reflinker) isBoundaryAt(idx int) bool {
+	if idx < 0 || len(l.src) <= idx {
+		return true
+	}
+	return isBoundary(l.src[idx])
+}
+
 func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
-	if begin > 0 && !isBoundary(l.src[begin-1]) {
+	if !l.isBoundaryAt(begin - 1) {
 		return -1 // Issue ref must follow a boundary (e.g. 'foo#bar')
 	}
 
@@ -80,7 +90,7 @@ func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
 		return begin + i
 	}
 
-	if end < len(l.src) && !isBoundary(l.src[end]) {
+	if !l.isBoundaryAt(end) {
 		return -1
 	}
 
@@ -104,7 +114,7 @@ func (l *Reflinker) linkIssue(begin, end int) int {
 }
 
 func (l *Reflinker) lastIndexUserRef(begin, end int) int {
-	if begin > 0 && !isBoundary(l.src[begin-1]) {
+	if !l.isBoundaryAt(begin - 1) {
 		return -1 // e.g. foo@bar, _@foo (-@foo is ok)
 	}
 
@@ -155,6 +165,25 @@ func (l *Reflinker) linkUser(begin, end int) int {
 	return e
 }
 
+var reHexDigits = regexp.MustCompile("^[0-9a-f]*")
+
+func (l *Reflinker) linkCommitSHA(begin, end int) int {
+	b := reHexDigits.Find(l.src[begin:end])
+
+	if len(b) != 40 || !l.isBoundaryAt(begin-1) || !l.isBoundaryAt(begin+40) {
+		// Since l.src[begin] is hex number, len(b) > 0. So we don't consider the case where len(b) == 0
+		return begin + len(b)
+	}
+
+	l.links = append(l.links, refLink{
+		start: begin,
+		end:   begin + len(b),
+		text:  fmt.Sprintf("[`%s`](%s/commit/%s)", b[:10], l.repo, b),
+	})
+
+	return begin + 40
+}
+
 // DetectLinks detects reference links in given markdown text and remembers them to replace all
 // references later.
 func (l *Reflinker) DetectLinks(t *ast.Text) {
@@ -162,7 +191,7 @@ func (l *Reflinker) DetectLinks(t *ast.Text) {
 
 	for o < t.Segment.Stop-1 { // `-1` means the last character is not checked
 		s := l.src[o:t.Segment.Stop]
-		i := bytes.IndexAny(s, "#@")
+		i := bytes.IndexAny(s, "#@1234567890abcdef")
 		if i < 0 || len(s)-1 <= i {
 			return
 		}
@@ -171,6 +200,9 @@ func (l *Reflinker) DetectLinks(t *ast.Text) {
 			o = l.linkIssue(o+i, t.Segment.Stop)
 		case '@':
 			o = l.linkUser(o+i, t.Segment.Stop)
+		default:
+			// hex character [0-9a-f]
+			o = l.linkCommitSHA(o+i, t.Segment.Stop)
 		}
 	}
 }
