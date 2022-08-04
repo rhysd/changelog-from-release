@@ -1,13 +1,13 @@
 <a name="v3.1.2"></a>
 # [v3.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.2) - 04 Aug 2022
 
-- Renamed `commit-summary-template` input to `commit_summary_template` since hyphens are not available in Docker actions. For example, when `v1.2.3` is released, the following step creates a commit with summary `chore(changelog): add v1.2.3`.
+- Fixed `commit-summary-template` was not effective by renaming the input to `commit_summary_template`. Hyphens are not available in Docker actions. For example, when `v1.2.3` is released, the following step creates a commit with summary `chore(changelog): describe changes for "v1.2.3"`.
   ```yaml
   - uses: rhysd/changelog-from-release/action@v3
     with:
       file: CHANGELOG.md
       github_token: ${{ secrets.GITHUB_TOKEN }}
-      commit_summary_template: 'chore(changelog): add %s'
+      commit_summary_template: 'chore(changelog): describe changes for %s'
   ```
 
 [Changes][v3.1.2]
