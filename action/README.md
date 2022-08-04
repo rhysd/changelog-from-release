@@ -16,23 +16,25 @@ jobs:
     name: Update changelog
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          ref: master
-      - uses: rhysd/changelog-from-release/action@v2
+          ref: main
+      - uses: rhysd/changelog-from-release/action@v3
         with:
           file: CHANGELOG.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 `file` is a file path for changelog and `github_token` is a GitHub API token to retrieve releases.
-Please read [action.yml](action.yml) for more details.
+Some other inputs are offered for customizing the behavior. Please read [action.yml](./action.yml)
+for more details.
 
-Note that `actions/checkout@v2` does not fetch branches by default. In above example, `ref: master`
-is specified as input to update `master` branch.
+Note that `actions/checkout@v3` does not fetch branches by default. In above example, `ref: main`
+is specified as input to fetch `main` branch. The generated changelog will be pushed to the branch.
 
-And ['Post release' job of this repository](../.github/workflows/post-release.yml) is a real-world
-usage example of the action.
+Real-world usage example of this action is ['Post release' job of this repository](../.github/workflows/post-release.yml).
+Please see [the workflow logs][ci-logs] to know how it runs.
 
 [gh-actions]: https://github.com/features/actions
 [release-badge]: https://img.shields.io/github/v/release/rhysd/changelog-from-release.svg
+[ci-logs]: https://github.com/rhysd/changelog-from-release/actions/workflows/post-release.yml
