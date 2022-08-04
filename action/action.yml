@@ -9,13 +9,13 @@ branding:
 
 inputs:
   github_token:
-    description: GitHub API token for pushing the commit to update changelog. Please pass secrets.GITHUB_TOKEN
+    description: GitHub API token for pushing the commit to update changelog. Please pass secrets.GITHUB_TOKEN.
     required: true
   file:
-    description: File path to the changelog file. Absolute path or relative path to the root directory of repository
+    description: File path to the changelog file. Absolute path or relative path to the root directory of repository.
     required: true
   version:
-    description: Version string for commit message of changelog update
+    description: Version string for commit message of changelog update.
     required: false
   commit:
     description: >
@@ -23,8 +23,13 @@ inputs:
       Setting 'false' to this input implies setting 'false' to 'push' input also.
     default: true
   push:
-    description: Set 'true' to push a generated commit to the remote
+    description: Set 'true' to push a generated commit to the remote.
     default: true
+  commit-summary-template:
+    description: >
+      Template to make a commit summary (first line of commit). This template is passed to printf command and it must
+      contain exactly one '%s' placeholder. The placeholder will be replaced with the tag name.
+    required: false
 
 runs:
   using: docker
