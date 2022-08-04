@@ -1,15 +1,23 @@
-<a name="v3.1.1"></a>
-# [v3.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.1) - 04 Aug 2022
+<a name="v3.1.2"></a>
+# [v3.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.2) - 04 Aug 2022
 
-- Use `git remote` instead of `git rev-parse` to retrieve a remote name of repository since `git rev-parse` sometimes returns an unexpected output for some reason. ([#6](https://github.com/rhysd/changelog-from-release/issues/6))
-- Added `commit-summary-template` input to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) so that the commit message can be customized. The template is passed to the first argument of `printf` command. It must contain one `%s` placeholder which will be replaced with the tag name.
+- Renamed `commit-summary-template` input to `commit_summary_template` since hyphens are not available in Docker actions. For example, when `v1.2.3` is released, the following step creates a commit with summary `chore(changelog): add v1.2.3`.
   ```yaml
   - uses: rhysd/changelog-from-release/action@v3
     with:
       file: CHANGELOG.md
       github_token: ${{ secrets.GITHUB_TOKEN }}
-      commit-summary-template: 'chore(changelog): add %s'
+      commit_summary_template: 'chore(changelog): add %s'
   ```
+
+[Changes][v3.1.2]
+
+
+<a name="v3.1.1"></a>
+# [v3.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.1) - 04 Aug 2022
+
+- Use `git remote` instead of `git rev-parse` to retrieve a remote name of repository since `git rev-parse` sometimes returns an unexpected output for some reason. ([#6](https://github.com/rhysd/changelog-from-release/issues/6))
+- Added `commit-summary-template` input to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) so that the commit message can be customized. The template is passed to the first argument of `printf` command. It must contain one `%s` placeholder which will be replaced with the tag name.
 - Removed duplicate of command output from error messages on `git` command failure.
 - Improved error messages when retrieving a URL of remote repository
 
@@ -198,6 +206,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.1.2]: https://github.com/rhysd/changelog-from-release/compare/v3.1.1...v3.1.2
 [v3.1.1]: https://github.com/rhysd/changelog-from-release/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/rhysd/changelog-from-release/compare/v3.0.0...v3.1.0
 [v3.0.0]: https://github.com/rhysd/changelog-from-release/compare/v2.2.5...v3.0.0
