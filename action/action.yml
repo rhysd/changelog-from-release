@@ -25,7 +25,7 @@ inputs:
   push:
     description: Set 'true' to push a generated commit to the remote.
     default: true
-  commit-summary-template:
+  commit_summary_template:
     description: >
       Template to make a commit summary (first line of commit). This template is passed to printf command and it must
       contain exactly one '%s' placeholder. The placeholder will be replaced with the tag name.

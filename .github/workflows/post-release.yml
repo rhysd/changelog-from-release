@@ -16,4 +16,4 @@ jobs:
         with:
           file: CHANGELOG.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit-summary-template: 'update changelog for %s changes'
+          commit_summary_template: 'update changelog for %s changes'
