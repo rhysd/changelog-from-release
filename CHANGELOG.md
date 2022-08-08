@@ -1,3 +1,12 @@
+<a name="v3.1.3"></a>
+# [v3.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.3) - 08 Aug 2022
+
+- Do not references in link texts. Previously references in link texts like `[#1](...)` were linked to `[[#1](https://github.com/owner/repo/issues/1)](...)`. Now they are not linked and left as-is ([#12](https://github.com/rhysd/changelog-from-release/issues/12)).
+
+
+[Changes][v3.1.3]
+
+
 <a name="v3.1.2"></a>
 # [v3.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.2) - 04 Aug 2022
 
@@ -206,6 +215,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.1.3]: https://github.com/rhysd/changelog-from-release/compare/v3.1.2...v3.1.3
 [v3.1.2]: https://github.com/rhysd/changelog-from-release/compare/v3.1.1...v3.1.2
 [v3.1.1]: https://github.com/rhysd/changelog-from-release/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/rhysd/changelog-from-release/compare/v3.0.0...v3.1.0
