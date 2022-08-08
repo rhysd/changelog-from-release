@@ -244,12 +244,12 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "issue in link",
 			input: "[oops #1](https://example.com/foo/bar?a=b#frag)",
-			want:  "[oops [#1](https://gh/u/r/issues/1)](https://example.com/foo/bar?a=b#frag)",
+			want:  "[oops #1](https://example.com/foo/bar?a=b#frag)",
 		},
 		{
 			what:  "user name in link",
 			input: "[@foo woo](https://example.com/foo/bar?a=b#frag)",
-			want:  "[[@foo](https://gh/foo) woo](https://example.com/foo/bar?a=b#frag)",
+			want:  "[@foo woo](https://example.com/foo/bar?a=b#frag)",
 		},
 		{
 			what:  "italic",
@@ -350,8 +350,8 @@ func TestLinkRefs(t *testing.T) {
 		},
 		{
 			what:  "commit sha in link",
-			input: "[41608e5f4109208a6ab995c58266554e6071c5b2 is awesome](https://example.com)",
-			want:  "[[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) is awesome](https://example.com)",
+			input: "[41608e5f4109208a6ab995c58266554e6071c5b2 is awesome commit](https://example.com)",
+			want:  "[41608e5f4109208a6ab995c58266554e6071c5b2 is awesome commit](https://example.com)",
 		},
 		{
 			what:  "commit sha in code span",
