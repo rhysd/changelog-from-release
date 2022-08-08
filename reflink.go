@@ -191,12 +191,8 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 // DetectLinks detects reference links in given markdown text and remembers them to replace all
 // references later.
 func (l *Reflinker) DetectLinks(t *ast.Text) {
-	p := t.Parent()
-
-	if _, ok := p.(*ast.CodeSpan); ok {
-		return
-	}
-	if _, ok := p.(*ast.Link); ok {
+	switch t.Parent().(type) {
+	case *ast.CodeSpan, *ast.Link:
 		return
 	}
 
