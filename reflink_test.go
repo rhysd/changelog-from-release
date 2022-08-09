@@ -373,6 +373,26 @@ func TestLinkRefs(t *testing.T) {
 			input: "いぬ41608e5f4109208a6ab995c58266554e6071c5b2🐶",
 			want:  "いぬ[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)🐶",
 		},
+		{
+			what:  "commit sha in upper case",
+			input: "41608E5F4109208A6AB995C58266554E6071C5B2",
+			want:  "41608E5F4109208A6AB995C58266554E6071C5B2",
+		},
+		{
+			what:  "issue in nested node in link",
+			input: "[_#1_](https://example.com)",
+			want:  "[_#1_](https://example.com)",
+		},
+		{
+			what:  "user in nested node in link",
+			input: "[_@foo_](https://example.com)",
+			want:  "[_@foo_](https://example.com)",
+		},
+		{
+			what:  "commit in nested node in link",
+			input: "[_41608e5f4109208a6ab995c58266554e6071c5b2_](https://example.com)",
+			want:  "[_41608e5f4109208a6ab995c58266554e6071c5b2_](https://example.com)",
+		},
 	}
 
 	for _, tc := range tests {

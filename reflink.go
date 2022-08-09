@@ -191,11 +191,6 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 // DetectLinks detects reference links in given markdown text and remembers them to replace all
 // references later.
 func (l *Reflinker) DetectLinks(t *ast.Text) {
-	switch t.Parent().(type) {
-	case *ast.CodeSpan, *ast.Link:
-		return
-	}
-
 	o := t.Segment.Start // start offset
 
 	for o < t.Segment.Stop-1 { // `-1` means the last character is not checked
@@ -246,11 +241,15 @@ func LinkRefs(input string, repoURL string) string {
 			return ast.WalkContinue, nil
 		}
 
-		if n, ok := n.(*ast.Text); ok {
+		switch n := n.(type) {
+		case *ast.CodeSpan, *ast.Link:
+			return ast.WalkSkipChildren, nil
+		case *ast.Text:
 			l.DetectLinks(n)
+			return ast.WalkContinue, nil
+		default:
+			return ast.WalkContinue, nil
 		}
-
-		return ast.WalkContinue, nil
 	})
 
 	return l.BuildLinkedText()
