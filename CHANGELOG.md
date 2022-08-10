@@ -1,3 +1,11 @@
+<a name="v3.1.4"></a>
+# [v3.1.4](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.4) - 10 Aug 2022
+
+- In previous release, references in link texts were fixed. But the fix was not perfect. Nested text node in a link node was still linked incorrectly and this release fixed the bug. For instance, `@foo` in `[_@foo_](...)` should not be linked where the text is in italic node in link node.
+
+[Changes][v3.1.4]
+
+
 <a name="v3.1.3"></a>
 # [v3.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.3) - 08 Aug 2022
 
@@ -215,6 +223,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.1.4]: https://github.com/rhysd/changelog-from-release/compare/v3.1.3...v3.1.4
 [v3.1.3]: https://github.com/rhysd/changelog-from-release/compare/v3.1.2...v3.1.3
 [v3.1.2]: https://github.com/rhysd/changelog-from-release/compare/v3.1.1...v3.1.2
 [v3.1.1]: https://github.com/rhysd/changelog-from-release/compare/v3.1.0...v3.1.1
