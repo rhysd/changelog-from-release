@@ -164,8 +164,10 @@ func (l *Reflinker) linkUser(begin, end int) int {
 	return e
 }
 
+const hashLen int = 40
+
 func (l *Reflinker) linkCommitSHA(begin, end int) int {
-	for i := 1; i < 40; i++ { // Since l.src[begin] was already checked, i starts from 1
+	for i := 1; i < hashLen; i++ { // Since l.src[begin] was already checked, i starts from 1
 		if begin+i >= end {
 			return begin + i
 		}
@@ -176,16 +178,16 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 		return begin + i
 	}
 
-	if l.isBoundaryAt(begin-1) && l.isBoundaryAt(begin+40) {
-		h := l.src[begin : begin+40]
+	if l.isBoundaryAt(begin-1) && l.isBoundaryAt(begin+hashLen) {
+		h := l.src[begin : begin+hashLen]
 		l.links = append(l.links, refLink{
 			start: begin,
-			end:   begin + 40,
+			end:   begin + hashLen,
 			text:  fmt.Sprintf("[`%s`](%s/commit/%s)", h[:10], l.repo, h),
 		})
 	}
 
-	return begin + 40
+	return begin + hashLen
 }
 
 // DetectLinks detects reference links in given markdown text and remembers them to replace all
