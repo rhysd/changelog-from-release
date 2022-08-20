@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -36,7 +35,7 @@ func validateExecutable(t *testing.T) string {
 func TestGenerateChangelog(t *testing.T) {
 	exe := validateExecutable(t)
 
-	b, err := ioutil.ReadFile("CHANGELOG.md")
+	b, err := os.ReadFile("CHANGELOG.md")
 	if err != nil {
 		panic(err)
 	}
