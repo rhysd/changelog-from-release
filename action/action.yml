@@ -30,6 +30,9 @@ inputs:
       Template to make a commit summary (first line of commit). This template is passed to printf command and it must
       contain exactly one '%s' placeholder. The placeholder will be replaced with the tag name.
     required: false
+  args:
+    description: Arguments on running 'changelog-from-release' command
+    required: false
 
 runs:
   using: docker

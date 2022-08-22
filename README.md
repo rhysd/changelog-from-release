@@ -40,7 +40,7 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
 [action's README](./action/README.md) for more details.
 
 ```yaml
-- uses: rhysd/changelog-from-release/action@v2
+- uses: rhysd/changelog-from-release/action@v3
   with:
     file: CHANGELOG.md
     github_token: ${{ secrets.GITHUB_TOKEN }}

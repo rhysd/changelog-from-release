@@ -24,11 +24,12 @@ echo "::debug::Retrieved version: ${INPUT_VERSION}"
 echo "::debug::Make a commit?: ${INPUT_COMMIT}"
 echo "::debug::Push to remote?: ${INPUT_PUSH}"
 echo "::debug::Commit summary template: '${INPUT_COMMIT_SUMMARY_TEMPLATE}'"
+echo "::debug::Command arguments: '${INPUT_ARGS}'"
 
 echo "changelog-from-release version: $(/changelog-from-release -v)"
 
 set -x
-GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release > "${INPUT_FILE}"
+GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release ${INPUT_ARGS} > "${INPUT_FILE}"
 set +x
 
 if [ "$INPUT_COMMIT" = 'true' ]; then
