@@ -49,6 +49,23 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
 
 ## FAQ
 
+### How to update changelog before adding the release tag?
+
+For example, how to include changes for v1.2.3 in `CHANGELOG.md` before creating a Git tag `v1.2.3`?
+
+Please use [a release draft][gh-draft].
+
+1. Create and save a new release note as draft. Leave Git tag empty at this point
+2. Run `changelog-from-release` with setting [a personal access token][pat] to `$GITHUB_TOKEN`
+   environment variable
+3. Commit the changelog
+4. Create and push a new Git tag
+5. Go to the draft release page created at 1. and set the Git tag to the release
+6. Publish the release by clicking 'Publish release' button on GitHub
+
+Setting a personal access token at 2. is mandatory since release drafts are private information.
+API token associated with your account is necessary to fetch it.
+
 ### How to insert some templates at top/bottom of generated changelog?
 
 Since `changelog-from-release` command just generates changelog history, you can insert your
@@ -89,22 +106,6 @@ EOS
 ```
 
 `-l 2` means using `##` instead of `#` for each release section. Please adjust it for your use case.
-
-### How to update changelog before adding the release tag?
-
-For example, how to include changes for v1.2.3 in `CHANGELOG.md` before creating a Git tag `v1.2.3`?
-
-Please use [a release draft][gh-draft].
-
-1. Create and save a new release note as draft
-2. Run `changelog-from-release` with setting [a personal access token][pat] to `$GITHUB_TOKEN`
-   environment variable
-3. Commit the changelog
-4. Create and push a new Git tag
-5. Publish the release by clicking 'Publish release' button on GitHub
-
-Setting a personal access token at 2. is mandatory since release drafts are private information.
-API token associated with your account is necessary to fetch it.
 
 
 ## Reference auto linking
