@@ -1,4 +1,4 @@
-module github.com/rhysd/changelog-from-release
+module github.com/rhysd/changelog-from-release/v3
 
 go 1.18
 
