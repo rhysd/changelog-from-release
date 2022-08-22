@@ -47,6 +47,49 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
 ```
 
 
+## FAQ
+
+### How to insert some templates at top/bottom of generated changelog?
+
+Since `changelog-from-release` command just generates changelog history, you can insert your
+favorite templates before/after redirecting the generated output to `CHANGELOG.md` file.
+
+```sh
+# Insert header
+cat <<-EOS > CHANGELOG.md
+Changelog
+=========
+
+This is a changelog for [my-project](https://github.com/owner/my-project
+
+EOS
+
+changelog-from-release >> CHANGELOG.md
+
+# Insert footer
+cat <<-EOS >> CHANGELOG.md
+
+Releases on GitHub: https://github.com/owner/my-project/releases
+EOS
+```
+
+If your shell supports `$()`, header and footer can be inserted once.
+
+```sh
+# Insert header
+cat <<-EOS > CHANGELOG.md
+Changelog
+=========
+
+This is a changelog for [my-project](https://github.com/owner/my-project
+
+$(changelog-from-release)
+
+Releases on GitHub: https://github.com/owner/my-project/releases
+EOS
+```
+
+
 ## Reference auto linking
 
 References in a release note are automatically converted to links by `changelog-from-release`.
