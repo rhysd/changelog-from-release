@@ -21,6 +21,7 @@ func fail(err error) {
 func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
+	heading := flag.Int("l", 1, "Heading level of each release section")
 	flag.Parse()
 
 	if *ver {
@@ -31,6 +32,10 @@ func main() {
 	if flag.NArg() != 0 {
 		usage()
 		os.Exit(111)
+	}
+
+	if *heading < 1 {
+		fail(fmt.Errorf("heading level set by -l must be >=1 but %d is set", *heading))
 	}
 
 	git, err := NewGitForCwd()
@@ -56,7 +61,7 @@ func main() {
 		fail(fmt.Errorf("no release was found at %s", url))
 	}
 
-	cl := NewChangeLog(os.Stdout, url)
+	cl := NewChangeLog(os.Stdout, url, *heading)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)

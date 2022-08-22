@@ -19,11 +19,13 @@ type link struct {
 type ChangeLog struct {
 	repoURL string
 	out     io.Writer
+	level   int
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	out := bufio.NewWriter(cl.out)
+	heading := strings.Repeat("#", cl.level)
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
@@ -53,7 +55,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
-		fmt.Fprintf(out, "# [%s](%s) - %s\n\n", title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
+		fmt.Fprintf(out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
 		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), cl.repoURL))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
@@ -70,8 +72,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, l int) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l}
 }

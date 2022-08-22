@@ -64,7 +64,7 @@ This is a changelog for [my-project](https://github.com/owner/my-project
 
 EOS
 
-changelog-from-release >> CHANGELOG.md
+changelog-from-release -l 2 >> CHANGELOG.md
 
 # Insert footer
 cat <<-EOS >> CHANGELOG.md
@@ -83,11 +83,13 @@ Changelog
 
 This is a changelog for [my-project](https://github.com/owner/my-project
 
-$(changelog-from-release)
+$(changelog-from-release -l 2)
 
 Releases on GitHub: https://github.com/owner/my-project/releases
 EOS
 ```
+
+`-l 2` means using `##` instead of `#` for each release section. Please adjust it for your use case.
 
 ### How to update changelog before adding the release tag?
 
