@@ -76,7 +76,6 @@ EOS
 If your shell supports `$()`, header and footer can be inserted once.
 
 ```sh
-# Insert header
 cat <<-EOS > CHANGELOG.md
 Changelog
 =========
@@ -114,7 +113,7 @@ References in a release note are automatically converted to links by `changelog-
 
 - **Issue references** like `#123` are converted to links to the issue pages
 - **User references** like `@rhysd` are converted to links to the user profile pages
-- **Commit references** like `93e1af6ec49d23397baba466fba1e89cc8b6de39` are converted to linkes to the
+- **Commit references** like `93e1af6ec49d23397baba466fba1e89cc8b6de39` are converted to links to the
   commit pages. To avoid false-positives, only full-length (40 characters) commit hashes are converted.
 
 For example,
