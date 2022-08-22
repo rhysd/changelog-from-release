@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v45/github"
 )
@@ -17,19 +19,28 @@ type link struct {
 
 // ChangeLog is a struct to generate changelog output from given repository URL
 type ChangeLog struct {
-	repoURL string
-	out     io.Writer
-	level   int
+	repoURL  string
+	out      io.Writer
+	level    int
+	draftTag string
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
+	sawDraft := false
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
 	for i, rel := range rels {
+		if rel.GetDraft() {
+			if sawDraft {
+				return errors.New("two or more draft releases were found. cannot determine which draft should be used for the next release")
+			}
+			sawDraft = true
+		}
+
 		prevTag := ""
 		if i+1 < numRels {
 			prevTag = rels[i+1].GetTagName()
@@ -58,7 +69,14 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", cl.repoURL, tag)
 
-		fmt.Fprintf(out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, rel.GetPublishedAt().Format("02 Jan 2006"))
+		var created github.Timestamp
+		if rel.GetDraft() {
+			created = rel.GetCreatedAt()
+		} else {
+			created = rel.GetPublishedAt()
+		}
+
+		fmt.Fprintf(out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, created.Format("02 Jan 2006"))
 		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), cl.repoURL))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
