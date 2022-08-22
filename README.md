@@ -89,6 +89,22 @@ Releases on GitHub: https://github.com/owner/my-project/releases
 EOS
 ```
 
+### How to update changelog before adding the release tag?
+
+For example, how to include changes for v1.2.3 in `CHANGELOG.md` before creating a Git tag `v1.2.3`?
+
+Please use [a release draft][gh-draft].
+
+1. Create and save a new release note as draft
+2. Run `changelog-from-release` with setting [a personal access token][pat] to `$GITHUB_TOKEN`
+   environment variable
+3. Commit the changelog
+4. Create and push a new Git tag
+5. Publish the release by clicking 'Publish release' button on GitHub
+
+Setting a personal access token at 2. is mandatory since release drafts are private information.
+API token associated with your account is necessary to fetch it.
+
 
 ## Reference auto linking
 
@@ -148,3 +164,4 @@ export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 [gh-actions]: https://github.com/features/actions
 [ghe]: https://github.com/enterprise
 [pat]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+[gh-draft]: https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
