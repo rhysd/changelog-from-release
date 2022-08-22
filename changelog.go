@@ -19,10 +19,9 @@ type link struct {
 
 // ChangeLog is a struct to generate changelog output from given repository URL
 type ChangeLog struct {
-	repoURL  string
-	out      io.Writer
-	level    int
-	draftTag string
+	repoURL string
+	out     io.Writer
+	level   int
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
@@ -50,14 +49,11 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		tag := rel.GetTagName()
 
 		if tag == "" {
-			if cl.draftTag == "" {
-				return fmt.Errorf(
-					"release %q created at %s is not associated with any tag and no tag name is provided by -d flag. cannot determine tag name for the draft release",
-					rel.GetName(),
-					rel.CreatedAt.Format(time.RFC3339),
-				)
-			}
-			tag = cl.draftTag
+			return fmt.Errorf(
+				"release %q created at %s is not associated with any tag name. cannot determine a tag name for the release. did you forget setting tag name in the draft release?",
+				rel.GetName(),
+				rel.CreatedAt.Format(time.RFC3339),
+			)
 		}
 
 		var compareURL string
@@ -101,8 +97,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL, l int, draftTag string) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, l int) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, draftTag}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l}
 }

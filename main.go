@@ -22,7 +22,6 @@ func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
-	draft := flag.String("d", "", "Tag name of draft release")
 	flag.Parse()
 
 	if *ver {
@@ -62,7 +61,7 @@ func main() {
 		fail(fmt.Errorf("no release was found at %s", url))
 	}
 
-	cl := NewChangeLog(os.Stdout, url, *heading, *draft)
+	cl := NewChangeLog(os.Stdout, url, *heading)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)
