@@ -35,7 +35,11 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 			prevTag = rels[i+1].GetTagName()
 		}
 
+		title := rel.GetName()
 		tag := rel.GetTagName()
+		if tag == "" {
+			tag = title
+		}
 
 		var compareURL string
 		if prevTag == "" {
@@ -46,7 +50,6 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 		fmt.Fprintf(out, "<a name=\"%s\"></a>\n", tag)
 
-		title := rel.GetName()
 		if title == "" {
 			title = tag
 		} else if title != tag {
