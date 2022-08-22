@@ -1,8 +1,9 @@
 <a name="v3.2.0"></a>
 # [v3.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.2.0) - 22 Aug 2022
 
-- Add `-l` option to set heading level of each release sections. For example, `-l 2` uses `##` instead `#` for each release sections.
+- Add `-l` option to set heading level of each release sections. For example, `-l 2` uses `##` instead of `#` for each release sections.
 - Use Go 1.19 to build release binaries.
+- Go module path was changed from `github.com/rhysd/changelog-from-release` to `github.com/rhysd/changelog-from-release/v3` since `go install` without version specifier does not work in recent Go toolchain. ([#14](https://github.com/rhysd/changelog-from-release/issues/14))
 
 [Changes][v3.2.0]
 
