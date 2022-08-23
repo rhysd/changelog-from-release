@@ -82,7 +82,7 @@ cat <<-EOS > CHANGELOG.md
 Changelog
 =========
 
-This is a changelog for [my-project](https://github.com/owner/my-project
+This is a footer.
 
 EOS
 
@@ -91,7 +91,7 @@ changelog-from-release -l 2 >> CHANGELOG.md
 # Insert footer
 cat <<-EOS >> CHANGELOG.md
 
-Releases on GitHub: https://github.com/owner/my-project/releases
+This is a footer.
 EOS
 ```
 
@@ -102,15 +102,34 @@ cat <<-EOS > CHANGELOG.md
 Changelog
 =========
 
-This is a changelog for [my-project](https://github.com/owner/my-project
+This is a header.
 
 $(changelog-from-release -l 2)
 
-Releases on GitHub: https://github.com/owner/my-project/releases
+This is a footer.
 EOS
 ```
 
 `-l 2` means using `##` instead of `#` for each release section. Please adjust it for your use case.
+
+If you're using [the action](./action/README.md), use `header` and `footer` inputs to insert texts
+before/after the generated changelog.
+
+```yaml
+- uses: rhysd/changelog-from-release/action@v3
+  with:
+    file: CHANGELOG.md
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    args: -l 2
+    header: |
+      Changelog
+      =========
+
+      This is header.
+    footer: |-
+
+      This is footer.
+```
 
 
 ## Reference auto linking
