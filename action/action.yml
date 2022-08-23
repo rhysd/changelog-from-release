@@ -33,6 +33,12 @@ inputs:
   args:
     description: Arguments on running 'changelog-from-release' command
     required: false
+  header:
+    description: Template inserted before a generated changelog
+    required: false
+  footer:
+    description: Template inserted after a generated changelog
+    required: false
 
 runs:
   using: docker

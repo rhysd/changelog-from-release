@@ -21,16 +21,30 @@ if [ -z "$INPUT_VERSION" ]; then
 fi
 
 echo "::debug::Retrieved version: ${INPUT_VERSION}"
+echo "::debug::Changelog file: ${INPUT_FILE}"
 echo "::debug::Make a commit?: ${INPUT_COMMIT}"
 echo "::debug::Push to remote?: ${INPUT_PUSH}"
 echo "::debug::Commit summary template: '${INPUT_COMMIT_SUMMARY_TEMPLATE}'"
 echo "::debug::Command arguments: '${INPUT_ARGS}'"
+echo "::debug::Header: '${INPUT_HEADER}'"
+echo "::debug::Footer: '${INPUT_FOOTER}'"
 
 echo "changelog-from-release version: $(/changelog-from-release -v)"
 
 set -x
-GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release ${INPUT_ARGS} > "${INPUT_FILE}"
+CHANGELOG="$(GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release ${INPUT_ARGS})"
 set +x
+
+if [ -n "$INPUT_HEADER" ]; then
+    echo "$INPUT_HEADER" > "${INPUT_FILE}"
+    echo "$CHANGELOG" >> "${INPUT_FILE}"
+else
+    echo "$CHANGELOG" > "${INPUT_FILE}"
+fi
+if [ -n "$INPUT_FOOTER" ]; then
+    echo "$INPUT_FOOTER" >> "${INPUT_FILE}"
+fi
+
 
 if [ "$INPUT_COMMIT" = 'true' ]; then
     COMMIT_SUMMARY="Update changelog for ${INPUT_VERSION}"
