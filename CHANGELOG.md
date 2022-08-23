@@ -1,3 +1,40 @@
+<a name="v3.3.0"></a>
+# [v3.3.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.3.0) - 23 Aug 2022
+
+- Add `args` input to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) to define command line arguments passed to `changelog-from-release` command.
+  ```yaml
+  - uses: rhysd/changelog-from-release/action@v3
+    with:
+      file: CHANGELOG.md
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      # Pass `-l 2` to use `##` instead of `#` for each release section
+      args: -l 2
+  ```
+- Add `header` and `footer` inputs to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) to insert templates before/after the generated changelog. The following step inserts the header and the footer.
+  ```yaml
+  - uses: rhysd/changelog-from-release/action@v3
+    with:
+      file: CHANGELOG.md
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      args: -l 2
+      header: |
+        Changelog
+        =========
+
+        This is header.
+      footer: |-
+
+        This is footer.
+  ```
+- Report an error when the release is not associated with any Git tags. This can happen when the release is a draft.
+- Fix release date is broken when the release is a draft. Instead of published date, created date is used in the case.
+- Add [FAQ section](https://github.com/rhysd/changelog-from-release#faq) to readme document. Currently two topics are described.
+  - [How to update changelog before adding the release tag?](https://github.com/rhysd/changelog-from-release#how-to-update-changelog-before-adding-the-release-tag)
+  - [How to insert some templates at top/bottom of generated changelog?](https://github.com/rhysd/changelog-from-release#how-to-insert-some-templates-at-topbottom-of-generated-changelog)
+
+[Changes][v3.3.0]
+
+
 <a name="v3.2.0"></a>
 # [v3.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.2.0) - 22 Aug 2022
 
@@ -233,6 +270,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.3.0]: https://github.com/rhysd/changelog-from-release/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/rhysd/changelog-from-release/compare/v3.1.4...v3.2.0
 [v3.1.4]: https://github.com/rhysd/changelog-from-release/compare/v3.1.3...v3.1.4
 [v3.1.3]: https://github.com/rhysd/changelog-from-release/compare/v3.1.2...v3.1.3
