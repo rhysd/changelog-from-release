@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -28,18 +27,10 @@ type ChangeLog struct {
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
-	sawDraft := false
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
 	for i, rel := range rels {
-		if rel.GetDraft() {
-			if sawDraft {
-				return errors.New("two or more draft releases were found. cannot determine which draft should be used for the next release")
-			}
-			sawDraft = true
-		}
-
 		prevTag := ""
 		if i+1 < numRels {
 			prevTag = rels[i+1].GetTagName()
