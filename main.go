@@ -19,11 +19,23 @@ func fail(err error) {
 	os.Exit(111)
 }
 
+func regexFlag(v, f string) (*regexp.Regexp, error) {
+	if v == "" {
+		return nil, nil
+	}
+	r, err := regexp.Compile(v)
+	if err != nil {
+		return nil, fmt.Errorf("regular expression at %s is not valid: %w", f, err)
+	}
+	return r, nil
+}
+
 func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
-	ignore := flag.String("i", "", "Pattern to extract release tags in regular expression")
+	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
+	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	flag.Parse()
 
 	if *ver {
@@ -31,13 +43,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	var reIgnore *regexp.Regexp
-	if *ignore != "" {
-		r, err := regexp.Compile(*ignore)
-		if err != nil {
-			fail(fmt.Errorf("regular expression at -ignore is not valid: %w", err))
-		}
-		reIgnore = r
+	reIgnore, err := regexFlag(*ignore, "-i")
+	if err != nil {
+		fail(err)
+	}
+	reExtract, err := regexFlag(*extract, "-e")
+	if err != nil {
+		fail(err)
 	}
 
 	if flag.NArg() != 0 {
@@ -72,7 +84,7 @@ func main() {
 		fail(fmt.Errorf("no release was found at %s", url))
 	}
 
-	cl := NewChangeLog(os.Stdout, url, *heading, reIgnore)
+	cl := NewChangeLog(os.Stdout, url, *heading, reIgnore, reExtract)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)

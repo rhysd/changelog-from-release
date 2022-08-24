@@ -23,17 +23,18 @@ type ChangeLog struct {
 	out     io.Writer
 	level   int
 	ignore  *regexp.Regexp
+	extract *regexp.Regexp
 }
 
 func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
-	if cl.ignore == nil {
+	if cl.ignore == nil && cl.extract == nil {
 		return rels
 	}
 
 	i := 0
 	for i < len(rels) {
 		t := rels[i].GetTagName()
-		if cl.ignore.MatchString(t) {
+		if cl.ignore != nil && cl.ignore.MatchString(t) || cl.extract != nil && !cl.extract.MatchString(t) {
 			rels = append(rels[:i], rels[i+1:]...)
 		} else {
 			i++
@@ -110,8 +111,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL, l int, i *regexp.Regexp) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, l int, i, e *regexp.Regexp) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, i}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, i, e}
 }
