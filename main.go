@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 )
 
 var version = "v3.3.0"
@@ -22,11 +23,21 @@ func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
+	ignore := flag.String("i", "", "Pattern to extract release tags in regular expression")
 	flag.Parse()
 
 	if *ver {
 		fmt.Println(version)
 		os.Exit(0)
+	}
+
+	var reIgnore *regexp.Regexp
+	if *ignore != "" {
+		r, err := regexp.Compile(*ignore)
+		if err != nil {
+			fail(fmt.Errorf("regular expression at -ignore is not valid: %w", err))
+		}
+		reIgnore = r
 	}
 
 	if flag.NArg() != 0 {
@@ -61,7 +72,7 @@ func main() {
 		fail(fmt.Errorf("no release was found at %s", url))
 	}
 
-	cl := NewChangeLog(os.Stdout, url, *heading)
+	cl := NewChangeLog(os.Stdout, url, *heading, reIgnore)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)

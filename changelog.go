@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -21,10 +22,31 @@ type ChangeLog struct {
 	repoURL string
 	out     io.Writer
 	level   int
+	ignore  *regexp.Regexp
+}
+
+func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
+	if cl.ignore == nil {
+		return rels
+	}
+
+	i := 0
+	for i < len(rels) {
+		t := rels[i].GetTagName()
+		if cl.ignore.MatchString(t) {
+			rels = append(rels[:i], rels[i+1:]...)
+		} else {
+			i++
+		}
+	}
+
+	return rels
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
+	rels = cl.filterReleases(rels)
+
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
 
@@ -88,8 +110,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL, l int) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, l int, i *regexp.Regexp) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, i}
 }

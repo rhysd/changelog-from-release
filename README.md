@@ -131,6 +131,17 @@ before/after the generated changelog.
       This is footer.
 ```
 
+### How to ignore some release tags?
+
+For example, if your project `nightly` tag release for nightly builds, it should be excluded from
+changelog.
+
+In the case, use `-i` command line option to ignore some release tags in regular expression:
+
+```sh
+changelog-from-release -i '^nightly$' > CHANGELOG.md
+```
+
 
 ## Reference auto linking
 
