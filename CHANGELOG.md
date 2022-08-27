@@ -1,3 +1,19 @@
+<a name="v3.4.0"></a>
+# [v3.4.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.4.0) - 27 Aug 2022
+
+- Add `-i` option to ignore release tags by regular expression pattern. For example, if your project has `nightly` tag release for nightly builds, it can be excluded as follows:
+  ```sh
+  changelog-from-release -i '^nightly$' > CHANGELOG.md
+  ```
+- Add `-e` option to extract release tags by regular expression pattern. For example, if your project uses `v{major}.{minor}.{patch}` format for release tags, they can be extracted as follows:
+  ```sh
+  changelog-from-release -e '^v\d+\.\d+\.\d+$' > CHANGELOG.md
+  ```
+- Allow multiple drafts in releases. For including draft releases, see [the FAQ](https://github.com/rhysd/changelog-from-release#how-to-update-changelog-before-adding-the-release-tag) for more details.
+
+[Changes][v3.4.0]
+
+
 <a name="v3.3.0"></a>
 # [v3.3.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.3.0) - 23 Aug 2022
 
@@ -270,6 +286,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.4.0]: https://github.com/rhysd/changelog-from-release/compare/v3.3.0...v3.4.0
 [v3.3.0]: https://github.com/rhysd/changelog-from-release/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/rhysd/changelog-from-release/compare/v3.1.4...v3.2.0
 [v3.1.4]: https://github.com/rhysd/changelog-from-release/compare/v3.1.3...v3.1.4
