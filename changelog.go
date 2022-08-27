@@ -24,7 +24,6 @@ type ChangeLog struct {
 	level   int
 	ignore  *regexp.Regexp
 	extract *regexp.Regexp
-	toc     bool
 }
 
 func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
@@ -51,20 +50,6 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
-
-	if cl.toc {
-		for _, rel := range rels {
-			tag := rel.GetTagName()
-			title := rel.GetName()
-			if title == "" {
-				title = tag
-			} else if title != tag {
-				title = fmt.Sprintf("%s (%s)", title, tag)
-			}
-			fmt.Fprintf(out, "- [%s](#%s)\n", title, tag)
-		}
-		fmt.Fprintln(out)
-	}
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
@@ -126,8 +111,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL, l int, i, e *regexp.Regexp, toc bool) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, l int, i, e *regexp.Regexp) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, i, e, toc}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, i, e}
 }
