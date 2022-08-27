@@ -133,10 +133,10 @@ before/after the generated changelog.
 
 ### How to ignore some release tags?
 
-For example, if your project `nightly` tag release for nightly builds, it should be excluded from
+For example, if your project has `nightly` tag release for nightly builds, it should be excluded from
 changelog.
 
-In the case, use `-i` command line option to ignore some release tags by regular expression:
+In this case, use `-i` command line option to ignore some release tags by regular expression:
 
 ```sh
 changelog-from-release -i '^nightly$' > CHANGELOG.md
@@ -147,7 +147,7 @@ changelog-from-release -i '^nightly$' > CHANGELOG.md
 For example, if your project uses `v{major}.{minor}.{patch}` format for release tags, a changelog
 should be created with extracting them.
 
-In the case, use `-e` command line option to extract some release tags by regular expression:
+In this case, use `-e` command line option to extract some release tags by regular expression:
 
 ```sh
 changelog-from-release -e '^v\d+\.\d+\.\d+$' > CHANGELOG.md
