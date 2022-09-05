@@ -67,4 +67,5 @@ jobs:
           file: CHANGELOG2.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
           push: false
-      - run: diff CHANGELOG.md CHANGELOG2.md
+      - run: |
+          [ -s CHANGELOG2.md ]
