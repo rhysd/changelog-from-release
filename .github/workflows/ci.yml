@@ -64,8 +64,15 @@ jobs:
       - name: Run action
         uses: ./action/
         with:
-          file: CHANGELOG2.md
+          file: CHANGELOG_FROM_ACTION.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
           push: false
-      - run: |
-          [ -s CHANGELOG2.md ]
+      - name: Get output from latest stable command
+        run: |
+          version="$(git tag --list 'v*.*.*' --sort '-v:refname' | head -n 1)"
+          version="${version#v}"
+          echo "extracted latest version: ${version}"
+          curl -LO "https://github.com/rhysd/changelog-from-release/releases/download/v${version}/changelog-from-release_${version}_linux_amd64.tar.gz"
+          tar xf "changelog-from-release_${version}_linux_amd64.tar.gz" changelog-from-release
+          ./changelog-from-release > CHANGELOG_FROM_COMMAND.md
+      - run: diff -u CHANGELOG_FROM_ACTION.md CHANGELOG_FROM_COMMAND.md
