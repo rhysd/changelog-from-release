@@ -34,6 +34,7 @@ func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
+	drafts := flag.Bool("d", true, "Include draft releases")
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	flag.Parse()
@@ -84,7 +85,7 @@ func main() {
 		fail(fmt.Errorf("no release was found at %s", url))
 	}
 
-	cl := NewChangeLog(os.Stdout, url, *heading, reIgnore, reExtract)
+	cl := NewChangeLog(os.Stdout, url, *heading, *drafts, reIgnore, reExtract)
 
 	if err := cl.Generate(rels); err != nil {
 		fail(err)

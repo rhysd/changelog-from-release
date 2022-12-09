@@ -153,6 +153,17 @@ In this case, use `-e` command line option to extract some release tags by regul
 changelog-from-release -e '^v\d+\.\d+\.\d+$' > CHANGELOG.md
 ```
 
+### How to ignore draft releases?
+
+If you're using the GitHub Action and don't want draft releases to be included in the changelog, you can use the `-d` flag to omit them:
+
+```yaml
+- uses: rhysd/changelog-from-release/action@v3
+  with:
+    file: CHANGELOG.md
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    args: -d=false
+```
 
 ## Reference auto linking
 
