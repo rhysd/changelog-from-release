@@ -51,9 +51,6 @@ func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 	rels = cl.filterReleases(rels)
-	if len(rels) == 0 {
-		fail(fmt.Errorf("no releases to process, all filtered out"))
-	}
 
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
