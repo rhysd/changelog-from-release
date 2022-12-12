@@ -10,6 +10,7 @@ builds:
   - <<: &build_defaults
       env:
         - CGO_ENABLED=0
+      ldflags: null
   - <<: *build_defaults
     id: macos
     goos: [darwin]
