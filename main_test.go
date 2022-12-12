@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func validateExecutable(t *testing.T) string {
@@ -48,7 +50,7 @@ func TestGenerateChangelog(t *testing.T) {
 	}
 
 	if want != have {
-		t.Fatalf("Generated output was different from CHANGELOG.md\n\nOutput:\n'%#v'\n\nCHANGELOG.md:\n'%#v'", have, want)
+		t.Fatalf("Generated output was different from CHANGELOG.md\n\n%s", cmp.Diff(have, want))
 	}
 }
 
