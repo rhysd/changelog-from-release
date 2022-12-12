@@ -81,9 +81,6 @@ func main() {
 	if err != nil {
 		fail(err)
 	}
-	if len(rels) == 0 {
-		fail(fmt.Errorf("no release was found at %s", url))
-	}
 
 	cl := NewChangeLog(os.Stdout, url, *heading, *drafts, reIgnore, reExtract)
 
