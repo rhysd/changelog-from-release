@@ -1,17 +1,3 @@
-<a name="v3.5.0"></a>
-# [v3.5.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.5.0) - 12 Dec 2022
-
-- Add `-d` option to include/exclude drafts in generated changelog. (thanks [@paescuj](https://github.com/paescuj), [#15](https://github.com/rhysd/changelog-from-release/issues/15))
-  ```sh
-  # Exclude drafts from the output
-  changelog-from-release -d=false > CHANGELOG.md
-  ```
-- Include version of `changelog-from-release` in the footer of generated output
-- Remove a single space which were prepended to a footer line
-
-[Changes][v3.5.0]
-
-
 <a name="v3.4.0"></a>
 # [v3.4.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.4.0) - 27 Aug 2022
 
@@ -300,7 +286,6 @@ First release :tada:
 [Changes][v1.0.0]
 
 
-[v3.5.0]: https://github.com/rhysd/changelog-from-release/compare/v3.4.0...v3.5.0
 [v3.4.0]: https://github.com/rhysd/changelog-from-release/compare/v3.3.0...v3.4.0
 [v3.3.0]: https://github.com/rhysd/changelog-from-release/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/rhysd/changelog-from-release/compare/v3.1.4...v3.2.0
