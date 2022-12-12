@@ -8,6 +8,7 @@
   ```
 - Include version of `changelog-from-release` in the footer of generated output
 - Remove a single space which were prepended to a footer line
+- Do not fail when no release is found since an empty changelog is a good start point of development
 
 [Changes][v3.5.1]
 
