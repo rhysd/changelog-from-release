@@ -46,6 +46,8 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
     github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+For more usage, see `-help` output.
+
 
 ## FAQ
 
@@ -155,7 +157,8 @@ changelog-from-release -e '^v\d+\.\d+\.\d+$' > CHANGELOG.md
 
 ### How to ignore draft releases?
 
-If you're using the GitHub Action and don't want draft releases to be included in the changelog, you can use the `-d` flag to omit them:
+If you're using the GitHub Action and don't want draft releases to be included in the changelog, you
+can use the `-d` flag to omit them:
 
 ```yaml
 - uses: rhysd/changelog-from-release/action@v3
