@@ -231,6 +231,11 @@ func (l *Reflinker) BuildLinkedText() string {
 	return b.String()
 }
 
+// IsLinkDetected returns whether some link was detected by DetectLinks() method calls.
+func (l *Reflinker) IsLinkDetected() bool {
+	return len(l.links) > 0
+}
+
 // LinkRefs replaces all references in the given markdown text with actual links.
 func LinkRefs(input string, repoURL string) string {
 	src := []byte(input)
@@ -253,6 +258,10 @@ func LinkRefs(input string, repoURL string) string {
 			return ast.WalkContinue, nil
 		}
 	})
+
+	if !l.IsLinkDetected() {
+		return input
+	}
 
 	return l.BuildLinkedText()
 }
