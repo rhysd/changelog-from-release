@@ -3,11 +3,26 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+func resolveRedirect(url string) (*url.URL, error) {
+	url = strings.TrimSuffix(url, ".git")
+
+	res, err := http.Head(url)
+	if err != nil {
+		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %s for following repository redirect: %w", url, err)
+	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("HEAD request to Git remote URL %s for following repository redirect was not successful: %s", url, res.Status)
+	}
+
+	return res.Request.URL, nil
+}
 
 // Git represents Git command for specific repository
 type Git struct {
@@ -84,9 +99,9 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 		return nil, fmt.Errorf("repository URL is neither HTTP nor HTTPS: %s", s)
 	}
 
-	u, err := url.Parse(s)
+	u, err := resolveRedirect(s)
 	if err != nil {
-		return nil, fmt.Errorf("cannot parse remote URL %q: %w", s, err)
+		return nil, err
 	}
 
 	return u, nil
