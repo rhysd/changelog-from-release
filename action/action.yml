@@ -25,6 +25,9 @@ inputs:
   push:
     description: Set 'true' to push a generated commit to the remote.
     default: true
+  pull_request:
+    description: Create a pull request with the auto-generated commit.
+    default: false
   commit_summary_template:
     description: >
       Template to make a commit summary (first line of commit). This template is passed to printf command and it must
