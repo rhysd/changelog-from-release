@@ -24,6 +24,7 @@ echo "::debug::Retrieved version: ${INPUT_VERSION}"
 echo "::debug::Changelog file: ${INPUT_FILE}"
 echo "::debug::Make a commit?: ${INPUT_COMMIT}"
 echo "::debug::Push to remote?: ${INPUT_PUSH}"
+echo "::debug::Create pull request?: ${INPUT_PULL_REQUEST}"
 echo "::debug::Commit summary template: '${INPUT_COMMIT_SUMMARY_TEMPLATE}'"
 echo "::debug::Command arguments: '${INPUT_ARGS}'"
 echo "::debug::Header: '${INPUT_HEADER}'"
@@ -53,6 +54,11 @@ if [ "$INPUT_COMMIT" = 'true' ]; then
     fi
 
     set -x
+    if [ "$INPUT_PULL_REQUEST" = 'true' ]; then
+        # Create a branch for pull request
+        git checkout -b "changelog-${INPUT_VERSION}"
+    fi
+
     git add "${INPUT_FILE}"
     git \
         -c "user.name=${GITHUB_ACTOR}" \
@@ -61,8 +67,14 @@ if [ "$INPUT_COMMIT" = 'true' ]; then
 
     This commit was created by changelog-from-release in '${GITHUB_WORKFLOW}' CI workflow"
 
-    if [ "$INPUT_PUSH" = 'true' ]; then
+    if [ "$INPUT_PUSH" = 'true' ] || [ "$INPUT_PULL_REQUEST" = 'true' ]; then
         git push --force "https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+    fi
+    if [ "$INPUT_PULL_REQUEST" = 'true' ]; then
+        echo "${INPUT_GITHUB_TOKEN}" | gh auth login --with-token
+        gh pr create --head "changelog-${INPUT_VERSION}" --title "Update changelog for ${INPUT_VERSION}" --body "This PR was automatically created by [changelog-from-release](https://github.com/rhysd/changelog-from-release) action for ${INPUT_VERSION}"
+        # Back to the original branch
+        git checkout -
     fi
     set +x
 fi
