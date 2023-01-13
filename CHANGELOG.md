@@ -5,6 +5,8 @@
 - Avoid unnecessary memory allocation when no reference link is included in changelog.
 - Update dependencies to include `golang.org/x/*` packages which were newly managed as Go modules.
 
+test
+
 [Changes][v3.5.2]
 
 
