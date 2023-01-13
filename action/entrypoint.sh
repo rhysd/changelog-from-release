@@ -67,12 +67,15 @@ if [ "$INPUT_COMMIT" = 'true' ]; then
 
     This commit was created by changelog-from-release in '${GITHUB_WORKFLOW}' CI workflow"
 
+    git show
+
     if [ "$INPUT_PUSH" = 'true' ]; then
         git push --force "https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
     fi
     if [ "$INPUT_PULL_REQUEST" = 'true' ]; then
         echo "${INPUT_GITHUB_TOKEN}" | gh auth login --with-token
-        gh pr create --title "Update changelog for ${INPUT_VERSION}" --body "This PR was automatically created by [changelog-from-release](https://github.com/rhysd/changelog-from-release) action for ${INPUT_VERSION}"
+        git push --force "https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        gh pr create --head "changelog-${INPUT_VERSION}" --title "Update changelog for ${INPUT_VERSION}" --body "This PR was automatically created by [changelog-from-release](https://github.com/rhysd/changelog-from-release) action for ${INPUT_VERSION}"
         # Back to the original branch
         git checkout -
     fi
