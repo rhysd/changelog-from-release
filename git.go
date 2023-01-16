@@ -17,10 +17,9 @@ func resolveRedirect(url string) (*url.URL, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %s for following repository redirect: %w", url, err)
 	}
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("HEAD request to Git remote URL %s for following repository redirect was not successful: %s", url, res.Status)
-	}
 
+	// Do not check response status because it is not useful. GitHub returns 404 when the repository is private.
+	// And GHE would does the same since all GHE repositories basically require authentication. (#19)
 	return res.Request.URL, nil
 }
 
