@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-const version = "v3.6.0"
+const version = "v3.6.1"
 
 func usage() {
 	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags]\n\n")
