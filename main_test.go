@@ -111,6 +111,31 @@ func TestGenerateWithRemoteURL(t *testing.T) {
 	}
 }
 
+func TestGeneratePrivateRepoChangelog(t *testing.T) {
+	a := os.Getenv("GITHUB_ACTOR")
+	if a != "rhysd" {
+		t.Skip("This test case can only be run with $GITHUB_ACTOR == \"rhysd\":", a)
+	}
+	exe := validateExecutable(t)
+	b, err := exec.Command(exe, "-r", "https://github.com/rhysd/private-repo-test").CombinedOutput()
+	out := string(b)
+	if err != nil {
+		t.Fatal("Error while running the command", out, exe)
+	}
+	want := `<a name="v0.0.0"></a>
+# [v0.0.0](https://github.com/rhysd/private-repo-test/releases/tag/v0.0.0) - 16 Jan 2023
+
+This is test.
+
+[Changes][v0.0.0]
+
+
+[v0.0.0]: https://github.com/rhysd/private-repo-test/tree/v0.0.0`
+	if !strings.Contains(out, want) {
+		t.Fatalf("Changelog of https://github.com/rhysd/private-repo-test is unexpected:\n%s", out)
+	}
+}
+
 func TestInvalidRemoteURL(t *testing.T) {
 	exe := validateExecutable(t)
 	tests := []struct {
