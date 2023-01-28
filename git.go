@@ -10,18 +10,19 @@ import (
 	"strings"
 )
 
-func resolveRedirect(url string) (*url.URL, error) {
+// ResolveRedirect resolves URL redirects and returns parsed URL
+func ResolveRedirect(url string) (*url.URL, error) {
 	url = strings.TrimSuffix(url, ".git")
 
 	res, err := http.Head(url)
 	if err != nil {
-		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %s for following repository redirect: %w", url, err)
+		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %q for following repository redirect: %w", url, err)
 	}
 
 	// GitHub returns 404 when the repository is private. GHE would do the same since all GHE repositories
 	// basically require authentication. 403 may be returned as well. (#19)
 	if res.StatusCode != 200 && res.StatusCode != 404 && res.StatusCode != 403 {
-		return nil, fmt.Errorf("HEAD request to Git remote URL %s for following repository redirect was not successful: %s", url, res.Status)
+		return nil, fmt.Errorf("HEAD request to Git remote URL %q for following repository redirect was not successful: %s", url, res.Status)
 	}
 
 	return res.Request.URL, nil
@@ -102,7 +103,7 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 		return nil, fmt.Errorf("repository URL is neither HTTP nor HTTPS: %s", s)
 	}
 
-	u, err := resolveRedirect(s)
+	u, err := ResolveRedirect(s)
 	if err != nil {
 		return nil, err
 	}

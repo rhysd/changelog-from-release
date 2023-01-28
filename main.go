@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 )
@@ -30,6 +31,19 @@ func regexFlag(v, f string) (*regexp.Regexp, error) {
 	return r, nil
 }
 
+func remoteURL(config string) (*url.URL, error) {
+	if config != "" {
+		return ResolveRedirect(config)
+	}
+
+	git, err := NewGitForCwd()
+	if err != nil {
+		return nil, err
+	}
+
+	return git.FirstRemoteURL()
+}
+
 func main() {
 	flag.Usage = usage
 	ver := flag.Bool("v", false, "Output version to stdout")
@@ -37,6 +51,7 @@ func main() {
 	drafts := flag.Bool("d", true, "Include draft releases")
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
+	remote := flag.String("r", "", "Remote URL of repository to refer")
 	flag.Parse()
 
 	if *ver {
@@ -62,12 +77,7 @@ func main() {
 		fail(fmt.Errorf("heading level set by -l must be >=1 but %d is set", *heading))
 	}
 
-	git, err := NewGitForCwd()
-	if err != nil {
-		fail(err)
-	}
-
-	url, err := git.FirstRemoteURL()
+	url, err := remoteURL(*remote)
 	if err != nil {
 		fail(err)
 	}
