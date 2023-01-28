@@ -1,0 +1,32 @@
+name: Private Repository
+on:
+  push:
+    branches: [master]
+
+jobs:
+  private-repo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+      - name: Build sources
+        run: go build
+        env:
+          # Note: -race requires cgo
+          CGO_ENABLED: 0
+      - name: Generate
+        run: |
+          ./changelog-from-release -r 'https://github.com/rhysd/private-repo-test' > OUTPUT.md
+          cat OUTPUT.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+      - name: Check
+        run: |
+          CHANGELOG="$(cat OUTPUT.md)"
+          if [[ "$CHANGELOG" != *"# [v0.0.0](https://github.com/rhysd/private-repo-test/releases/tag/v0.0.0) - 16 Jan 2023"* ]]; then
+            echo 'Unexpected changelog output:' 1>&2
+            cat OUTPUT.md 1>&2
+            exit 1
+          fi
