@@ -63,13 +63,13 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 			prevTag = rels[i+1].GetTagName()
 		}
 
-		title := rel.GetName()
+		title := strings.TrimSpace(rel.GetName())
 		tag := rel.GetTagName()
 
 		if tag == "" {
 			return fmt.Errorf(
 				"release %q created at %s is not associated with any tag name. cannot determine a tag name for the release. did you forget setting tag name in the draft release?",
-				rel.GetName(),
+				strings.TrimSpace(rel.GetName()),
 				rel.CreatedAt.Format(time.RFC3339),
 			)
 		}
