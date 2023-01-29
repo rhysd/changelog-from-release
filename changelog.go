@@ -85,7 +85,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 		if title == "" {
 			title = tag
-		} else if title != tag {
+		} else if !strings.Contains(title, tag) {
 			title = fmt.Sprintf("%s (%s)", title, tag)
 		}
 
