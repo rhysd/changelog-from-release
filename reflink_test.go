@@ -20,7 +20,7 @@ func TestLinkRefs(t *testing.T) {
 			want:  "[@foo](https://gh/foo)",
 		},
 		{
-			what:  "user includes hypen",
+			what:  "user includes hyphen",
 			input: "@a-B-2",
 			want:  "[@a-B-2](https://gh/a-B-2)",
 		},
@@ -314,7 +314,7 @@ func TestLinkRefs(t *testing.T) {
 			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)",
 		},
 		{
-			what:  "mutiple commit sha",
+			what:  "multiple commit sha",
 			input: "41608e5f4109208a6ab995c58266554e6071c5b2 41608e5f4109208a6ab995c58266554e6071c5b2 f7b60f34e0a60a0e67f2864f6cebdacc7e247e29",
 			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`f7b60f34e0`](https://gh/u/r/commit/f7b60f34e0a60a0e67f2864f6cebdacc7e247e29)",
 		},

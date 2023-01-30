@@ -51,7 +51,7 @@ func main() {
 	drafts := flag.Bool("d", true, "Include draft releases")
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
-	remote := flag.String("r", "", "Remote URL of repository to refer")
+	remote := flag.String("r", "", "Remote repository URL to generate changelog")
 	flag.Parse()
 
 	if *ver {
