@@ -63,10 +63,17 @@ func GitHubFromURL(u *url.URL) (*GitHub, error) {
 
 	api := github.NewClient(client)
 	if v := os.Getenv("GITHUB_API_BASE_URL"); v != "" {
+		// > BaseURL should always be specified with a trailing slash.
+		// https://pkg.go.dev/github.com/google/go-github/github#Client
+		if !strings.HasSuffix(v, "/") {
+			v += "/"
+		}
+
 		u, err := url.Parse(v)
 		if err != nil {
-			return nil, fmt.Errorf("invalid URL in $GITHUB_API_BASE_URL: %w", err)
+			return nil, fmt.Errorf("invalid URL %q in $GITHUB_API_BASE_URL: %w", v, err)
 		}
+
 		api.BaseURL = u
 	}
 	return &GitHub{api, ctx, slug[1], slug[2]}, nil

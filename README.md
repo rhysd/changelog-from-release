@@ -198,7 +198,7 @@ For [GitHub Enterprise][ghe], please set `GITHUB_API_BASE_URL` environment varia
 base URL.
 
 ```sh
-export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3
+export GITHUB_API_BASE_URL=https://github.your-company.com/api/v3/
 ```
 
 ### `GITHUB_TOKEN`
