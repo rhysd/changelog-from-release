@@ -3,8 +3,8 @@ module github.com/rhysd/changelog-from-release/v3
 go 1.18
 
 require (
-	github.com/google/go-cmp v0.5.8
-	github.com/google/go-github/v45 v45.2.0
+	github.com/google/go-cmp v0.5.9
+	github.com/google/go-github/v50 v50.0.0
 	github.com/yuin/goldmark v1.5.3
 	golang.org/x/oauth2 v0.4.0
 )
