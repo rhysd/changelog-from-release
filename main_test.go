@@ -153,3 +153,18 @@ func TestInvalidRemoteURL(t *testing.T) {
 		})
 	}
 }
+
+func TestInvalidGitHubToken(t *testing.T) {
+	exe := validateExecutable(t)
+
+	c := exec.Command(exe)
+	c.Env = append(c.Environ(), "GITHUB_TOKEN=invalid")
+	b, err := c.CombinedOutput()
+	out := string(b)
+	if err == nil {
+		t.Fatalf("error did not happen: %q", out)
+	}
+	if !strings.Contains(out, "401 Bad credentials") {
+		t.Fatalf("Wanted 401 bad credential error but got %q", out)
+	}
+}
