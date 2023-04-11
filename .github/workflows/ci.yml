@@ -21,7 +21,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'bump up version:')"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '>=1.19.0'
       - name: Build sources
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '>=1.19.0'
       - name: Check Go sources are formatted
