@@ -32,9 +32,7 @@ echo "::debug::Footer: '${INPUT_FOOTER}'"
 
 echo "changelog-from-release version: $(/changelog-from-release -v)"
 
-set -x
 CHANGELOG="$(GITHUB_TOKEN="$INPUT_GITHUB_TOKEN" /changelog-from-release ${INPUT_ARGS})"
-set +x
 
 if [ -n "$INPUT_HEADER" ]; then
     echo "$INPUT_HEADER" > "${INPUT_FILE}"
@@ -66,6 +64,8 @@ if [ "$INPUT_COMMIT" = 'true' ]; then
         commit -m "${COMMIT_SUMMARY}
 
     This commit was created by changelog-from-release in '${GITHUB_WORKFLOW}' CI workflow"
+
+    git show
 
     if [ "$INPUT_PUSH" = 'true' ] || [ "$INPUT_PULL_REQUEST" = 'true' ]; then
         git push --force "https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
