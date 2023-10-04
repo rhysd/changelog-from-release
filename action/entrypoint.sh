@@ -9,7 +9,7 @@ git config --global --add safe.directory /github/workspace
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
-    TAG_FROM_PAYLOAD="$(jq .release.tag_name < "$GITHUB_EVENT_PATH")"
+    TAG_FROM_PAYLOAD="$(jq -r .release.tag_name < "$GITHUB_EVENT_PATH")"
     if [ "$TAG_FROM_PAYLOAD" = "null" ]; then
         git fetch --prune --depth=1 origin '+refs/tags/*:refs/tags/*'
         INPUT_VERSION="$(git tag --list | tail -n 1)"
