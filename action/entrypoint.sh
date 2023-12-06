@@ -8,9 +8,11 @@ git config --global --add safe.directory /github/workspace
 
 # Disable Git LFS
 git config --global lfs.fetchexclude '*'
-sudo apt-get update
-sudo apt-get install git-lfs
-git lfs install
+# Bypass git lfs fetch during clone
+git clone --config 'lfs.fetchexclude=*' https://github.com/instacart/instacart-ios.git
+
+# Skip smudge - do not download LFS files during checkout
+git -c filter.lfs.smudge= -c filter.lfs.required=false lfs checkout
 
 cd "$GITHUB_WORKSPACE" || exit 1
 
