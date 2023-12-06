@@ -8,6 +8,9 @@ git config --global --add safe.directory /github/workspace
 
 # Disable Git LFS
 git config --global lfs.fetchexclude '*'
+sudo apt-get update
+sudo apt-get install git-lfs
+git lfs install
 
 cd "$GITHUB_WORKSPACE" || exit 1
 
