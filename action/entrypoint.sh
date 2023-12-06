@@ -6,6 +6,9 @@ set -e
 # https://github.blog/2022-04-12-git-security-vulnerability-announced/
 git config --global --add safe.directory /github/workspace
 
+# Disable Git LFS
+git config --global lfs.fetchexclude '*'
+
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
