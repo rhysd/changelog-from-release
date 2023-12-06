@@ -9,9 +9,6 @@ git config --global --add safe.directory /github/workspace
 # Disable Git LFS
 git config --global lfs.fetchexclude '*'
 
-# Skip smudge - do not download LFS files during checkout
-git -c filter.lfs.smudge= -c filter.lfs.required=false lfs checkout
-
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
