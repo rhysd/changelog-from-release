@@ -82,7 +82,7 @@ func main() {
 		fail(err)
 	}
 
-	gh, err := GitHubFromURL(url)
+	gh, err := NewGitHub(url)
 	if err != nil {
 		fail(err)
 	}

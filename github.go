@@ -41,12 +41,8 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 	}
 }
 
-// GitHubFromURL creates GitHub instance from given repository URL
-func GitHubFromURL(u *url.URL) (*GitHub, error) {
-	if u.Host != "github.com" {
-		return nil, fmt.Errorf("only 'github.com' is supported but got '%s'", u.String())
-	}
-
+// NewGitHub creates GitHub instance from given repository URL
+func NewGitHub(u *url.URL) (*GitHub, error) {
 	// '/owner/name'
 	path := strings.TrimSuffix(u.Path, ".git")
 	slug := strings.Split(path, "/")

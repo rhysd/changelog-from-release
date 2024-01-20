@@ -129,11 +129,6 @@ func TestInvalidRemoteURL(t *testing.T) {
 			want:  `unsupported protocol scheme "file"`,
 		},
 		{
-			what:  "not a GitHub URL",
-			input: "https://example.com",
-			want:  "only 'github.com' is supported but got 'https://example.com'",
-		},
-		{
 			what:  "repository does not exist",
 			input: "https://github.com/rhysd/this-repository-does-not-exist-oops",
 			want:  "404 Not Found",
