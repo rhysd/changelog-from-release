@@ -6,6 +6,9 @@ set -e
 # https://github.blog/2022-04-12-git-security-vulnerability-announced/
 git config --global --add safe.directory /github/workspace
 
+# Ignore files on LFS (#24)
+export GIT_LFS_SKIP_SMUDGE=1
+
 cd "$GITHUB_WORKSPACE" || exit 1
 
 if [ -z "$INPUT_VERSION" ]; then
