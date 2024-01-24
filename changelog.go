@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v56/github"
+	"github.com/google/go-github/v58/github"
 )
 
 type link struct {
