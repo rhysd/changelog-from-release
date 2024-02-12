@@ -249,7 +249,7 @@ func LinkRefs(input string, repoURL string) string {
 		}
 
 		switch n := n.(type) {
-		case *ast.CodeSpan, *ast.Link:
+		case *ast.CodeSpan, *ast.Link, *ast.AutoLink:
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
 			l.DetectLinks(n)
