@@ -12,17 +12,17 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "issue",
 			input: "#123",
-			want:  "[#123](https://gh/u/r/issues/123)",
+			want:  "[#123](https://github.com/u/r/issues/123)",
 		},
 		{
 			what:  "user",
 			input: "@foo",
-			want:  "[@foo](https://gh/foo)",
+			want:  "[@foo](https://github.com/foo)",
 		},
 		{
 			what:  "user includes hyphen",
 			input: "@a-B-2",
-			want:  "[@a-B-2](https://gh/a-B-2)",
+			want:  "[@a-B-2](https://github.com/a-B-2)",
 		},
 		{
 			what:  "issue number in codeblock",
@@ -37,27 +37,27 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "multiple issues",
 			input: "#1 #2 #3",
-			want:  "[#1](https://gh/u/r/issues/1) [#2](https://gh/u/r/issues/2) [#3](https://gh/u/r/issues/3)",
+			want:  "[#1](https://github.com/u/r/issues/1) [#2](https://github.com/u/r/issues/2) [#3](https://github.com/u/r/issues/3)",
 		},
 		{
 			what:  "multiple users",
 			input: "@a @b @c",
-			want:  "[@a](https://gh/a) [@b](https://gh/b) [@c](https://gh/c)",
+			want:  "[@a](https://github.com/a) [@b](https://github.com/b) [@c](https://github.com/c)",
 		},
 		{
 			what:  "issues list",
 			input: "- #1\n- #2\n- #3",
-			want:  "- [#1](https://gh/u/r/issues/1)\n- [#2](https://gh/u/r/issues/2)\n- [#3](https://gh/u/r/issues/3)",
+			want:  "- [#1](https://github.com/u/r/issues/1)\n- [#2](https://github.com/u/r/issues/2)\n- [#3](https://github.com/u/r/issues/3)",
 		},
 		{
 			what:  "issues list",
 			input: "- #1\n- #2\n- #3",
-			want:  "- [#1](https://gh/u/r/issues/1)\n- [#2](https://gh/u/r/issues/2)\n- [#3](https://gh/u/r/issues/3)",
+			want:  "- [#1](https://github.com/u/r/issues/1)\n- [#2](https://github.com/u/r/issues/2)\n- [#3](https://github.com/u/r/issues/3)",
 		},
 		{
 			what:  "users list",
 			input: "- @a\n- @b\n- @c",
-			want:  "- [@a](https://gh/a)\n- [@b](https://gh/b)\n- [@c](https://gh/c)",
+			want:  "- [@a](https://github.com/a)\n- [@b](https://github.com/b)\n- [@c](https://github.com/c)",
 		},
 		{
 			what:  "issue follows alphabet",
@@ -75,7 +75,7 @@ func TestLinkRefs(t *testing.T) {
 			// align the behavior
 			what:  "issue follows _",
 			input: "_#123",
-			want:  "_[#123](https://gh/u/r/issues/123)",
+			want:  "_[#123](https://github.com/u/r/issues/123)",
 		},
 		{
 			// Note: This behavior is different from GitHub (#123 should not be linked). But aligning
@@ -83,27 +83,27 @@ func TestLinkRefs(t *testing.T) {
 			// align the behavior
 			what:  "issue followed by _",
 			input: "#123_",
-			want:  "[#123](https://gh/u/r/issues/123)_",
+			want:  "[#123](https://github.com/u/r/issues/123)_",
 		},
 		{
 			what:  "issue as italic text",
 			input: "_#123_",
-			want:  "_[#123](https://gh/u/r/issues/123)_", // Linked because it's an italic text
+			want:  "_[#123](https://github.com/u/r/issues/123)_", // Linked because it's an italic text
 		},
 		{
 			what:  "issue as part of italic text",
 			input: "_foo #123_",
-			want:  "_foo [#123](https://gh/u/r/issues/123)_", // Linked because it's an italic text
+			want:  "_foo [#123](https://github.com/u/r/issues/123)_", // Linked because it's an italic text
 		},
 		{
 			what:  "issue next to italic",
 			input: "_foo_#123",
-			want:  "_foo_[#123](https://gh/u/r/issues/123)",
+			want:  "_foo_[#123](https://github.com/u/r/issues/123)",
 		},
 		{
 			what:  "italic next to issue",
 			input: "#123_foo_",
-			want:  "[#123](https://gh/u/r/issues/123)_foo_",
+			want:  "[#123](https://github.com/u/r/issues/123)_foo_",
 		},
 		{
 			what:  "issue follows number",
@@ -118,17 +118,17 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "issue followed by sharp",
 			input: "#123#456",
-			want:  "[#123](https://gh/u/r/issues/123)#456",
+			want:  "[#123](https://github.com/u/r/issues/123)#456",
 		},
 		{
 			what:  "issue surrounded by punctuations",
 			input: "!#123?",
-			want:  "![#123](https://gh/u/r/issues/123)?",
+			want:  "![#123](https://github.com/u/r/issues/123)?",
 		},
 		{
 			what:  "issue among multibyte characters",
 			input: "い#1🐶#2ぬ",
-			want:  "い[#1](https://gh/u/r/issues/1)🐶[#2](https://gh/u/r/issues/2)ぬ",
+			want:  "い[#1](https://github.com/u/r/issues/1)🐶[#2](https://github.com/u/r/issues/2)ぬ",
 		},
 		{
 			what:  "user follows alphabet",
@@ -141,7 +141,7 @@ func TestLinkRefs(t *testing.T) {
 			// align the behavior
 			what:  "user follows _",
 			input: "_@foo",
-			want:  "_[@foo](https://gh/foo)",
+			want:  "_[@foo](https://github.com/foo)",
 		},
 		{
 			// Note: This behavior is different from GitHub (@foo should not be linked). But aligning
@@ -149,22 +149,22 @@ func TestLinkRefs(t *testing.T) {
 			// align the behavior
 			what:  "user followed by _",
 			input: "@foo_",
-			want:  "[@foo](https://gh/foo)_",
+			want:  "[@foo](https://github.com/foo)_",
 		},
 		{
 			what:  "user as italic text",
 			input: "_@foo_",
-			want:  "_[@foo](https://gh/foo)_", // Linked because of italic text
+			want:  "_[@foo](https://github.com/foo)_", // Linked because of italic text
 		},
 		{
 			what:  "user as part of italic text",
 			input: "_foo @foo_",
-			want:  "_foo [@foo](https://gh/foo)_", // Linked because of italic text
+			want:  "_foo [@foo](https://github.com/foo)_", // Linked because of italic text
 		},
 		{
 			what:  "user follows hyphen",
 			input: "-@foo",
-			want:  "-[@foo](https://gh/foo)",
+			want:  "-[@foo](https://github.com/foo)",
 		},
 		{
 			what:  "user ends with hyphen",
@@ -184,22 +184,22 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "user followed by other user",
 			input: "@a@b",
-			want:  "[@a](https://gh/a)@b",
+			want:  "[@a](https://github.com/a)@b",
 		},
 		{
 			what:  "user surrounded by punctuations",
 			input: "!@a?",
-			want:  "![@a](https://gh/a)?",
+			want:  "![@a](https://github.com/a)?",
 		},
 		{
 			what:  "user among multibyte characters",
 			input: "い@X🐶@Yぬ",
-			want:  "い[@X](https://gh/X)🐶[@Y](https://gh/Y)ぬ",
+			want:  "い[@X](https://github.com/X)🐶[@Y](https://github.com/Y)ぬ",
 		},
 		{
 			what:  "users and issues are mixed",
 			input: "#1 @a #2 @b",
-			want:  "[#1](https://gh/u/r/issues/1) [@a](https://gh/a) [#2](https://gh/u/r/issues/2) [@b](https://gh/b)",
+			want:  "[#1](https://github.com/u/r/issues/1) [@a](https://github.com/a) [#2](https://github.com/u/r/issues/2) [@b](https://github.com/b)",
 		},
 		{
 			what:  "single sharp",
@@ -214,12 +214,12 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "text ends with sharp",
 			input: "#123 foo #",
-			want:  "[#123](https://gh/u/r/issues/123) foo #",
+			want:  "[#123](https://github.com/u/r/issues/123) foo #",
 		},
 		{
 			what:  "text ends with at",
 			input: "@foo bar @",
-			want:  "[@foo](https://gh/foo) bar @",
+			want:  "[@foo](https://github.com/foo) bar @",
 		},
 		{
 			what:  "text starts with sharp",
@@ -239,7 +239,7 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "quote",
 			input: "> @foo\n> #1",
-			want:  "> [@foo](https://gh/foo)\n> [#1](https://gh/u/r/issues/1)",
+			want:  "> [@foo](https://github.com/foo)\n> [#1](https://github.com/u/r/issues/1)",
 		},
 		{
 			what:  "issue in link",
@@ -254,22 +254,22 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "italic",
 			input: "*@foo* *#1*",
-			want:  "*[@foo](https://gh/foo)* *[#1](https://gh/u/r/issues/1)*",
+			want:  "*[@foo](https://github.com/foo)* *[#1](https://github.com/u/r/issues/1)*",
 		},
 		{
 			what:  "italic with _",
 			input: "_@foo_ _#1_",
-			want:  "_[@foo](https://gh/foo)_ _[#1](https://gh/u/r/issues/1)_",
+			want:  "_[@foo](https://github.com/foo)_ _[#1](https://github.com/u/r/issues/1)_",
 		},
 		{
 			what:  "bold",
 			input: "**@foo** **#1**",
-			want:  "**[@foo](https://gh/foo)** **[#1](https://gh/u/r/issues/1)**",
+			want:  "**[@foo](https://github.com/foo)** **[#1](https://github.com/u/r/issues/1)**",
 		},
 		{
 			what:  "bold with _",
 			input: "__@foo__ __#1__",
-			want:  "__[@foo](https://gh/foo)__ __[#1](https://gh/u/r/issues/1)__",
+			want:  "__[@foo](https://github.com/foo)__ __[#1](https://github.com/u/r/issues/1)__",
 		},
 		{
 			what:  "code fence",
@@ -306,17 +306,17 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "slash before user name",
 			input: "/@foo",
-			want:  "/[@foo](https://gh/foo)",
+			want:  "/[@foo](https://github.com/foo)",
 		},
 		{
 			what:  "commit sha",
 			input: "41608e5f4109208a6ab995c58266554e6071c5b2",
-			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)",
+			want:  "[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)",
 		},
 		{
 			what:  "multiple commit sha",
 			input: "41608e5f4109208a6ab995c58266554e6071c5b2 41608e5f4109208a6ab995c58266554e6071c5b2 f7b60f34e0a60a0e67f2864f6cebdacc7e247e29",
-			want:  "[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`f7b60f34e0`](https://gh/u/r/commit/f7b60f34e0a60a0e67f2864f6cebdacc7e247e29)",
+			want:  "[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2) [`f7b60f34e0`](https://github.com/u/r/commit/f7b60f34e0a60a0e67f2864f6cebdacc7e247e29)",
 		},
 		{
 			what:  "commit sha shorter than 40 characters",
@@ -331,12 +331,12 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "italic commit sha",
 			input: "_41608e5f4109208a6ab995c58266554e6071c5b2_ *41608e5f4109208a6ab995c58266554e6071c5b2*",
-			want:  "_[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)_ *[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)*",
+			want:  "_[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)_ *[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)*",
 		},
 		{
 			what:  "bold commit sha",
 			input: "__41608e5f4109208a6ab995c58266554e6071c5b2__ **41608e5f4109208a6ab995c58266554e6071c5b2**",
-			want:  "__[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)__ **[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)**",
+			want:  "__[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)__ **[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)**",
 		},
 		{
 			what:  "commit sha follows alphabets",
@@ -371,7 +371,7 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "commit sha among multiple characters",
 			input: "いぬ41608e5f4109208a6ab995c58266554e6071c5b2🐶",
-			want:  "いぬ[`41608e5f41`](https://gh/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)🐶",
+			want:  "いぬ[`41608e5f41`](https://github.com/u/r/commit/41608e5f4109208a6ab995c58266554e6071c5b2)🐶",
 		},
 		{
 			what:  "commit sha in upper case",
@@ -393,11 +393,66 @@ func TestLinkRefs(t *testing.T) {
 			input: "[_41608e5f4109208a6ab995c58266554e6071c5b2_](https://example.com)",
 			want:  "[_41608e5f4109208a6ab995c58266554e6071c5b2_](https://example.com)",
 		},
+		{
+			what:  "non-GitHub URL",
+			input: "https://example.com",
+			want:  "https://example.com",
+		},
+		{
+			what:  "commit URL with full hash",
+			input: "this is https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
+			want:  "this is [`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+		},
+		{
+			what:  "commit URL with partial hash",
+			input: "this is https://github.com/foo/bar/commit/1d457ba test",
+			want:  "this is [`foo/bar@1d457ba`](https://github.com/foo/bar/commit/1d457ba) test",
+		},
+		{
+			what:  "commit URL at start of text",
+			input: "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
+			want:  "[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+		},
+		{
+			what:  "commit URL at end of text",
+			input: "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
+			want:  "[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+		},
+		{
+			what:  "commit URL with explicit auto link",
+			input: "this is <https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe> test",
+			want:  "this is <https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe> test",
+		},
+		{
+			what:  "commit URL with explicit auto link at start",
+			input: "<https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe> test",
+			want:  "<https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe> test",
+		},
+		{
+			what:  "commit URL with explicit auto link at end",
+			input: "this is <https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe>",
+			want:  "this is <https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe>",
+		},
+		{
+			what:  "commit URL of current repository",
+			input: "this is https://github.com/u/r/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
+			want:  "this is [`1d457ba853`](https://github.com/u/r/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+		},
+		{
+			what:  "commit URL in link text",
+			input: "[https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe](https://example.com)",
+			want:  "[https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe](https://example.com)",
+		},
+		{
+			what:  "commit URL in link URL",
+			input: "[this commit](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+			want:  "[this commit](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.what, func(t *testing.T) {
-			u := "https://gh/u/r"
+			u := "https://github.com/u/r"
 			if tc.repoURL != "" {
 				u = tc.repoURL
 			}

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -190,9 +191,9 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 	return begin + hashLen
 }
 
-// DetectLinks detects reference links in given markdown text and remembers them to replace all
+// DetectLinksInText detects reference links in given markdown text and remembers them to replace all
 // references later.
-func (l *Reflinker) DetectLinks(t *ast.Text) {
+func (l *Reflinker) DetectLinksInText(t *ast.Text) {
 	o := t.Segment.Start // start offset
 
 	for o < t.Segment.Stop-1 { // `-1` means the last character is not checked
@@ -213,8 +214,55 @@ func (l *Reflinker) DetectLinks(t *ast.Text) {
 	}
 }
 
+var reGitHubCommitURL = regexp.MustCompile(`^https://github\.com/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
+
+func (l *Reflinker) detectGitHubURLInAutoLink(n *ast.AutoLink, src []byte) {
+	start := 0
+	p := n.PreviousSibling()
+	if p != nil {
+		t := p.(*ast.Text)
+		if t == nil {
+			return
+		}
+		start = t.Segment.Stop
+	}
+
+	label := n.Label(src)
+	stop := start + len(label)
+	if start >= len(src) || stop >= len(src) {
+		return
+	}
+	if src[start] == '<' && stop+1 < len(src) && src[stop+1] == '>' {
+		return
+	}
+
+	m := reGitHubCommitURL.FindSubmatch(label)
+	if m == nil {
+		return
+	}
+
+	slug := m[1]
+	hash := m[2]
+	if len(hash) > 10 {
+		hash = hash[:10]
+	}
+
+	var replaced string
+	if bytes.HasPrefix(label, []byte(l.repo)) {
+		replaced = fmt.Sprintf("[`%s`](%s)", hash, label)
+	} else {
+		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, label)
+	}
+
+	l.links = append(l.links, refLink{
+		start: start,
+		end:   stop,
+		text:  replaced,
+	})
+}
+
 // BuildLinkedText builds a markdown text where all references are replaced with links. The links were
-// detected by DetectLinks() method calls.
+// detected by DetectLinksInText() method calls.
 func (l *Reflinker) BuildLinkedText() string {
 	if len(l.links) == 0 {
 		return string(l.src)
@@ -231,7 +279,7 @@ func (l *Reflinker) BuildLinkedText() string {
 	return b.String()
 }
 
-// IsLinkDetected returns whether some link was detected by DetectLinks() method calls.
+// IsLinkDetected returns whether one or more links were detected.
 func (l *Reflinker) IsLinkDetected() bool {
 	return len(l.links) > 0
 }
@@ -249,10 +297,13 @@ func LinkRefs(input string, repoURL string) string {
 		}
 
 		switch n := n.(type) {
-		case *ast.CodeSpan, *ast.Link, *ast.AutoLink:
+		case *ast.CodeSpan, *ast.Link:
+			return ast.WalkSkipChildren, nil
+		case *ast.AutoLink:
+			l.detectGitHubURLInAutoLink(n, src)
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
-			l.DetectLinks(n)
+			l.DetectLinksInText(n)
 			return ast.WalkContinue, nil
 		default:
 			return ast.WalkContinue, nil
