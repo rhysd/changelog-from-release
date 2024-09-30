@@ -415,8 +415,8 @@ func TestLinkRefs(t *testing.T) {
 		},
 		{
 			what:  "commit URL at end of text",
-			input: "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
-			want:  "[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+			input: "test https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
+			want:  "tes [`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
 		},
 		{
 			what:  "commit URL with explicit auto link",

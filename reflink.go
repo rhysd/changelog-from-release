@@ -191,9 +191,7 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 	return begin + hashLen
 }
 
-// DetectLinksInText detects reference links in given markdown text and remembers them to replace all
-// references later.
-func (l *Reflinker) DetectLinksInText(t *ast.Text) {
+func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 	o := t.Segment.Start // start offset
 
 	for o < t.Segment.Stop-1 { // `-1` means the last character is not checked
@@ -216,7 +214,7 @@ func (l *Reflinker) DetectLinksInText(t *ast.Text) {
 
 var reGitHubCommitURL = regexp.MustCompile(`^https://github\.com/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
 
-func (l *Reflinker) detectGitHubURLInAutoLink(n *ast.AutoLink, src []byte) {
+func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 	start := 0
 	p := n.PreviousSibling()
 	if p != nil {
@@ -261,8 +259,7 @@ func (l *Reflinker) detectGitHubURLInAutoLink(n *ast.AutoLink, src []byte) {
 	})
 }
 
-// BuildLinkedText builds a markdown text where all references are replaced with links. The links were
-// detected by DetectLinksInText() method calls.
+// BuildLinkedText builds a markdown text linking all references.
 func (l *Reflinker) BuildLinkedText() string {
 	if len(l.links) == 0 {
 		return string(l.src)
@@ -300,10 +297,10 @@ func LinkRefs(input string, repoURL string) string {
 		case *ast.CodeSpan, *ast.Link:
 			return ast.WalkSkipChildren, nil
 		case *ast.AutoLink:
-			l.detectGitHubURLInAutoLink(n, src)
+			l.linkGitHubURL(n, src)
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
-			l.DetectLinksInText(n)
+			l.linkGitHubRefs(n)
 			return ast.WalkContinue, nil
 		default:
 			return ast.WalkContinue, nil
