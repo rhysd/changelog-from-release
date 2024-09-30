@@ -224,10 +224,9 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 		}
 		start = t.Segment.Stop
 	}
-
 	label := n.Label(src)
 	stop := start + len(label)
-	if start >= len(src) || stop >= len(src) {
+	if start >= len(src) || stop > len(src) {
 		return
 	}
 	if src[start] == '<' && stop+1 < len(src) && src[stop+1] == '>' {
@@ -239,8 +238,7 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 		return
 	}
 
-	slug := m[1]
-	hash := m[2]
+	slug, hash := m[1], m[2]
 	if len(hash) > 10 {
 		hash = hash[:10]
 	}
