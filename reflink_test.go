@@ -448,6 +448,16 @@ func TestLinkRefs(t *testing.T) {
 			input: "[this commit](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
 			want:  "[this commit](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
 		},
+		{
+			what:  "commit URL in code snippet",
+			input: "`https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe`",
+			want:  "`https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe`",
+		},
+		{
+			what:  "commit URL in bold text",
+			input: "**https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe**",
+			want:  "**[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)**",
+		},
 	}
 
 	for _, tc := range tests {

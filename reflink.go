@@ -216,16 +216,26 @@ var reGitHubCommitURL = regexp.MustCompile(`^https://github\.com/([^/]+/[^/]+)/c
 
 func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 	start := 0
-	p := n.PreviousSibling()
-	if p != nil {
+	if p := n.PreviousSibling(); p != nil {
 		t := p.(*ast.Text)
 		if t == nil {
 			return
 		}
 		start = t.Segment.Stop
 	}
-	label := n.Label(src)
-	stop := start + len(label)
+
+	url := n.URL(src)
+
+	// Search the offset of the start of the URL. When the text is a child of some other node, URL
+	// may not appear just after the previous node. The example is **https://...** where URL appers
+	// after the first **.
+	offset := bytes.Index(src[start:], url)
+	if offset < 0 {
+		return
+	}
+	start += offset
+
+	stop := start + len(url)
 	if start >= len(src) || stop > len(src) {
 		return
 	}
@@ -233,7 +243,7 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 		return
 	}
 
-	m := reGitHubCommitURL.FindSubmatch(label)
+	m := reGitHubCommitURL.FindSubmatch(url)
 	if m == nil {
 		return
 	}
@@ -244,10 +254,10 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 	}
 
 	var replaced string
-	if bytes.HasPrefix(label, []byte(l.repo)) {
-		replaced = fmt.Sprintf("[`%s`](%s)", hash, label)
+	if bytes.HasPrefix(url, []byte(l.repo)) {
+		replaced = fmt.Sprintf("[`%s`](%s)", hash, url)
 	} else {
-		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, label)
+		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, url)
 	}
 
 	l.links = append(l.links, refLink{
