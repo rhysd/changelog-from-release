@@ -212,7 +212,7 @@ func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 	}
 }
 
-var reGitHubCommitURL = regexp.MustCompile(`^https://github\.com/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
+var reGitHubCommitPath = regexp.MustCompile(`^/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
 
 func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 	start := 0
@@ -224,7 +224,11 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 		start = t.Segment.Stop
 	}
 
+	home := []byte(l.home)
 	url := n.URL(src)
+	if !bytes.HasPrefix(url, home) {
+		return
+	}
 
 	// Search the offset of the start of the URL. When the text is a child of some other node, URL
 	// may not appear just after the previous node. The example is **https://...** where URL appers
@@ -235,15 +239,17 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 	}
 	start += offset
 
-	stop := start + len(url)
-	if start >= len(src) || stop > len(src) {
-		return
-	}
-	if src[start] == '<' && stop+1 < len(src) && src[stop+1] == '>' {
+	end := start + len(url)
+	if start >= len(src) || end > len(src) {
 		return
 	}
 
-	m := reGitHubCommitURL.FindSubmatch(url)
+	// Note: `end` is the index of the character just after the URL
+	if start > 0 && src[start-1] == '<' && end < len(src) && src[end] == '>' {
+		return
+	}
+
+	m := reGitHubCommitPath.FindSubmatch(url[len(home):])
 	if m == nil {
 		return
 	}
@@ -262,7 +268,7 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 
 	l.links = append(l.links, refLink{
 		start: start,
-		end:   stop,
+		end:   end,
 		text:  replaced,
 	})
 }
