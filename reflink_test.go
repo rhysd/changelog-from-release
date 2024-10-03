@@ -458,6 +458,24 @@ func TestLinkRefs(t *testing.T) {
 			input: "**https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe**",
 			want:  "**[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)**",
 		},
+		{
+			what:    "commit URL with GHE",
+			input:   "https://github.company.com/u/r/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
+			want:    "[`1d457ba853`](https://github.company.com/u/r/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+			repoURL: "https://github.company.com/u/r",
+		},
+		{
+			what:    "commit URL of outside repository with GHE",
+			input:   "https://github.company.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
+			want:    "[`foo/bar@1d457ba853`](https://github.company.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+			repoURL: "https://github.company.com/u/r",
+		},
+		{
+			what:    "GitHub URL is not linked with GHE",
+			input:   "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
+			want:    "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
+			repoURL: "https://github.company.com/u/r",
+		},
 	}
 
 	for _, tc := range tests {
