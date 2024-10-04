@@ -471,6 +471,11 @@ func TestLinkRefs(t *testing.T) {
 			repoURL: "https://github.company.com/u/r",
 		},
 		{
+			what:  "commit URL with hash link",
+			input: "https://github.com/foo/bar/commit/1d457ba853#diff-1d457ba853",
+			want:  "https://github.com/foo/bar/commit/1d457ba853#diff-1d457ba853",
+		},
+		{
 			what:    "GitHub URL is not linked with GHE",
 			input:   "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
 			want:    "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
@@ -495,6 +500,36 @@ func TestLinkRefs(t *testing.T) {
 			what:  "PR URL outside the repo",
 			input: "the PR is https://github.com/foo/bar/pull/123!",
 			want:  "the PR is [foo/bar#123](https://github.com/foo/bar/pull/123)!",
+		},
+		{
+			what:  "PR URL changed files",
+			input: "changed files are https://github.com/foo/bar/pull/123/files",
+			want:  "changed files are https://github.com/foo/bar/pull/123/files",
+		},
+		{
+			what:  "issue URL with comment hash link",
+			input: "the issue comment is https://github.com/u/r/issues/123#issue-123456",
+			want:  "the issue comment is [#123 (comment)](https://github.com/u/r/issues/123#issue-123456)",
+		},
+		{
+			what:  "PR URL with description hash link",
+			input: "the PR comment is https://github.com/foo/bar/pull/123#issue-123456",
+			want:  "the PR comment is [foo/bar#123 (comment)](https://github.com/foo/bar/pull/123#issue-123456)",
+		},
+		{
+			what:  "PR URL with comment hash link",
+			input: "the PR comment is https://github.com/foo/bar/pull/123#issuecomment-123456",
+			want:  "the PR comment is [foo/bar#123 (comment)](https://github.com/foo/bar/pull/123#issuecomment-123456)",
+		},
+		{
+			what:  "PR URL with review discussion hash link",
+			input: "the PR comment is https://github.com/foo/bar/pull/123#discussion_r123456",
+			want:  "the PR comment is [foo/bar#123 (comment)](https://github.com/foo/bar/pull/123#discussion_r123456)",
+		},
+		{
+			what:  "PR URL with review summary hash link",
+			input: "the PR review is https://github.com/u/r/pull/123#pullrequestreview-1212591132",
+			want:  "the PR review is [#123 (review)](https://github.com/u/r/pull/123#pullrequestreview-1212591132)",
 		},
 	}
 

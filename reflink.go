@@ -212,7 +212,9 @@ func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 	}
 }
 
-var reGitHubCommitPath = regexp.MustCompile(`^/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
+// Commit URL with fragment should not be converted to a reference link.
+// e.g. https://github.com/rhysd/changelog-from-release/commit/096c8152092281371e88265dd43b1b7d23a88453#diff-ced928ba39db1f56ef7862baebfe0314ed06f433a71defdc60a2b12e67011453L226
+var reGitHubCommitPath = regexp.MustCompile(`^/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})$`)
 
 func (l *Reflinker) linkCommitURL(m [][]byte, url []byte, start, end int) {
 	slug, hash := m[1], m[2]
@@ -234,16 +236,32 @@ func (l *Reflinker) linkCommitURL(m [][]byte, url []byte, start, end int) {
 	})
 }
 
-var reGitHubIssuePath = regexp.MustCompile(`^/([^/]+/[^/]+)/(?:pull|issues)/(\d+)`)
+// Consider URL with fragment which links to issue comments.
+// e.g.
+// - https://github.com/rhysd/changelog-from-release/issues/11#issue-1327166917
+// - https://github.com/rhysd/changelog-from-release/issues/11#issuecomment-1346614286
+// - https://github.com/rhysd/changelog-from-release/pull/15#pullrequestreview-1212591132
+// - https://github.com/rhysd/changelog-from-release/pull/15#discussion_r1045110870
+var reGitHubIssuePath = regexp.MustCompile(`^/([^/]+/[^/]+)/(?:pull|issues)/(\d+)(#.+)?$`)
 
 func (l *Reflinker) linkIssueURL(m [][]byte, url []byte, start, end int) {
 	slug, num := m[1], m[2]
 
+	// When hash like #issue-12345 follows, it links to a comment in the issue thread
+	var note string
+	if len(m[3]) > 0 {
+		if bytes.HasPrefix(m[3], []byte("#pullrequestreview-")) {
+			note = " (review)"
+		} else {
+			note = " (comment)"
+		}
+	}
+
 	var replaced string
 	if bytes.HasPrefix(url, []byte(l.repo)) {
-		replaced = fmt.Sprintf("[#%s](%s)", num, url)
+		replaced = fmt.Sprintf("[#%s%s](%s)", num, note, url)
 	} else {
-		replaced = fmt.Sprintf("[%s#%s](%s)", slug, num, url)
+		replaced = fmt.Sprintf("[%s#%s%s](%s)", slug, num, note, url)
 	}
 
 	l.links = append(l.links, refLink{
