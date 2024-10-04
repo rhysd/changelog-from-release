@@ -224,7 +224,7 @@ func (l *Reflinker) linkCommitURL(m [][]byte, url []byte, start, end int) {
 	if bytes.HasPrefix(url, []byte(l.repo)) {
 		replaced = fmt.Sprintf("[`%s`](%s)", hash, url)
 	} else {
-		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, url)
+		replaced = fmt.Sprintf("[%s@`%s`](%s)", slug, hash, url)
 	}
 
 	l.links = append(l.links, refLink{

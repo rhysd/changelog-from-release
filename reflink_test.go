@@ -401,22 +401,22 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "commit URL with full hash",
 			input: "this is https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
-			want:  "this is [`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+			want:  "this is [foo/bar@`1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
 		},
 		{
 			what:  "commit URL with partial hash",
 			input: "this is https://github.com/foo/bar/commit/1d457ba test",
-			want:  "this is [`foo/bar@1d457ba`](https://github.com/foo/bar/commit/1d457ba) test",
+			want:  "this is [foo/bar@`1d457ba`](https://github.com/foo/bar/commit/1d457ba) test",
 		},
 		{
 			what:  "commit URL at start of text",
 			input: "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe test",
-			want:  "[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
+			want:  "[foo/bar@`1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe) test",
 		},
 		{
 			what:  "commit URL at end of text",
 			input: "test https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
-			want:  "test [`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+			want:  "test [foo/bar@`1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
 		},
 		{
 			what:  "commit URL with explicit auto link",
@@ -456,7 +456,7 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:  "commit URL in bold text",
 			input: "**https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe**",
-			want:  "**[`foo/bar@1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)**",
+			want:  "**[foo/bar@`1d457ba853`](https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)**",
 		},
 		{
 			what:    "commit URL with GHE",
@@ -467,7 +467,7 @@ func TestLinkRefs(t *testing.T) {
 		{
 			what:    "commit URL of outside repository with GHE",
 			input:   "https://github.company.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
-			want:    "[`foo/bar@1d457ba853`](https://github.company.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
+			want:    "[foo/bar@`1d457ba853`](https://github.company.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe)",
 			repoURL: "https://github.company.com/u/r",
 		},
 		{
