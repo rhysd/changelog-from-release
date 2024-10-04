@@ -214,7 +214,46 @@ func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 
 var reGitHubCommitPath = regexp.MustCompile(`^/([^/]+/[^/]+)/commit/([[:xdigit:]]{7,})`)
 
-func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
+func (l *Reflinker) linkCommitURL(m [][]byte, url []byte, start, end int) {
+	slug, hash := m[1], m[2]
+	if len(hash) > 10 {
+		hash = hash[:10]
+	}
+
+	var replaced string
+	if bytes.HasPrefix(url, []byte(l.repo)) {
+		replaced = fmt.Sprintf("[`%s`](%s)", hash, url)
+	} else {
+		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, url)
+	}
+
+	l.links = append(l.links, refLink{
+		start: start,
+		end:   end,
+		text:  replaced,
+	})
+}
+
+var reGitHubIssuePath = regexp.MustCompile(`^/([^/]+/[^/]+)/(?:pull|issues)/(\d+)`)
+
+func (l *Reflinker) linkIssueURL(m [][]byte, url []byte, start, end int) {
+	slug, num := m[1], m[2]
+
+	var replaced string
+	if bytes.HasPrefix(url, []byte(l.repo)) {
+		replaced = fmt.Sprintf("[#%s](%s)", num, url)
+	} else {
+		replaced = fmt.Sprintf("[%s#%s](%s)", slug, num, url)
+	}
+
+	l.links = append(l.links, refLink{
+		start: start,
+		end:   end,
+		text:  replaced,
+	})
+}
+
+func (l *Reflinker) linkURL(n *ast.AutoLink, src []byte) {
 	start := 0
 	if p := n.PreviousSibling(); p != nil {
 		t := p.(*ast.Text)
@@ -249,28 +288,13 @@ func (l *Reflinker) linkGitHubURL(n *ast.AutoLink, src []byte) {
 		return
 	}
 
-	m := reGitHubCommitPath.FindSubmatch(url[len(home):])
-	if m == nil {
-		return
-	}
+	path := url[len(home):]
 
-	slug, hash := m[1], m[2]
-	if len(hash) > 10 {
-		hash = hash[:10]
+	if m := reGitHubCommitPath.FindSubmatch(path); m != nil {
+		l.linkCommitURL(m, url, start, end)
+	} else if m := reGitHubIssuePath.FindSubmatch(path); m != nil {
+		l.linkIssueURL(m, url, start, end)
 	}
-
-	var replaced string
-	if bytes.HasPrefix(url, []byte(l.repo)) {
-		replaced = fmt.Sprintf("[`%s`](%s)", hash, url)
-	} else {
-		replaced = fmt.Sprintf("[`%s@%s`](%s)", slug, hash, url)
-	}
-
-	l.links = append(l.links, refLink{
-		start: start,
-		end:   end,
-		text:  replaced,
-	})
 }
 
 // BuildLinkedText builds a markdown text linking all references.
@@ -311,7 +335,7 @@ func LinkRefs(input string, repoURL string) string {
 		case *ast.CodeSpan, *ast.Link:
 			return ast.WalkSkipChildren, nil
 		case *ast.AutoLink:
-			l.linkGitHubURL(n, src)
+			l.linkURL(n, src)
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
 			l.linkGitHubRefs(n)

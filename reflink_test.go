@@ -476,6 +476,26 @@ func TestLinkRefs(t *testing.T) {
 			want:    "https://github.com/foo/bar/commit/1d457ba853aa10f9a6c925a1b73d5aed38066ffe",
 			repoURL: "https://github.company.com/u/r",
 		},
+		{
+			what:  "issue URL inside the repo",
+			input: "the issue is https://github.com/u/r/issues/123!",
+			want:  "the issue is [#123](https://github.com/u/r/issues/123)!",
+		},
+		{
+			what:  "PR URL inside the repo",
+			input: "the PR is https://github.com/u/r/pull/123!",
+			want:  "the PR is [#123](https://github.com/u/r/pull/123)!",
+		},
+		{
+			what:  "issue URL outside the repo",
+			input: "the issue is https://github.com/foo/bar/issues/123!",
+			want:  "the issue is [foo/bar#123](https://github.com/foo/bar/issues/123)!",
+		},
+		{
+			what:  "PR URL outside the repo",
+			input: "the PR is https://github.com/foo/bar/pull/123!",
+			want:  "the PR is [foo/bar#123](https://github.com/foo/bar/pull/123)!",
+		},
 	}
 
 	for _, tc := range tests {
