@@ -54,6 +54,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
+	linker := NewReflinker(cl.repoURL)
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)
@@ -99,7 +100,7 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
 		}
 
 		fmt.Fprintf(out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, created.Format("02 Jan 2006"))
-		fmt.Fprint(out, LinkRefs(strings.Replace(rel.GetBody(), "\r", "", -1), cl.repoURL))
+		fmt.Fprint(out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
 		fmt.Fprintf(out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		relLinks = append(relLinks, link{tag, compareURL})

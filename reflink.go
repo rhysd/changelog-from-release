@@ -66,7 +66,7 @@ type Reflinker struct {
 
 // NewReflinker creates Reflinker instance. repoURL is a repository URL of the service like
 // https://github.com/user/repo.
-func NewReflinker(repoURL string, src []byte) *Reflinker {
+func NewReflinker(repoURL string) *Reflinker {
 	u, err := url.Parse(repoURL)
 	if err != nil {
 		panic(err)
@@ -74,13 +74,16 @@ func NewReflinker(repoURL string, src []byte) *Reflinker {
 	u.Path = ""
 
 	l := &Reflinker{
-		repo:  repoURL,
-		home:  u.String(),
-		src:   src,
-		links: nil,
+		repo: repoURL,
+		home: u.String(),
 	}
 	l.AddExtRef("GH-", repoURL+"/issues/<num>", false)
 	return l
+}
+
+func (l *Reflinker) reset(src []byte) {
+	l.src = src
+	l.links = nil
 }
 
 func (l *Reflinker) isBoundaryAt(idx int) bool {
@@ -371,11 +374,7 @@ func (l *Reflinker) linkURL(n *ast.AutoLink) {
 	}
 }
 
-// BuildLinkedText builds a markdown text linking all references.
-func (l *Reflinker) BuildLinkedText() string {
-	if len(l.links) == 0 {
-		return string(l.src)
-	}
+func (l *Reflinker) buildLinkedText() string {
 	sort.Sort(byStart(l.links))
 
 	var b strings.Builder
@@ -389,17 +388,16 @@ func (l *Reflinker) BuildLinkedText() string {
 	return b.String()
 }
 
-// IsLinkDetected returns whether one or more links were detected.
-func (l *Reflinker) IsLinkDetected() bool {
+func (l *Reflinker) isLinkDetected() bool {
 	return len(l.links) > 0
 }
 
-// LinkRefs replaces all references in the given markdown text with actual links.
-func LinkRefs(input string, repoURL string) string {
+// Link replaces all references in the given markdown text with actual links.
+func (l *Reflinker) Link(input string) string {
 	src := []byte(input)
 	md := goldmark.New(goldmark.WithExtensions(extension.GFM))
 	t := md.Parser().Parse(text.NewReader(src))
-	l := NewReflinker(repoURL, src)
+	l.reset(src)
 
 	ast.Walk(t, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
@@ -421,9 +419,9 @@ func LinkRefs(input string, repoURL string) string {
 		}
 	})
 
-	if !l.IsLinkDetected() {
+	if !l.isLinkDetected() {
 		return input
 	}
 
-	return l.BuildLinkedText()
+	return l.buildLinkedText()
 }

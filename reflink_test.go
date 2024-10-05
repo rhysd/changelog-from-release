@@ -570,7 +570,8 @@ func TestLinkRefs(t *testing.T) {
 			if tc.repoURL != "" {
 				u = tc.repoURL
 			}
-			have := LinkRefs(tc.input, u)
+			l := NewReflinker(u)
+			have := l.Link(tc.input)
 			if have != tc.want {
 				t.Fatalf("wanted %q but got %q", tc.want, have)
 			}
