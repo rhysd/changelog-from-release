@@ -531,6 +531,37 @@ func TestLinkRefs(t *testing.T) {
 			input: "the PR review is https://github.com/u/r/pull/123#pullrequestreview-1212591132",
 			want:  "the PR review is [#123 (review)](https://github.com/u/r/pull/123#pullrequestreview-1212591132)",
 		},
+		{
+			what:  "GitHub external reference in text",
+			input: "This is GH-123 link",
+			want:  "This is [GH-123](https://github.com/u/r/issues/123) link",
+		},
+		{
+			what:  "GitHub external reference only",
+			input: "GH-123",
+			want:  "[GH-123](https://github.com/u/r/issues/123)",
+		},
+		{
+			what:  "GitHub external reference inside URL",
+			input: "https://example.com/GH-123/foo",
+			want:  "https://example.com/GH-123/foo",
+		},
+		{
+			what:  "alphabets following GitHub external reference",
+			input: "This is GH-123abc",
+			want:  "This is GH-123abc",
+		},
+		{
+			what:  "alphabets in GitHub external reference",
+			input: "This is GH-abc",
+			want:  "This is GH-abc",
+		},
+		{
+			what:    "GHE external reference",
+			input:   "This is GH-123 link",
+			want:    "This is [GH-123](https://github.company.com/a/b/issues/123) link",
+			repoURL: "https://github.company.com/a/b",
+		},
 	}
 
 	for _, tc := range tests {

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -20,6 +21,12 @@ type refLink struct {
 	end   int
 	text  string
 }
+
+type byStart []refLink
+
+func (l byStart) Len() int           { return len(l) }
+func (l byStart) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
+func (l byStart) Less(i, j int) bool { return l[i].start < l[j].start }
 
 // Note: '_' is actually not boundary. But it's hard to check if the '_' is a part of italic/bold
 // syntax.
@@ -42,11 +49,18 @@ func isUserNameChar(b byte) bool {
 	return '0' <= b && b <= '9' || 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '-'
 }
 
+type extRef struct {
+	prefix string
+	pat    *regexp.Regexp
+	url    string
+}
+
 // Reflinker detects all references in markdown text and replaces them with links.
 type Reflinker struct {
 	repo  string
 	home  string
 	src   []byte
+	ext   []extRef
 	links []refLink
 }
 
@@ -59,12 +73,14 @@ func NewReflinker(repoURL string, src []byte) *Reflinker {
 	}
 	u.Path = ""
 
-	return &Reflinker{
+	l := &Reflinker{
 		repo:  repoURL,
 		home:  u.String(),
 		src:   src,
 		links: nil,
 	}
+	l.AddExtRef("GH-", repoURL+"/issues/<num>", false)
+	return l
 }
 
 func (l *Reflinker) isBoundaryAt(idx int) bool {
@@ -97,7 +113,7 @@ func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
 	return end // The text ends with issue number
 }
 
-func (l *Reflinker) linkIssue(begin, end int) int {
+func (l *Reflinker) linkIssueRef(begin, end int) int {
 	e := l.lastIndexIssueRef(begin, end)
 	if e < 0 {
 		return begin + 1
@@ -107,7 +123,8 @@ func (l *Reflinker) linkIssue(begin, end int) int {
 	l.links = append(l.links, refLink{
 		start: begin,
 		end:   e,
-		text:  fmt.Sprintf("[%s](%s/issues/%s)", r, l.repo, r[1:]),
+		// Note: The link may be for PR, but GitHub can redirect this issue link to the PR
+		text: fmt.Sprintf("[%s](%s/issues/%s)", r, l.repo, r[1:]),
 	})
 
 	return e
@@ -149,7 +166,7 @@ func (l *Reflinker) lastIndexUserRef(begin, end int) int {
 	return end
 }
 
-func (l *Reflinker) linkUser(begin, end int) int {
+func (l *Reflinker) linkUserRef(begin, end int) int {
 	e := l.lastIndexUserRef(begin, end)
 	if e < 0 {
 		return begin + 1
@@ -200,15 +217,54 @@ func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 		if i < 0 || len(s)-1 <= i {
 			return
 		}
+
 		switch s[i] {
 		case '#':
-			o = l.linkIssue(o+i, t.Segment.Stop)
+			o = l.linkIssueRef(o+i, t.Segment.Stop)
 		case '@':
-			o = l.linkUser(o+i, t.Segment.Stop)
+			o = l.linkUserRef(o+i, t.Segment.Stop)
 		default:
 			// hex character [0-9a-f]
 			o = l.linkCommitSHA(o+i, t.Segment.Stop)
 		}
+	}
+}
+
+// Parameters are corresponding to the API:
+// https://docs.github.com/en/rest/repos/autolinks?apiVersion=2022-11-28
+func (l *Reflinker) AddExtRef(prefix, url string, alphanumeric bool) {
+	var r *regexp.Regexp
+	if alphanumeric {
+		r = regexp.MustCompile(`\b` + prefix + `[a-zA-Z0-9_]+`)
+	} else {
+		r = regexp.MustCompile(`\b` + prefix + `\d+\b`)
+	}
+	l.ext = append(l.ext, extRef{prefix, r, url})
+}
+
+func (l *Reflinker) linkExtRef(start, end int) int {
+	src := l.src[start:end]
+	for _, ext := range l.ext {
+		if r := ext.pat.FindIndex(src); r != nil {
+			s, e := r[0], r[1]
+			ref := src[s:e]
+			num := ref[len(ext.prefix):]
+			url := strings.ReplaceAll(ext.url, "<num>", string(num))
+			l.links = append(l.links, refLink{
+				start: start + s,
+				end:   start + e,
+				text:  fmt.Sprintf("[%s](%s)", ref, url),
+			})
+			return start + e
+		}
+	}
+	return end // Not found
+}
+
+func (l *Reflinker) linkExtRefs(t *ast.Text) {
+	o := t.Segment.Start
+	for o < t.Segment.Stop-1 {
+		o = l.linkExtRef(o, t.Segment.Stop)
 	}
 }
 
@@ -271,7 +327,7 @@ func (l *Reflinker) linkIssueURL(m [][]byte, url []byte, start, end int) {
 	})
 }
 
-func (l *Reflinker) linkURL(n *ast.AutoLink, src []byte) {
+func (l *Reflinker) linkURL(n *ast.AutoLink) {
 	start := 0
 	if p := n.PreviousSibling(); p != nil {
 		t := p.(*ast.Text)
@@ -282,7 +338,7 @@ func (l *Reflinker) linkURL(n *ast.AutoLink, src []byte) {
 	}
 
 	home := []byte(l.home)
-	url := n.URL(src)
+	url := n.URL(l.src)
 	if !bytes.HasPrefix(url, home) {
 		return
 	}
@@ -290,19 +346,19 @@ func (l *Reflinker) linkURL(n *ast.AutoLink, src []byte) {
 	// Search the offset of the start of the URL. When the text is a child of some other node, URL
 	// may not appear just after the previous node. The example is **https://...** where URL appers
 	// after the first **.
-	offset := bytes.Index(src[start:], url)
+	offset := bytes.Index(l.src[start:], url)
 	if offset < 0 {
 		return
 	}
 	start += offset
 
 	end := start + len(url)
-	if start >= len(src) || end > len(src) {
+	if start >= len(l.src) || end > len(l.src) {
 		return
 	}
 
 	// Note: `end` is the index of the character just after the URL
-	if start > 0 && src[start-1] == '<' && end < len(src) && src[end] == '>' {
+	if start > 0 && l.src[start-1] == '<' && end < len(l.src) && l.src[end] == '>' {
 		return
 	}
 
@@ -320,6 +376,7 @@ func (l *Reflinker) BuildLinkedText() string {
 	if len(l.links) == 0 {
 		return string(l.src)
 	}
+	sort.Sort(byStart(l.links))
 
 	var b strings.Builder
 	i := 0
@@ -353,10 +410,11 @@ func LinkRefs(input string, repoURL string) string {
 		case *ast.CodeSpan, *ast.Link:
 			return ast.WalkSkipChildren, nil
 		case *ast.AutoLink:
-			l.linkURL(n, src)
+			l.linkURL(n)
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
 			l.linkGitHubRefs(n)
+			l.linkExtRefs(n)
 			return ast.WalkContinue, nil
 		default:
 			return ast.WalkContinue, nil
