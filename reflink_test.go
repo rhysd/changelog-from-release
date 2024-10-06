@@ -578,3 +578,54 @@ func TestLinkRefs(t *testing.T) {
 		})
 	}
 }
+
+func TestLinkCustomReferences(t *testing.T) {
+	tests := []struct {
+		what  string
+		input string
+		want  string
+	}{
+		{
+			what:  "numeric reference",
+			input: "ref FOO-123 is numeric",
+			want:  "ref [FOO-123](https://example.com/foo/123) is numeric",
+		},
+		{
+			what:  "numeric ref prefix with alphanumeric ID",
+			input: "ref FOO-a123 is not linked",
+			want:  "ref FOO-a123 is not linked",
+		},
+		{
+			what:  "numeric reference not followed by boundary",
+			input: "ref FOO-123a is not linked",
+			want:  "ref FOO-123a is not linked",
+		},
+		{
+			what:  "prefix not following boundary",
+			input: "xFOO-123 is not linked",
+			want:  "xFOO-123 is not linked",
+		},
+		{
+			what:  "alphanumeric reference",
+			input: "ref BAR-abc123 is alphanumeric",
+			want:  "ref [BAR-abc123](https://example.com/bar/abc123) is alphanumeric",
+		},
+		{
+			what:  "alphanumeric ref followed by non-alphanumeric",
+			input: "ref BAR-abc123あ is linked",
+			want:  "ref [BAR-abc123](https://example.com/bar/abc123)あ is linked",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.what, func(t *testing.T) {
+			l := NewReflinker("https://github.com/u/r")
+			l.AddExtRef("FOO-", "https://example.com/foo/<num>", false)
+			l.AddExtRef("BAR-", "https://example.com/bar/<num>", true)
+			have := l.Link(tc.input)
+			if have != tc.want {
+				t.Fatalf("wanted %q but got %q", tc.want, have)
+			}
+		})
+	}
+}
