@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -13,30 +12,28 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func validateExecutable(t *testing.T) string {
-	exe := "changelog-from-release"
-	if runtime.GOOS == "windows" {
-		exe = exe + ".exe"
+var testExecutablePath = ""
+
+func ensureExecutable(t *testing.T) string {
+	t.Helper()
+
+	if testExecutablePath == "" {
+		b, err := exec.Command("go", "build").CombinedOutput()
+		if err != nil {
+			t.Fatal("Compile error while building `changelog-from-release` executable:", err, ":", string(b))
+		}
+		if runtime.GOOS == "windows" {
+			testExecutablePath = `.\changelog-from-release.exe`
+		} else {
+			testExecutablePath = `./changelog-from-release`
+		}
 	}
 
-	if _, err := os.Stat(exe); err != nil {
-		t.Fatal("Executable not found:", exe)
-	}
-
-	if s, err := os.Stat(".git"); err != nil || !s.IsDir() {
-		t.Fatal("Test did not run at root of repository")
-	}
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	return filepath.Join(cwd, exe)
+	return testExecutablePath
 }
 
 func TestGenerateChangelog(t *testing.T) {
-	exe := validateExecutable(t)
+	exe := ensureExecutable(t)
 
 	b, err := os.ReadFile("CHANGELOG.md")
 	if err != nil {
@@ -56,7 +53,7 @@ func TestGenerateChangelog(t *testing.T) {
 }
 
 func TestVersion(t *testing.T) {
-	exe := validateExecutable(t)
+	exe := ensureExecutable(t)
 
 	b, err := exec.Command(exe, "-v").CombinedOutput()
 	out := string(b)
@@ -71,7 +68,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestGenerateWithRemoteURL(t *testing.T) {
-	exe := validateExecutable(t)
+	exe := ensureExecutable(t)
 	b, err := exec.Command(exe, "-r", "https://github.com/rhysd/action-setup-vim").CombinedOutput()
 	out := string(b)
 	if err != nil {
@@ -112,7 +109,7 @@ func TestGenerateWithRemoteURL(t *testing.T) {
 }
 
 func TestInvalidRemoteURL(t *testing.T) {
-	exe := validateExecutable(t)
+	exe := ensureExecutable(t)
 	tests := []struct {
 		what  string
 		input string
@@ -150,7 +147,7 @@ func TestInvalidRemoteURL(t *testing.T) {
 }
 
 func TestInvalidGitHubToken(t *testing.T) {
-	exe := validateExecutable(t)
+	exe := ensureExecutable(t)
 
 	c := exec.Command(exe)
 	c.Env = append(c.Environ(), "GITHUB_TOKEN=invalid")

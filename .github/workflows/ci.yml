@@ -10,6 +10,8 @@ on:
       - '**'
   pull_request:
   workflow_dispatch:
+env:
+  CGO_ENABLED: 0
 
 jobs:
   tests:
@@ -24,15 +26,10 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '>=1.19.0'
-      - name: Build sources
-        run: go build
-        env:
-          # Note: -race requires cgo
-          CGO_ENABLED: 0
-      - name: Run smoke tests
+      - run: go build
+      - run: go test -v
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: go test -v
   linter:
     name: Run staticcheck
     runs-on: ubuntu-latest
