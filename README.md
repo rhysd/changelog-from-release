@@ -217,8 +217,8 @@ export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 [gh-releases]: https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases
 [releases]: https://github.com/rhysd/changelog-from-release/releases
-[ci]: https://github.com/rhysd/changelog-from-release/actions?query=workflow%3ACI+branch%3Amaster
-[ci-badge]: https://github.com/rhysd/changelog-from-release/workflows/CI/badge.svg?branch=master&event=push
+[ci]: https://github.com/rhysd/changelog-from-release/actions/workflows/ci.yml
+[ci-badge]: https://github.com/rhysd/changelog-from-release/actions/workflows/ci.yml/badge.svg
 [gh-actions]: https://github.com/features/actions
 [ghe]: https://github.com/enterprise
 [pat]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
