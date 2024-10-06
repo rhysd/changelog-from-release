@@ -607,13 +607,18 @@ func TestLinkCustomReferences(t *testing.T) {
 		},
 		{
 			what:  "alphanumeric reference",
-			input: "ref BAR-abc123 is alphanumeric",
-			want:  "ref [BAR-abc123](https://example.com/bar/abc123) is alphanumeric",
+			input: "ref BAR-abC123 is alphanumeric",
+			want:  "ref [BAR-abC123](https://example.com/bar/abC123) is alphanumeric",
 		},
 		{
 			what:  "alphanumeric ref followed by non-alphanumeric",
 			input: "ref BAR-abc123あ is linked",
 			want:  "ref [BAR-abc123](https://example.com/bar/abc123)あ is linked",
+		},
+		{
+			what:  "alphanumeric ref with underscores",
+			input: "ref BAR-A_1_ is linked",
+			want:  "ref [BAR-A_1_](https://example.com/bar/A_1_) is linked",
 		},
 	}
 

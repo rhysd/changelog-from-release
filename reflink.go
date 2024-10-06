@@ -211,11 +211,11 @@ func (l *Reflinker) linkCommitSHA(begin, end int) int {
 	return begin + hashLen
 }
 
-func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
-	o := t.Segment.Start // start offset
+func (l *Reflinker) linkGitHubRefs(start, stop int) {
+	o := start
 
-	for o < t.Segment.Stop-1 { // `-1` means the last character is not checked
-		s := l.src[o:t.Segment.Stop]
+	for o < stop-1 { // `-1` means the last character is not checked
+		s := l.src[o:stop]
 		i := bytes.IndexAny(s, "#@1234567890abcdef")
 		if i < 0 || len(s)-1 <= i {
 			return
@@ -223,12 +223,12 @@ func (l *Reflinker) linkGitHubRefs(t *ast.Text) {
 
 		switch s[i] {
 		case '#':
-			o = l.linkIssueRef(o+i, t.Segment.Stop)
+			o = l.linkIssueRef(o+i, stop)
 		case '@':
-			o = l.linkUserRef(o+i, t.Segment.Stop)
+			o = l.linkUserRef(o+i, stop)
 		default:
 			// hex character [0-9a-f]
-			o = l.linkCommitSHA(o+i, t.Segment.Stop)
+			o = l.linkCommitSHA(o+i, stop)
 		}
 	}
 }
@@ -264,10 +264,10 @@ func (l *Reflinker) linkExtRef(start, end int) int {
 	return end // Not found
 }
 
-func (l *Reflinker) linkExtRefs(t *ast.Text) {
-	o := t.Segment.Start
-	for o < t.Segment.Stop-1 {
-		o = l.linkExtRef(o, t.Segment.Stop)
+func (l *Reflinker) linkExtRefs(start, stop int) {
+	o := start
+	for o < stop-1 {
+		o = l.linkExtRef(o, stop)
 	}
 }
 
@@ -398,6 +398,7 @@ func (l *Reflinker) Link(input string) string {
 	md := goldmark.New(goldmark.WithExtensions(extension.GFM))
 	t := md.Parser().Parse(text.NewReader(src))
 	l.reset(src)
+	textStart := -1
 
 	ast.Walk(t, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
@@ -411,9 +412,17 @@ func (l *Reflinker) Link(input string) string {
 			l.linkURL(n)
 			return ast.WalkSkipChildren, nil
 		case *ast.Text:
-			l.linkGitHubRefs(n)
-			l.linkExtRefs(n)
-			return ast.WalkContinue, nil
+			// Combine all contiguous text nodes. For example, text nodes are split on '_'.
+			if textStart < 0 {
+				textStart = n.Segment.Start
+			}
+			// Link the combined text
+			if _, ok := n.NextSibling().(*ast.Text); !ok {
+				l.linkGitHubRefs(textStart, n.Segment.Stop)
+				l.linkExtRefs(textStart, n.Segment.Stop)
+				textStart = -1
+			}
+			return ast.WalkSkipChildren, nil
 		default:
 			return ast.WalkContinue, nil
 		}
