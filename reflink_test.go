@@ -70,20 +70,14 @@ func TestLinkRefs(t *testing.T) {
 			want:  "#123a",
 		},
 		{
-			// Note: This behavior is different from GitHub (#123 should not be linked). But aligning
-			// to GitHub's behavior is hard and it is very edge case for us. So we determined not to
-			// align the behavior
 			what:  "issue follows _",
 			input: "_#123",
-			want:  "_[#123](https://github.com/u/r/issues/123)",
+			want:  "_#123",
 		},
 		{
-			// Note: This behavior is different from GitHub (#123 should not be linked). But aligning
-			// to GitHub's behavior is hard and it is very edge case for us. So we determined not to
-			// align the behavior
 			what:  "issue followed by _",
 			input: "#123_",
-			want:  "[#123](https://github.com/u/r/issues/123)_",
+			want:  "#123_",
 		},
 		{
 			what:  "issue as italic text",
@@ -91,9 +85,24 @@ func TestLinkRefs(t *testing.T) {
 			want:  "_[#123](https://github.com/u/r/issues/123)_", // Linked because it's an italic text
 		},
 		{
-			what:  "issue as part of italic text",
+			what:  "issue as italic text with asterisk",
+			input: "*#123*",
+			want:  "*[#123](https://github.com/u/r/issues/123)*", // Linked because it's an italic text
+		},
+		{
+			what:  "issue as bold text",
+			input: "__#123__",
+			want:  "__[#123](https://github.com/u/r/issues/123)__", // Linked because it's an bold text
+		},
+		{
+			what:  "issue at end of italic text",
 			input: "_foo #123_",
 			want:  "_foo [#123](https://github.com/u/r/issues/123)_", // Linked because it's an italic text
+		},
+		{
+			what:  "issue at start of italic text",
+			input: "_#123 foo_",
+			want:  "_[#123](https://github.com/u/r/issues/123) foo_", // Linked because it's an italic text
 		},
 		{
 			what:  "issue next to italic",
@@ -101,9 +110,9 @@ func TestLinkRefs(t *testing.T) {
 			want:  "_foo_[#123](https://github.com/u/r/issues/123)",
 		},
 		{
-			what:  "italic next to issue",
+			what:  "non-italic underscore text follows issue",
 			input: "#123_foo_",
-			want:  "[#123](https://github.com/u/r/issues/123)_foo_",
+			want:  "#123_foo_",
 		},
 		{
 			what:  "issue follows number",
@@ -136,20 +145,14 @@ func TestLinkRefs(t *testing.T) {
 			want:  "a@foo",
 		},
 		{
-			// Note: This behavior is different from GitHub (@foo should not be linked). But aligning
-			// to GitHub's behavior is hard and it is very edge case for us. So we determined not to
-			// align the behavior
 			what:  "user follows _",
 			input: "_@foo",
-			want:  "_[@foo](https://github.com/foo)",
+			want:  "_@foo",
 		},
 		{
-			// Note: This behavior is different from GitHub (@foo should not be linked). But aligning
-			// to GitHub's behavior is hard and it is very edge case for us. So we determined not to
-			// align the behavior
 			what:  "user followed by _",
 			input: "@foo_",
-			want:  "[@foo](https://github.com/foo)_",
+			want:  "@foo_",
 		},
 		{
 			what:  "user as italic text",
@@ -180,6 +183,16 @@ func TestLinkRefs(t *testing.T) {
 			what:  "user follows number",
 			input: "1@foo",
 			want:  "1@foo",
+		},
+		{
+			what:  "user followed by underscore",
+			input: "@foo_bar",
+			want:  "@foo_bar",
+		},
+		{
+			what:  "user follows underscore",
+			input: "bar_@foo",
+			want:  "bar_@foo",
 		},
 		{
 			what:  "user followed by other user",
@@ -394,6 +407,11 @@ func TestLinkRefs(t *testing.T) {
 			want:  "[_41608e5f4109208a6ab995c58266554e6071c5b2_](https://example.com)",
 		},
 		{
+			what:  "commit sha less than 10 characters",
+			input: "z41608e5f",
+			want:  "z41608e5f",
+		},
+		{
 			what:  "non-GitHub URL",
 			input: "https://example.com",
 			want:  "https://example.com",
@@ -530,6 +548,11 @@ func TestLinkRefs(t *testing.T) {
 			what:  "PR URL with review summary hash link",
 			input: "the PR review is https://github.com/u/r/pull/123#pullrequestreview-1212591132",
 			want:  "the PR review is [#123 (review)](https://github.com/u/r/pull/123#pullrequestreview-1212591132)",
+		},
+		{
+			what:  "underscores in repository name of PR URL",
+			input: "the PR is https://github.com/foo/a_b_c_d/pull/123!",
+			want:  "the PR is [foo/a_b_c_d#123](https://github.com/foo/a_b_c_d/pull/123)!",
 		},
 		{
 			what:  "GitHub external reference in text",

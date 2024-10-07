@@ -28,18 +28,8 @@ func (l byStart) Len() int           { return len(l) }
 func (l byStart) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
 func (l byStart) Less(i, j int) bool { return l[i].start < l[j].start }
 
-// Note: '_' is actually not boundary. But it's hard to check if the '_' is a part of italic/bold
-// syntax.
-// For example, _#123_ should be linked because '_'s are part of italic syntax. But _#123 and #123_
-// should not be linked because '_'s are NOT part of italic syntax.
-// Checking if the parent node is Italic/Bold or not does not help to solve this issue. For example,
-// _foo_#1 should be linked. However #1 itself is not an italic text though the neighbor node is
-// Italic.
-// Fortunately this is very edge case. To keep our implementation simple, we compromise to treat '_'
-// as a boundary. For example, _#1 and #1_ are linked incorrectly, but I believe they are OK for our
-// use cases.
 func isBoundary(b byte) bool {
-	if '0' <= b && b <= '9' || 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' {
+	if '0' <= b && b <= '9' || 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '_' {
 		return false
 	}
 	return true
@@ -93,38 +83,34 @@ func (l *Reflinker) isBoundaryAt(idx int) bool {
 	return isBoundary(l.src[idx])
 }
 
-func (l *Reflinker) lastIndexIssueRef(begin, end int) int {
-	if !l.isBoundaryAt(begin - 1) {
+func (l *Reflinker) lastIndexIssueRef(offset, start, end int) int {
+	if start < offset && !l.isBoundaryAt(offset-1) {
 		return -1 // Issue ref must follow a boundary (e.g. 'foo#bar')
 	}
 
-	for i := 1; begin+i < end; i++ {
-		b := l.src[begin+i]
+	for i := 1; offset+i < end; i++ {
+		b := l.src[offset+i]
 		if '0' <= b && b <= '9' {
 			continue
 		}
 		if i == 1 || !isBoundary(b) {
 			return -1
 		}
-		return begin + i
-	}
-
-	if !l.isBoundaryAt(end) {
-		return -1
+		return offset + i
 	}
 
 	return end // The text ends with issue number
 }
 
-func (l *Reflinker) linkIssueRef(begin, end int) int {
-	e := l.lastIndexIssueRef(begin, end)
+func (l *Reflinker) linkIssueRef(offset, start, end int) int {
+	e := l.lastIndexIssueRef(offset, start, end)
 	if e < 0 {
-		return begin + 1
+		return offset + 1
 	}
 
-	r := l.src[begin:e]
+	r := l.src[offset:e]
 	l.links = append(l.links, refLink{
-		start: begin,
+		start: offset,
 		end:   e,
 		// Note: The link may be for PR, but GitHub can redirect this issue link to the PR
 		text: fmt.Sprintf("[%s](%s/issues/%s)", r, l.repo, r[1:]),
@@ -133,8 +119,8 @@ func (l *Reflinker) linkIssueRef(begin, end int) int {
 	return e
 }
 
-func (l *Reflinker) lastIndexUserRef(begin, end int) int {
-	if !l.isBoundaryAt(begin - 1) {
+func (l *Reflinker) lastIndexUserRef(offset, start, end int) int {
+	if start < offset && !l.isBoundaryAt(offset-1) {
 		return -1 // e.g. foo@bar, _@foo (-@foo is ok)
 	}
 
@@ -142,42 +128,37 @@ func (l *Reflinker) lastIndexUserRef(begin, end int) int {
 	// or end with a hyphen: @foo-, @-foo
 	// Note: '/' just after user name like @foo/ is not allowed
 
-	if b := l.src[begin+1]; !isUserNameChar(b) || b == '-' {
+	if b := l.src[offset+1]; !isUserNameChar(b) || b == '-' {
 		return -1
 	}
 
-	for i := 2; begin+i < end; i++ {
-		b := l.src[begin+i]
+	for i := 2; offset+i < end; i++ {
+		b := l.src[offset+i]
 		if isUserNameChar(b) {
 			continue
 		}
-		if !isBoundary(b) || b == '/' || l.src[begin+i-1] == '-' {
+		if !isBoundary(b) || b == '/' || l.src[offset+i-1] == '-' {
 			return -1
 		}
-		return begin + i
+		return offset + i
 	}
 
 	if l.src[end-1] == '-' {
 		return -1
 	}
-	if end < len(l.src) {
-		if b := l.src[end]; !isBoundary(b) || b == '/' {
-			return -1
-		}
-	}
 
 	return end
 }
 
-func (l *Reflinker) linkUserRef(begin, end int) int {
-	e := l.lastIndexUserRef(begin, end)
+func (l *Reflinker) linkUserRef(offset, start, end int) int {
+	e := l.lastIndexUserRef(offset, start, end)
 	if e < 0 {
-		return begin + 1
+		return offset + 1
 	}
 
-	u := l.src[begin:e]
+	u := l.src[offset:e]
 	l.links = append(l.links, refLink{
-		start: begin,
+		start: offset,
 		end:   e,
 		text:  fmt.Sprintf("[%s](%s/%s)", u, l.home, u[1:]),
 	})
@@ -187,28 +168,29 @@ func (l *Reflinker) linkUserRef(begin, end int) int {
 
 const hashLen int = 40
 
-func (l *Reflinker) linkCommitSHA(begin, end int) int {
-	for i := 1; i < hashLen; i++ { // Since l.src[begin] was already checked, i starts from 1
-		if begin+i >= end {
-			return begin + i
+func (l *Reflinker) linkCommitSHA(offset, start, end int) int {
+	for i := 1; i < hashLen; i++ { // Since l.src[offset] was already checked, i starts from 1
+		if offset+i >= end {
+			return offset + i
 		}
-		b := l.src[begin+i]
+		b := l.src[offset+i]
 		if '0' <= b && b <= '9' || 'a' <= b && b <= 'f' {
 			continue
 		}
-		return begin + i
+		return offset + i
 	}
 
-	if l.isBoundaryAt(begin-1) && l.isBoundaryAt(begin+hashLen) {
-		h := l.src[begin : begin+hashLen]
+	hashEnd := offset + hashLen
+	if (start == offset || l.isBoundaryAt(offset-1)) && (hashEnd == end || l.isBoundaryAt(hashEnd)) {
+		h := l.src[offset:hashEnd]
 		l.links = append(l.links, refLink{
-			start: begin,
-			end:   begin + hashLen,
+			start: offset,
+			end:   offset + hashLen,
 			text:  fmt.Sprintf("[`%s`](%s/commit/%s)", h[:10], l.repo, h),
 		})
 	}
 
-	return begin + hashLen
+	return offset + hashLen
 }
 
 func (l *Reflinker) linkGitHubRefs(start, stop int) {
@@ -223,12 +205,12 @@ func (l *Reflinker) linkGitHubRefs(start, stop int) {
 
 		switch s[i] {
 		case '#':
-			o = l.linkIssueRef(o+i, stop)
+			o = l.linkIssueRef(o+i, start, stop)
 		case '@':
-			o = l.linkUserRef(o+i, stop)
+			o = l.linkUserRef(o+i, start, stop)
 		default:
 			// hex character [0-9a-f]
-			o = l.linkCommitSHA(o+i, stop)
+			o = l.linkCommitSHA(o+i, start, stop)
 		}
 	}
 }
