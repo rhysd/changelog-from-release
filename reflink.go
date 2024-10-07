@@ -329,7 +329,7 @@ func (l *Reflinker) linkURL(n *ast.AutoLink) {
 	}
 
 	// Search the offset of the start of the URL. When the text is a child of some other node, URL
-	// may not appear just after the previous node. The example is **https://...** where URL appers
+	// may not appear just after the previous node. The example is **https://...** where URL appears
 	// after the first **.
 	offset := bytes.Index(l.src[start:], url)
 	if offset < 0 {

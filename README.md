@@ -18,7 +18,7 @@ Other real-world examples:
 ## Installation
 
 Download binary from [the releases page](https://github.com/rhysd/changelog-from-release/releases) or
-build from sources with Go toolchain.
+build from sources with Go toolchain (1.21 or later).
 
 ```
 $ go install github.com/rhysd/changelog-from-release/v3@latest
@@ -36,6 +36,8 @@ $ changelog-from-release > CHANGELOG.md
 $ cat CHANGELOG.md
 ```
 
+For more command line usage, see the `-help` output.
+
 Automation with [GitHub Actions][gh-actions] is also offered. Please read
 [action's README](./action/README.md) for more details.
 
@@ -45,8 +47,6 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
     file: CHANGELOG.md
     github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
-
-For more usage, see `-help` output.
 
 
 ## Reference auto linking
@@ -110,7 +110,7 @@ cat <<-EOS > CHANGELOG.md
 Changelog
 =========
 
-This is a footer.
+This is a header.
 
 EOS
 
