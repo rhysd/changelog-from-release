@@ -92,7 +92,13 @@ func main() {
 		fail(err)
 	}
 
-	cl := NewChangeLog(os.Stdout, url, *heading, *drafts, reIgnore, reExtract)
+	cfg := &Config{
+		Level:   *heading,
+		Drafts:  *drafts,
+		Ignore:  reIgnore,
+		Extract: reExtract,
+	}
+	cl := NewChangeLog(os.Stdout, url, cfg)
 	ls, _ := gh.CustomAutolinks()
 	if err := cl.Generate(rels, ls); err != nil {
 		fail(err)

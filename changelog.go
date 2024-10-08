@@ -17,18 +17,15 @@ type link struct {
 	url  string
 }
 
-// ChangeLog is a struct to generate changelog output from given repository URL
-type ChangeLog struct {
-	repoURL string
-	out     io.Writer
-	level   int
-	drafts  bool
-	ignore  *regexp.Regexp
-	extract *regexp.Regexp
+type Config struct {
+	Level   int
+	Drafts  bool
+	Ignore  *regexp.Regexp
+	Extract *regexp.Regexp
 }
 
-func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
-	if cl.drafts && cl.ignore == nil && cl.extract == nil {
+func (c *Config) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
+	if c.Drafts && c.Ignore == nil && c.Extract == nil {
 		return rels
 	}
 
@@ -36,9 +33,9 @@ func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.
 	for i < len(rels) {
 		r := rels[i]
 		t := r.GetTagName()
-		if !cl.drafts && r.GetDraft() ||
-			cl.ignore != nil && cl.ignore.MatchString(t) ||
-			cl.extract != nil && !cl.extract.MatchString(t) {
+		if !c.Drafts && r.GetDraft() ||
+			c.Ignore != nil && c.Ignore.MatchString(t) ||
+			c.Extract != nil && !c.Extract.MatchString(t) {
 			rels = append(rels[:i], rels[i+1:]...)
 		} else {
 			i++
@@ -48,12 +45,19 @@ func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.
 	return rels
 }
 
+// ChangeLog is a struct to generate changelog output from given repository URL
+type ChangeLog struct {
+	repoURL string
+	out     io.Writer
+	cfg     *Config
+}
+
 // Generate generates changelog text from given releases and outputs it to its writer
 func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease, links []*github.Autolink) error {
-	rels = cl.filterReleases(rels)
+	rels = cl.cfg.filterReleases(rels)
 
 	out := bufio.NewWriter(cl.out)
-	heading := strings.Repeat("#", cl.level)
+	heading := strings.Repeat("#", cl.cfg.Level)
 
 	linker := NewReflinker(cl.repoURL)
 	for _, l := range links {
@@ -120,8 +124,8 @@ func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease, links []*github.
 }
 
 // NewChangeLog creates a new ChangeLog instance
-func NewChangeLog(w io.Writer, u *url.URL, l int, d bool, i, e *regexp.Regexp) *ChangeLog {
+func NewChangeLog(w io.Writer, u *url.URL, c *Config) *ChangeLog {
 	// Strip credentials in the repository URL (#9)
 	u.User = nil
-	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, l, d, i, e}
+	return &ChangeLog{strings.TrimSuffix(u.String(), ".git"), w, c}
 }
