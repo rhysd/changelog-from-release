@@ -49,12 +49,16 @@ func (cl *ChangeLog) filterReleases(rels []*github.RepositoryRelease) []*github.
 }
 
 // Generate generates changelog text from given releases and outputs it to its writer
-func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease) error {
+func (cl *ChangeLog) Generate(rels []*github.RepositoryRelease, links []*github.Autolink) error {
 	rels = cl.filterReleases(rels)
 
 	out := bufio.NewWriter(cl.out)
 	heading := strings.Repeat("#", cl.level)
+
 	linker := NewReflinker(cl.repoURL)
+	for _, l := range links {
+		linker.AddExtRef(*l.KeyPrefix, *l.URLTemplate, *l.IsAlphanumeric)
+	}
 
 	numRels := len(rels)
 	relLinks := make([]link, 0, numRels)

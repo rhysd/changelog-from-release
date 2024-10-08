@@ -93,8 +93,8 @@ func main() {
 	}
 
 	cl := NewChangeLog(os.Stdout, url, *heading, *drafts, reIgnore, reExtract)
-
-	if err := cl.Generate(rels); err != nil {
+	ls, _ := gh.CustomAutolinks()
+	if err := cl.Generate(rels, ls); err != nil {
 		fail(err)
 	}
 }
