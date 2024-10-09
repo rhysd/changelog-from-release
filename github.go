@@ -7,10 +7,26 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/google/go-github/v65/github"
 	"golang.org/x/oauth2"
 )
+
+type Project struct {
+	Releases  []*github.RepositoryRelease
+	Autolinks []*github.Autolink
+	Remote    *url.URL
+}
+
+func (p *Project) RepoURL() string {
+	// Strip credentials in the repository URL (#9)
+	saved := p.Remote.User
+	p.Remote.User = nil
+	ret := strings.TrimSuffix(p.Remote.String(), ".git")
+	p.Remote.User = saved
+	return ret
+}
 
 // GitHub implements GitHub API v3 client
 type GitHub struct {
@@ -18,6 +34,7 @@ type GitHub struct {
 	apiCtx   context.Context
 	owner    string
 	repoName string
+	url      *url.URL
 }
 
 // Releases fetches releases information. When no release is found, this method returns an error
@@ -58,6 +75,39 @@ func (gh *GitHub) CustomAutolinks() ([]*github.Autolink, error) {
 	}
 }
 
+func (gh *GitHub) Project() (*Project, error) {
+	// Fetch the releases and autolinks in parallel. This is more efficient than fetching them in
+	// serial when we have the permission to fetch autolinks. Note that I'm not sure go-github's
+	// API client is thread-safe, but I checked that `-race` didn't report any error.
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var rs []*github.RepositoryRelease
+	var err error
+	go func() {
+		rs, err = gh.Releases()
+		wg.Done()
+	}()
+
+	var ls []*github.Autolink
+	go func() {
+		// Ignore custom autolinks when we have no permission
+		ls, _ = gh.CustomAutolinks()
+		wg.Done()
+	}()
+
+	wg.Wait()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Project{
+		Releases:  rs,
+		Autolinks: ls,
+		Remote:    gh.url,
+	}, nil
+}
+
 // NewGitHub creates GitHub instance from given repository URL
 func NewGitHub(u *url.URL, c context.Context) (*GitHub, error) {
 	// '/owner/name'
@@ -88,5 +138,5 @@ func NewGitHub(u *url.URL, c context.Context) (*GitHub, error) {
 
 		api.BaseURL = u
 	}
-	return &GitHub{api, c, slug[1], slug[2]}, nil
+	return &GitHub{api, c, slug[1], slug[2], u}, nil
 }
