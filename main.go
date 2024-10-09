@@ -6,6 +6,9 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"sync"
+
+	"github.com/google/go-github/v65/github"
 )
 
 const version = "v3.7.2"
@@ -42,6 +45,31 @@ func remoteURL(config string) (*url.URL, error) {
 	}
 
 	return git.FirstRemoteURL()
+}
+
+func fetchInParallel(gh *GitHub) ([]*github.RepositoryRelease, []*github.Autolink, error) {
+	// Fetch the releases and autolinks in parallel. This is more efficient than fetching them in
+	// serial when we have the permission to fetch autolinks. Note that I'm not sure go-github's
+	// API client is thread-safe, but I checked that `-race` didn't report any error.
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var rs []*github.RepositoryRelease
+	var err error
+	go func() {
+		rs, err = gh.Releases()
+		wg.Done()
+	}()
+
+	var ls []*github.Autolink
+	go func() {
+		// Ignore custom autolinks when we have no permission
+		ls, _ = gh.CustomAutolinks()
+		wg.Done()
+	}()
+
+	wg.Wait()
+	return rs, ls, err
 }
 
 func main() {
@@ -87,7 +115,7 @@ func main() {
 		fail(err)
 	}
 
-	rels, err := gh.Releases()
+	rels, ls, err := fetchInParallel(gh)
 	if err != nil {
 		fail(err)
 	}
@@ -99,7 +127,6 @@ func main() {
 		Extract: reExtract,
 	}
 	cl := NewChangeLog(os.Stdout, url, cfg)
-	ls, _ := gh.CustomAutolinks()
 	if err := cl.Generate(rels, ls); err != nil {
 		fail(err)
 	}
