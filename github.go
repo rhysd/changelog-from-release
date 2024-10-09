@@ -59,7 +59,7 @@ func (gh *GitHub) CustomAutolinks() ([]*github.Autolink, error) {
 }
 
 // NewGitHub creates GitHub instance from given repository URL
-func NewGitHub(u *url.URL) (*GitHub, error) {
+func NewGitHub(u *url.URL, c context.Context) (*GitHub, error) {
 	// '/owner/name'
 	path := strings.TrimSuffix(u.Path, ".git")
 	slug := strings.Split(path, "/")
@@ -67,11 +67,10 @@ func NewGitHub(u *url.URL) (*GitHub, error) {
 		return nil, fmt.Errorf("invalid slug in GitHub repository URL path: %s", path)
 	}
 
-	ctx := context.Background()
 	client := http.DefaultClient
 	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
 		src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-		client = oauth2.NewClient(ctx, src)
+		client = oauth2.NewClient(c, src)
 	}
 
 	api := github.NewClient(client)
@@ -89,5 +88,5 @@ func NewGitHub(u *url.URL) (*GitHub, error) {
 
 		api.BaseURL = u
 	}
-	return &GitHub{api, ctx, slug[1], slug[2]}, nil
+	return &GitHub{api, c, slug[1], slug[2]}, nil
 }
