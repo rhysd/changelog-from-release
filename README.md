@@ -4,7 +4,8 @@ Generate Changelog from GitHub Releases
 
 `changelog-from-release` is a (too) small command line tool to generate changelog from
 [GitHub Releases][gh-releases]. It fetches releases of the repository via GitHub API and generates
-changelog in Markdown format.
+changelog in Markdown format. [References][gh-autolinks] like `#123` or `@rhysd` are automatically
+linked.
 
 For example, [CHANGELOG.md](./CHANGELOG.md) was generated from [the releases page][releases].
 
@@ -46,32 +47,6 @@ Automation with [GitHub Actions][gh-actions] is also offered. Please read
   with:
     file: CHANGELOG.md
     github_token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-
-## Reference auto linking
-
-References in a release note are automatically converted to links by `changelog-from-release`.
-
-- **Issue references** like `#123` are converted to links to the issue pages
-- **User references** like `@rhysd` are converted to links to the user profile pages
-- **Commit references** like `93e1af6ec49d23397baba466fba1e89cc8b6de39` are converted to links to the
-  commit pages. To avoid false-positives, only full-length (40 characters) commit hashes are converted.
-
-For example,
-
-```markdown
-Commit: 93e1af6ec49d23397baba466fba1e89cc8b6de39
-Author: @rhysd
-Issue:  #123
-```
-
-is converted to
-
-```markdown
-Commit: [`93e1af6ec4`](https://github.com/owner/repo/commit/93e1af6ec49d23397baba466fba1e89cc8b6de39)
-Author: [@rhysd](https://github.com/rhysd)
-Issue:  [#123](https://github.com/owner/repo/issues/123)
 ```
 
 
@@ -190,6 +165,75 @@ can use the `-d` flag to omit them:
 changelog-from-release -d=false > CHANGELOG.md
 ```
 
+
+## Reference auto linking
+
+GitHub [automatically links][gh-autolinks] to references to resources.
+
+`changelog-from-release` provides the same auto-linking feature. It automatically links the following
+references and URLs in release notes.
+
+### Issue reference
+
+`#123` → `[#123](https://github.com/owner/repo/issues/123)`
+
+External reference with `GH-` prefix is also supported.
+
+`GH-123` → `[#123](https://github.com/owner/repo/issues/123)`
+
+### User reference
+
+`@rhysd` → `[@rhysd](https://github.com/rhysd)`
+
+### Commit reference
+
+`93e1af6ec49d23397baba466fba1e89cc8b6de39` → ``[`93e1af6ec4`](https://github.com/owner/repo/commit/93e1af6ec49d23397baba466fba1e89cc8b6de39)``
+
+> [!Note]
+> To avoid false-positives, only full-length (40 characters) commit hashes are converted.
+
+### Custom autolink
+
+`JIRA-123` → `[JIRA-123](https://jira.my-company.com/browse/PROJ-123)`
+
+> [!Note]
+> Custom autolinks are [configured][gh-config-autolink] on your repository. [The API to fetch the custom autolinks configuration][gh-api-autolink]
+> requires "Administration" repository permissions (read). When the permission lacks, `changelog-from-release`
+> ignores the custom autolinks.
+
+### Issue URL
+
+`https://github.com/owner/repo/issues/123` → `[#123](https://github.com/owner/repo/issues/123)`
+
+For outside repositories,
+
+`https://github.com/other/repo/issues/123` → `[other/repo#123](https://github.com/owner/repo/issues/123)`
+
+And URL to an issue comment is supported.
+
+`https://github.com/owner/repo/issues/123#issue-1212591132` → `[#123 (comment)](https://github.com/owner/repo/issues/123#issue-1212591132)`
+
+### Pull request URL
+
+`https://github.com/owner/repo/pull/123` → `[#123](https://github.com/owner/repo/pull/123)`
+
+For outside repositories,
+
+`https://github.com/other/repo/pull/123` → `[other/repo#123](https://github.com/owner/repo/pull/123)`
+
+And URL to a review comment is supported.
+
+`https://github.com/owner/repo/pull/123#pullrequestreview-1212591132` → `[#123 (review)](https://github.com/owner/repo/pull/123#pullrequestreview-1212591132)`
+
+### Commit URL
+
+`https://github.com/owner/repo/commit/93e1af6ec4` → ``[`93e1af6ec4`](https://github.com/owner/repo/commit/93e1af6ec4)``
+
+For outside repositories,
+
+`https://github.com/other/repo/commit/93e1af6ec4` →  ``[other/repo`93e1af6ec4`](https://github.com/owner/repo/commit/93e1af6ec4)``
+
+
 ## Environment variables
 
 ### `GITHUB_API_BASE_URL`
@@ -223,3 +267,6 @@ export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 [ghe]: https://github.com/enterprise
 [pat]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 [gh-draft]: https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+[gh-autolinks]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls
+[gh-config-autolink]: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/configuring-autolinks-to-reference-external-resources
+[gh-api-autolink]: https://docs.github.com/en/rest/repos/autolinks
