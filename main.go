@@ -113,9 +113,14 @@ func main() {
 	}
 	slog.Debug("Fetched project via GitHub API:", "project", proj)
 
-	cl := NewChangeLog(os.Stdout, cfg)
-	if err := cl.Generate(proj); err != nil {
+	gen, err := GenerateChangeLog(cfg, proj)
+	if err != nil {
 		fail(err)
 	}
+
+	if _, err := os.Stdout.Write(gen); err != nil {
+		fail(fmt.Errorf("could not write the generated changelog to stdout: %w", err))
+	}
+
 	slog.Debug("Done")
 }
