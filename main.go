@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/url"
 	"os"
@@ -14,7 +15,7 @@ import (
 const version = "v3.7.2"
 
 func usage() {
-	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags]\n\n")
+	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags] [FILE]\n\n")
 	flag.PrintDefaults()
 }
 
@@ -97,8 +98,8 @@ func main() {
 	}
 	slog.Debug("Arguments parsed:", "config", cfg)
 
-	if flag.NArg() != 0 {
-		fail(fmt.Errorf("no argument is allowed but got %v", flag.Args()))
+	if flag.NArg() > 1 {
+		fail(fmt.Errorf("0 or 1 argument is allowed but got %v", flag.Args()))
 	}
 
 	url, err := remoteURL(*remote)
@@ -118,8 +119,23 @@ func main() {
 		fail(err)
 	}
 
-	if _, err := os.Stdout.Write(gen); err != nil {
-		fail(fmt.Errorf("could not write the generated changelog to stdout: %w", err))
+	var w io.Writer
+	if flag.NArg() == 0 {
+		slog.Debug("Writing the generated output to stdout")
+		w = os.Stdout
+	} else {
+		p := flag.Arg(0)
+		slog.Debug("Writing the generated output to file", "file", p)
+		f, err := os.Create(p)
+		if err != nil {
+			fail(err)
+		}
+		defer f.Close()
+		w = f
+	}
+
+	if _, err := w.Write(gen); err != nil {
+		fail(fmt.Errorf("could not write the generated changelog: %w", err))
 	}
 
 	slog.Debug("Done")
