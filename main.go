@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"os"
 	"regexp"
@@ -66,11 +67,18 @@ func main() {
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	remote := flag.String("r", "", "Remote repository URL to generate changelog")
+	debug := flag.Bool("debug", false, "Enable debug log")
 	flag.Parse()
 
 	if *ver {
 		fmt.Println(version)
 		os.Exit(0)
+	}
+	if *debug {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+	}
+	if *heading < 1 {
+		fail(fmt.Errorf("heading level set by -l must be >=1 but %d is set", *heading))
 	}
 
 	reIgnore, err := regexFlag(*ignore, "-i")
@@ -81,34 +89,33 @@ func main() {
 	if err != nil {
 		fail(err)
 	}
-
-	if flag.NArg() != 0 {
-		usage()
-		os.Exit(111)
-	}
-
-	if *heading < 1 {
-		fail(fmt.Errorf("heading level set by -l must be >=1 but %d is set", *heading))
-	}
-
-	url, err := remoteURL(*remote)
-	if err != nil {
-		fail(err)
-	}
-
-	proj, err := fetchFromGitHub(url)
-	if err != nil {
-		fail(err)
-	}
-
 	cfg := &Config{
 		Level:   *heading,
 		Drafts:  *drafts,
 		Ignore:  reIgnore,
 		Extract: reExtract,
 	}
+	slog.Debug("Arguments parsed:", "config", cfg)
+
+	if flag.NArg() != 0 {
+		fail(fmt.Errorf("no argument is allowed but got %v", flag.Args()))
+	}
+
+	url, err := remoteURL(*remote)
+	if err != nil {
+		fail(err)
+	}
+	slog.Debug("Remote URL was resolved:", "config", *remote, "url", url)
+
+	proj, err := fetchFromGitHub(url)
+	if err != nil {
+		fail(err)
+	}
+	slog.Debug("Fetched project via GitHub API:", "project", proj)
+
 	cl := NewChangeLog(os.Stdout, cfg)
 	if err := cl.Generate(proj); err != nil {
 		fail(err)
 	}
+	slog.Debug("Done")
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,6 +26,7 @@ func ResolveRedirect(url string) (*url.URL, error) {
 		return nil, fmt.Errorf("HEAD request to Git remote URL %q for following repository redirect was not successful: %s", url, res.Status)
 	}
 
+	slog.Debug("Resolved URL", "from", url, "to", res.Request.URL)
 	return res.Request.URL, nil
 }
 
@@ -38,8 +40,8 @@ type Git struct {
 func (git *Git) Command(subcmd string, args ...string) *exec.Cmd {
 	// e.g. 'git diff --cached' -> 'git -C /path/to/repo diff --cached'
 	a := append([]string{"-C", git.root, subcmd}, args...)
-	cmd := exec.Command(git.bin, a...)
-	return cmd
+	slog.Debug("Running Git command", "bin", git.bin, "args", a)
+	return exec.Command(git.bin, a...)
 }
 
 // Exec runs runs given Git subcommand with given arguments
@@ -56,7 +58,9 @@ func (git *Git) Exec(subcmd string, args ...string) (string, error) {
 		return "", fmt.Errorf("Git command %q  with args %v failed with output %q: %w", subcmd, args, out, err)
 	}
 
-	return string(out), nil
+	s := string(out)
+	slog.Debug("Git command successfully exited", "output", s)
+	return s, nil
 }
 
 // FirstRemoteName returns remote name of current Git repository. When multiple remotes are
@@ -75,6 +79,7 @@ func (git *Git) FirstRemoteName() (string, error) {
 		return "", fmt.Errorf("no remote is configured in this repository")
 	}
 
+	slog.Debug("Extracted the first remote name", "name", s)
 	return s, nil
 }
 
@@ -86,10 +91,12 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 		return nil, fmt.Errorf("could not get URL of remote repository: %w", err)
 	}
 
-	s, err := git.Exec("config", fmt.Sprintf("remote.%s.url", r))
+	c := fmt.Sprintf("remote.%s.url", r)
+	s, err := git.Exec("config", c)
 	if err != nil {
 		return nil, fmt.Errorf("could not get URL of remote %q: %w", r, err)
 	}
+	slog.Debug("Got config for remote URL", "config", c, "url", s)
 
 	if strings.HasPrefix(s, "git@") && strings.ContainsRune(s, ':') {
 		// git@github.com:user/repo.git → https://github.com/user/repo.git
@@ -102,6 +109,7 @@ func (git *Git) FirstRemoteURL() (*url.URL, error) {
 	if !strings.HasPrefix(s, "https://") && !strings.HasPrefix(s, "http://") {
 		return nil, fmt.Errorf("repository URL is neither HTTP nor HTTPS: %s", s)
 	}
+	slog.Debug("Converted to HTTP URL", "url", s)
 
 	u, err := ResolveRedirect(s)
 	if err != nil {
@@ -121,5 +129,6 @@ func NewGitForCwd() (*Git, error) {
 	if err != nil {
 		return nil, fmt.Errorf("'git' executable not found: %w", err)
 	}
+	slog.Debug("Git execution environment", "executable", exe, "cwd", cwd)
 	return &Git{exe, cwd}, nil
 }

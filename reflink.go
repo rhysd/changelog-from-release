@@ -5,6 +5,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"regexp"
 	"sort"
@@ -109,12 +110,14 @@ func (l *Reflinker) linkIssueRef(offset, start, end int) int {
 	}
 
 	r := l.src[offset:e]
-	l.links = append(l.links, refLink{
+	ln := refLink{
 		start: offset,
 		end:   e,
 		// Note: The link may be for PR, but GitHub can redirect this issue link to the PR
 		text: fmt.Sprintf("[%s](%s/issues/%s)", r, l.repo, r[1:]),
-	})
+	}
+	slog.Debug("Found issue reference autolink", "replacement", &ln, "offset", offset, "start", start, "end", end)
+	l.links = append(l.links, ln)
 
 	return e
 }
@@ -157,11 +160,13 @@ func (l *Reflinker) linkUserRef(offset, start, end int) int {
 	}
 
 	u := l.src[offset:e]
-	l.links = append(l.links, refLink{
+	ln := refLink{
 		start: offset,
 		end:   e,
 		text:  fmt.Sprintf("[%s](%s/%s)", u, l.home, u[1:]),
-	})
+	}
+	slog.Debug("Found user reference autolink", "replacement", &ln, "offset", offset, "start", start, "end", end)
+	l.links = append(l.links, ln)
 
 	return e
 }
@@ -183,11 +188,13 @@ func (l *Reflinker) linkCommitSHA(offset, start, end int) int {
 	hashEnd := offset + hashLen
 	if (start == offset || l.isBoundaryAt(offset-1)) && (hashEnd == end || l.isBoundaryAt(hashEnd)) {
 		h := l.src[offset:hashEnd]
-		l.links = append(l.links, refLink{
+		ln := refLink{
 			start: offset,
 			end:   offset + hashLen,
 			text:  fmt.Sprintf("[`%s`](%s/commit/%s)", h[:10], l.repo, h),
-		})
+		}
+		slog.Debug("Found commit hash reference autolink", "replacement", &ln, "offset", offset, "start", start, "end", end)
+		l.links = append(l.links, ln)
 	}
 
 	return offset + hashLen
@@ -235,11 +242,13 @@ func (l *Reflinker) linkExtRef(start, end int) int {
 			ref := src[s:e]
 			num := ref[len(ext.prefix):]
 			url := strings.ReplaceAll(ext.url, "<num>", string(num))
-			l.links = append(l.links, refLink{
+			ln := refLink{
 				start: start + s,
 				end:   start + e,
 				text:  fmt.Sprintf("[%s](%s)", ref, url),
-			})
+			}
+			slog.Debug("Found external resource (custom) autolink", "replacement", &ln, "start", start, "end", end)
+			l.links = append(l.links, ln)
 			return start + e
 		}
 	}
@@ -270,11 +279,13 @@ func (l *Reflinker) linkCommitURL(m [][]byte, url []byte, start, end int) {
 		replaced = fmt.Sprintf("[%s@`%s`](%s)", slug, hash, url)
 	}
 
-	l.links = append(l.links, refLink{
+	ln := refLink{
 		start: start,
 		end:   end,
 		text:  replaced,
-	})
+	}
+	slog.Debug("Converted commit URL to reference autolink", "replacement", &ln, "url", url, "start", start, "end", end)
+	l.links = append(l.links, ln)
 }
 
 // Consider URL with fragment which links to issue comments.
@@ -305,11 +316,13 @@ func (l *Reflinker) linkIssueURL(m [][]byte, url []byte, start, end int) {
 		replaced = fmt.Sprintf("[%s#%s%s](%s)", slug, num, note, url)
 	}
 
-	l.links = append(l.links, refLink{
+	ln := refLink{
 		start: start,
 		end:   end,
 		text:  replaced,
-	})
+	}
+	slog.Debug("Converted issue/PR URL to reference autolink", "replacement", &ln, "url", url, "start", start, "end", end)
+	l.links = append(l.links, ln)
 }
 
 func (l *Reflinker) linkURL(n *ast.AutoLink) {
@@ -370,10 +383,6 @@ func (l *Reflinker) buildLinkedText() string {
 	return b.String()
 }
 
-func (l *Reflinker) isLinkDetected() bool {
-	return len(l.links) > 0
-}
-
 // Link replaces all references in the given markdown text with actual links.
 func (l *Reflinker) Link(input string) string {
 	src := []byte(input)
@@ -410,7 +419,8 @@ func (l *Reflinker) Link(input string) string {
 		}
 	})
 
-	if !l.isLinkDetected() {
+	slog.Debug("Total reference autolink replacements", "replacements", len(l.links))
+	if len(l.links) == 0 {
 		return input
 	}
 

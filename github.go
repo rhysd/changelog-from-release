@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,6 +29,10 @@ func (p *Project) RepoURL() string {
 	return ret
 }
 
+func (p *Project) String() string {
+	return fmt.Sprintf("Project { %d releases, %d autolinks, URL %q }", len(p.Releases), len(p.Autolinks), p.Remote)
+}
+
 // GitHub implements GitHub API v3 client
 type GitHub struct {
 	api      *github.Client
@@ -42,6 +47,7 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 	rels := []*github.RepositoryRelease{}
 	page := 1
 	for {
+		slog.Debug("Fetching GitHub Releases API:", "url", gh.url, "page", page)
 		opts := github.ListOptions{
 			Page:    page,
 			PerPage: 100,
@@ -50,6 +56,7 @@ func (gh *GitHub) Releases() ([]*github.RepositoryRelease, error) {
 		if err != nil {
 			return nil, fmt.Errorf("cannot get releases from repository %s/%s via GitHub API: %w", gh.owner, gh.repoName, err)
 		}
+		slog.Debug("Fetched releases:", "url", gh.url, "releases", len(rels), "response", res)
 		rels = append(rels, rs...)
 		if res.NextPage == 0 {
 			return rels, nil
@@ -62,11 +69,13 @@ func (gh *GitHub) CustomAutolinks() ([]*github.Autolink, error) {
 	links := []*github.Autolink{}
 	page := 1
 	for {
+		slog.Debug("Fetching GitHub Autolinks API:", "url", gh.url, "page", page)
 		opts := github.ListOptions{Page: page}
 		ls, res, err := gh.api.Repositories.ListAutolinks(gh.apiCtx, gh.owner, gh.repoName, &opts)
 		if err != nil {
 			return nil, fmt.Errorf("cannot get custom autolinks from repository %s/%s via GitHub API: %w", gh.owner, gh.repoName, err)
 		}
+		slog.Debug("Fetched custom autolinks:", "url", gh.url, "links", len(ls), "response", res)
 		links = append(links, ls...)
 		if res.NextPage == 0 {
 			return links, nil
@@ -86,13 +95,15 @@ func (gh *GitHub) Project() (*Project, error) {
 	var err error
 	go func() {
 		rs, err = gh.Releases()
+		slog.Debug("Fetched all releases:", "url", gh.url, "releases", len(rs), "error", err)
 		wg.Done()
 	}()
 
 	var ls []*github.Autolink
 	go func() {
 		// Ignore custom autolinks when we have no permission
-		ls, _ = gh.CustomAutolinks()
+		ls, err = gh.CustomAutolinks()
+		slog.Debug("Fetched all autolinks:", "url", gh.url, "autolinks", len(ls), "error", err)
 		wg.Done()
 	}()
 
@@ -116,11 +127,13 @@ func NewGitHub(u *url.URL, c context.Context) (*GitHub, error) {
 	if len(slug) != 3 {
 		return nil, fmt.Errorf("invalid slug in GitHub repository URL path: %s", path)
 	}
+	slog.Debug("Extract repository information from URL", "owner", slug[1], "repo", slug[2], "url", u)
 
 	client := http.DefaultClient
 	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
 		src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 		client = oauth2.NewClient(c, src)
+		slog.Debug("Use API token through $GITHUB_TOKEN", "url", u)
 	}
 
 	api := github.NewClient(client)
@@ -137,6 +150,8 @@ func NewGitHub(u *url.URL, c context.Context) (*GitHub, error) {
 		}
 
 		api.BaseURL = u
+		slog.Debug("Use base URL for API requests", "url", u)
 	}
+
 	return &GitHub{api, c, slug[1], slug[2], u}, nil
 }

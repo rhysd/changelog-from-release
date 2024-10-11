@@ -255,6 +255,15 @@ export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 
+## Bug report or feature request
+
+Please [create an issue on GitHub][create-issue]. If something went wrong, it is helpful to include the debug log in the description. Debug log can be captured with the following command.
+
+```sh
+changelog-from-release -debug 2>log.txt
+```
+
+
 ## License
 
 [the MIT License](LICENSE.txt)
@@ -270,3 +279,4 @@ export GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 [gh-autolinks]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls
 [gh-config-autolink]: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/configuring-autolinks-to-reference-external-resources
 [gh-api-autolink]: https://docs.github.com/en/rest/repos/autolinks
+[create-issue]: https://github.com/rhysd/changelog-from-release/issues/new
