@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linter:
-    name: Run staticcheck
+    name: Run linters
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,14 +45,13 @@ jobs:
             echo "$diffs" >&2
             exit 1
           fi
+      - run: go vet
       - name: Install staticcheck
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
-      - name: Run staticcheck
-        run: |
           staticcheck --version
-          staticcheck ./
+      - run: staticcheck ./
   action:
     name: Check action
     runs-on: ubuntu-latest
