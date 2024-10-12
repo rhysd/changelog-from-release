@@ -19,7 +19,7 @@ Other real-world examples:
 ## Installation
 
 Download binary from [the releases page](https://github.com/rhysd/changelog-from-release/releases) or
-build from sources with Go toolchain (1.21 or later).
+build from sources with Go toolchain (1.22 or later).
 
 ```
 $ go install github.com/rhysd/changelog-from-release/v3@latest
