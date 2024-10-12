@@ -12,10 +12,11 @@ import (
 )
 
 type Config struct {
-	Level   int
-	Drafts  bool
-	Ignore  *regexp.Regexp
-	Extract *regexp.Regexp
+	Level      int
+	Drafts     bool
+	Prerelease bool
+	Ignore     *regexp.Regexp
+	Extract    *regexp.Regexp
 }
 
 func (c *Config) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
@@ -28,6 +29,7 @@ func (c *Config) filterReleases(rels []*github.RepositoryRelease) []*github.Repo
 		r := rels[i]
 		t := r.GetTagName()
 		if !c.Drafts && r.GetDraft() ||
+			!c.Prerelease && r.GetPrerelease() ||
 			c.Ignore != nil && c.Ignore.MatchString(t) ||
 			c.Extract != nil && !c.Extract.MatchString(t) {
 			slog.Debug("Filtered release due to configuration", "release", r, "tag", t)

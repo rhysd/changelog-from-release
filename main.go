@@ -64,6 +64,7 @@ func main() {
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
 	drafts := flag.Bool("d", true, "Include draft releases")
+	prerelease := flag.Bool("p", false, "Include prereleases")
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	remote := flag.String("r", "", "Remote repository URL to generate changelog")
@@ -90,10 +91,11 @@ func main() {
 		fail(err)
 	}
 	cfg := &Config{
-		Level:   *heading,
-		Drafts:  *drafts,
-		Ignore:  reIgnore,
-		Extract: reExtract,
+		Level:      *heading,
+		Drafts:     *drafts,
+		Prerelease: *prerelease,
+		Ignore:     reIgnore,
+		Extract:    reExtract,
 	}
 	slog.Debug("Arguments parsed:", "config", cfg)
 
@@ -118,6 +120,7 @@ func main() {
 		fail(err)
 	}
 
+	slog.Debug("Write the generated output to stdout", "bytes", len(gen))
 	if _, err := os.Stdout.Write(gen); err != nil {
 		fail(fmt.Errorf("could not write the generated changelog to stdout: %w", err))
 	}
