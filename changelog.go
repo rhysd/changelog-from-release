@@ -20,22 +20,18 @@ type Config struct {
 }
 
 func (c *Config) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
-	if c.Drafts && c.Ignore == nil && c.Extract == nil {
-		return rels
-	}
-
 	i := 0
 	for i < len(rels) {
 		r := rels[i]
 		t := r.GetTagName()
-		if !c.Drafts && r.GetDraft() ||
-			!c.Prerelease && r.GetPrerelease() ||
-			c.Ignore != nil && c.Ignore.MatchString(t) ||
-			c.Extract != nil && !c.Extract.MatchString(t) {
+		if (c.Drafts || !r.GetDraft()) &&
+			(c.Prerelease || !r.GetPrerelease()) &&
+			(c.Ignore == nil || !c.Ignore.MatchString(t)) &&
+			(c.Extract == nil || c.Extract.MatchString(t)) {
+			i++
+		} else {
 			slog.Debug("Filtered release due to configuration", "release", r, "tag", t)
 			rels = append(rels[:i], rels[i+1:]...)
-		} else {
-			i++
 		}
 	}
 
