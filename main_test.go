@@ -90,7 +90,7 @@ func TestGenerateWithRemoteURL(t *testing.T) {
 			link = fmt.Sprintf("[%s]: https://github.com/rhysd/action-setup-vim/compare/", v)
 		}
 		for _, want := range []string{
-			fmt.Sprintf(`<a name="%s"></a>`, v),
+			fmt.Sprintf(`<a id="%s"></a>`, v),
 			fmt.Sprintf(`# [%s](https://github.com/rhysd/action-setup-vim/releases/tag/%s)`, v, v),
 			fmt.Sprintf(`[Changes][%s]`, v),
 			fmt.Sprintf(`[Changes][%s]`, v),

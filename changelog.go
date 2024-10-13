@@ -92,7 +92,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 			compareURL = fmt.Sprintf("%s/compare/%s...%s", url, prevTag, tag)
 		}
 
-		fmt.Fprintf(&out, "<a name=\"%s\"></a>\n", tag)
+		fmt.Fprintf(&out, "<a id=\"%s\"></a>\n", tag)
 
 		if title == "" {
 			title = tag
