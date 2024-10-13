@@ -14,6 +14,12 @@ jobs:
         with:
           go-version: '>=1.22.0'
       - run: go build
+      - name: Get the expected output
+        run: |
+          curl -H "Authorization: token ${GITHUB_TOKEN}" 'https://raw.githubusercontent.com/rhysd/private-repo-test/refs/heads/main/CHANGELOG.md' > EXPECTED.md
+          cat EXPECTED.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Generate
         run: |
           ./changelog-from-release -r 'https://github.com/rhysd/private-repo-test' > OUTPUT.md
@@ -22,9 +28,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Check
         run: |
-          CHANGELOG="$(cat OUTPUT.md)"
-          if [[ "$CHANGELOG" != *"# [v0.0.0](https://github.com/rhysd/private-repo-test/releases/tag/v0.0.0) - 16 Jan 2023"* ]]; then
-            echo 'Unexpected changelog output:' 1>&2
-            cat OUTPUT.md 1>&2
+          diff=$(diff EXPECTED.md OUTPUT.md)
+          if [[ "$diff" != "" ]]; then
+            echo "$diff" >&2
             exit 1
           fi
