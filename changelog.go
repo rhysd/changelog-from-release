@@ -101,7 +101,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		}
 
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", url, tag)
-		date := created.Format("02 Jan 2006")
+		date := created.Format(time.DateOnly)
 
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
 		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))

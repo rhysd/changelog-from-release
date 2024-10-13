@@ -1,5 +1,5 @@
 <a name="v3.7.2"></a>
-# [v3.7.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.2) - 26 Jan 2024
+# [v3.7.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.2) - 2024-01-26
 
 - Fix getting a tag from `$GITHUB_EVENT_PATH` environment variable in action ([#23](https://github.com/rhysd/changelog-from-release/issues/23), thanks [@linde12](https://github.com/linde12))
 - Fix only `github.com` is allowed as host name for GHE environment
@@ -10,7 +10,7 @@
 
 
 <a name="v3.7.1"></a>
-# [v3.7.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.1) - 12 Apr 2023
+# [v3.7.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.1) - 2023-04-12
 
 - Ensure a trailing `/` in the API base URL set in `GITHUB_API_BASE_URL` environment variable
 - Show a diff of updated changelog in action output instead of printing an entire changelog
@@ -21,7 +21,7 @@
 
 
 <a name="v3.7.0"></a>
-# [v3.7.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.0) - 29 Jan 2023
+# [v3.7.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.7.0) - 2023-01-29
 
 - Add `-r` option to specify a remote URL of repository.
   ```sh
@@ -37,7 +37,7 @@
 
 
 <a name="v3.6.1"></a>
-# [v3.6.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.6.1) - 16 Jan 2023
+# [v3.6.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.6.1) - 2023-01-16
 
 - Fix 404 response is not handled when trying to resolve private renamed repositories. ([#19](https://github.com/rhysd/changelog-from-release/issues/19))
   - For private repositories, repository rename is not resolved because GitHub always returns 404 even if an authentication token is set. Please ensure the Git remote URL in your local repository is up-to-date when running `changelog-from-release` command in this case.
@@ -46,7 +46,7 @@
 
 
 <a name="v3.6.0"></a>
-# [v3.6.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.6.0) - 13 Jan 2023
+# [v3.6.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.6.0) - 2023-01-13
 
 - If you enable [protected-branch](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches), `rhysd/changelog-from-release/action` action cannot push a commit directly to the branch. Instead, use `pull_request` input to create a pull request to update the changelog. ([#17](https://github.com/rhysd/changelog-from-release/issues/17))
   ```yaml
@@ -61,7 +61,7 @@
 
 
 <a name="v3.5.2"></a>
-# [v3.5.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.5.2) - 05 Jan 2023
+# [v3.5.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.5.2) - 2023-01-05
 
 - Check and follow redirects for Git remote URLs. This check is necessary to resolve renamed old repositories correctly. ([#16](https://github.com/rhysd/changelog-from-release/issues/16))
 - Avoid unnecessary memory allocation when no reference link is included in changelog.
@@ -71,7 +71,7 @@
 
 
 <a name="v3.5.1"></a>
-# [v3.5.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.5.1) - 12 Dec 2022
+# [v3.5.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.5.1) - 2022-12-12
 
 - Add `-d` option to include/exclude drafts in generated changelog. (thanks [@paescuj](https://github.com/paescuj), [#15](https://github.com/rhysd/changelog-from-release/issues/15))
   ```sh
@@ -86,7 +86,7 @@
 
 
 <a name="v3.4.0"></a>
-# [v3.4.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.4.0) - 27 Aug 2022
+# [v3.4.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.4.0) - 2022-08-27
 
 - Add `-i` option to ignore release tags by regular expression pattern. For example, if your project has `nightly` tag release for nightly builds, it can be excluded as follows:
   ```sh
@@ -102,7 +102,7 @@
 
 
 <a name="v3.3.0"></a>
-# [v3.3.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.3.0) - 23 Aug 2022
+# [v3.3.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.3.0) - 2022-08-23
 
 - Add `args` input to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) to define command line arguments passed to `changelog-from-release` command.
   ```yaml
@@ -139,7 +139,7 @@
 
 
 <a name="v3.2.0"></a>
-# [v3.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.2.0) - 22 Aug 2022
+# [v3.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.2.0) - 2022-08-22
 
 - Add `-l` option to set heading level of each release sections. For example, `-l 2` uses `##` instead of `#` for each release sections.
 - Use Go 1.19 to build release binaries.
@@ -149,7 +149,7 @@
 
 
 <a name="v3.1.4"></a>
-# [v3.1.4](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.4) - 10 Aug 2022
+# [v3.1.4](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.4) - 2022-08-10
 
 - In previous release, references in link texts were fixed. But the fix was not perfect. Nested text node in a link node was still linked incorrectly and this release fixed the bug. For instance, `@foo` in `[_@foo_](...)` should not be linked where the text is in italic node in link node.
 
@@ -157,7 +157,7 @@
 
 
 <a name="v3.1.3"></a>
-# [v3.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.3) - 08 Aug 2022
+# [v3.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.3) - 2022-08-08
 
 - Do not references in link texts. Previously references in link texts like `[#1](...)` were linked to `[[#1](https://github.com/owner/repo/issues/1)](...)`. Now they are not linked and left as-is ([#12](https://github.com/rhysd/changelog-from-release/issues/12)).
 
@@ -166,7 +166,7 @@
 
 
 <a name="v3.1.2"></a>
-# [v3.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.2) - 04 Aug 2022
+# [v3.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.2) - 2022-08-04
 
 - Fixed `commit-summary-template` was not effective by renaming the input to `commit_summary_template`. Hyphens are not available in Docker actions. For example, when `v1.2.3` is released, the following step creates a commit with summary `chore(changelog): describe changes for "v1.2.3"`.
   ```yaml
@@ -181,7 +181,7 @@
 
 
 <a name="v3.1.1"></a>
-# [v3.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.1) - 04 Aug 2022
+# [v3.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.1) - 2022-08-04
 
 - Use `git remote` instead of `git rev-parse` to retrieve a remote name of repository since `git rev-parse` sometimes returns an unexpected output for some reason. ([#6](https://github.com/rhysd/changelog-from-release/issues/6))
 - Added `commit-summary-template` input to [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) so that the commit message can be customized. The template is passed to the first argument of `printf` command. It must contain one `%s` placeholder which will be replaced with the tag name.
@@ -192,7 +192,7 @@
 
 
 <a name="v3.1.0"></a>
-# [v3.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.0) - 03 Aug 2022
+# [v3.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.1.0) - 2022-08-03
 
 - Link commit references in release note automatically. For example, `85a7d9028ed70bc81224cb126e29e070dcc0aa1c` is converted to ``[`85a7d9028e`](https://github.com/owner/repo/commit/85a7d9028ed70bc81224cb126e29e070dcc0aa1c)``. Note that only full-length (40 characters) commit hashes are linked to avoid false positives.
 - Fix user references followed by `/` like `@foo/` are wrongly linked.
@@ -202,7 +202,7 @@
 
 
 <a name="v3.0.0"></a>
-# [v3.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.0.0) - 03 Aug 2022
+# [v3.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.0.0) - 2022-08-03
 
 - **BREAKING:** Labels at head of list items are no longer converted to bold text. For example, a list item starting with `- Fix:` was converted to `- **Fix:**`, but it is no longer converted from v3.0.0.
 - Issue references like `#123` and user references like `@rhysd` are now automatically linked ([#3](https://github.com/rhysd/changelog-from-release/issues/3)). For example, when we have a release item as follows in release notes:
@@ -221,7 +221,7 @@
 
 
 <a name="v2.2.5"></a>
-# [v2.2.5](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.5) - 02 Jun 2022
+# [v2.2.5](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.5) - 2022-06-02
 
 - Fix `changelog-from-release` command hangs when generating a changelog of repository which has more than 30 releases ([#8](https://github.com/rhysd/changelog-from-release/issues/8), [#10](https://github.com/rhysd/changelog-from-release/issues/10))
 
@@ -229,7 +229,7 @@
 
 
 <a name="v2.2.4"></a>
-# [v2.2.4](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.4) - 12 May 2022
+# [v2.2.4](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.4) - 2022-05-12
 
 - Strip credentials in repository URLs ([#9](https://github.com/rhysd/changelog-from-release/issues/9)).
 - Fix [the action](https://github.com/rhysd/changelog-from-release/tree/master/action) fails due to permission error on accessing a workspace directory.
@@ -240,7 +240,7 @@
 
 
 <a name="v2.2.3"></a>
-# [v2.2.3](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.3) - 26 Sep 2021
+# [v2.2.3](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.3) - 2021-09-26
 
 - Improve: Introduce Go modules. Now this tool is installable via `go install`
 - Improve: Better footer comment (thanks [@spl](https://github.com/spl), [#7](https://github.com/rhysd/changelog-from-release/issues/7))
@@ -251,7 +251,7 @@
 
 
 <a name="v2.2.2"></a>
-# [v2.2.2](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.2) - 24 Feb 2021
+# [v2.2.2](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.2) - 2021-02-24
 
 - Fix: Rename `github-token` input to `github_token` since `-` is not available for input names ([#4](https://github.com/rhysd/changelog-from-release/issues/4))
 
@@ -259,7 +259,7 @@
 
 
 <a name="v2.2.0"></a>
-# [v2.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.0) - 22 Feb 2020
+# [v2.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.2.0) - 2020-02-22
 
 - New: Support `$GITHUB_API_BASE_URL` environment variable to configure API endpoint for GitHub Enterprise
 
@@ -272,7 +272,7 @@ GITHUB_TOKEN=abcabcabcabcabcabcabc changelog-from-release > CHANGELOG.md
 
 
 <a name="v2.1.0"></a>
-# [v2.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.1.0) - 20 Feb 2020
+# [v2.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.1.0) - 2020-02-20
 
 - New: [Action](https://github.com/rhysd/changelog-from-release/tree/master/action) for [GitHub Actions]() was added. Updating your changelog file following the new release now can be automated easily.
 
@@ -303,7 +303,7 @@ jobs:
 
 
 <a name="v2.0.0"></a>
-# [v2.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.0.0) - 19 Feb 2020
+# [v2.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v2.0.0) - 2020-02-19
 
 I decided to keep this tool as simple as possible. This release drops some features for simplification.
 
@@ -325,7 +325,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.2.0"></a>
-# [v1.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.2.0) - 18 Feb 2020
+# [v1.2.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.2.0) - 2020-02-18
 
 - New: `-commit` option was added to make a new commit for the changelog updates automatically
 
@@ -333,7 +333,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.1.3"></a>
-# [v1.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.3) - 13 Feb 2020
+# [v1.1.3](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.3) - 2020-02-13
 
 - Fix: Consider paging for getting releases from GitHub API
 - Fix: Cause an error when no release found
@@ -342,7 +342,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.1.2"></a>
-# [v1.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.2) - 16 Nov 2019
+# [v1.1.2](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.2) - 2019-11-16
 
 - Fix: Codes in fences should not be modified
 
@@ -350,7 +350,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.1.1"></a>
-# [v1.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.1) - 14 Nov 2018
+# [v1.1.1](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.1) - 2018-11-14
 
 - Fix: Fix emphasizing item header with bold, not italic
 
@@ -358,7 +358,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.1.0"></a>
-# [v1.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.0) - 14 Nov 2018
+# [v1.1.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.1.0) - 2018-11-14
 
 - Improve: Emphasize list item headers like `- *Fix:* Fix something`
 
@@ -366,7 +366,7 @@ $ git commit -m "Update changelog for $(git describe --tags)"
 
 
 <a name="v1.0.0"></a>
-# [v1.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.0.0) - 10 Nov 2018
+# [v1.0.0](https://github.com/rhysd/changelog-from-release/releases/tag/v1.0.0) - 2018-11-10
 
 First release :tada:
 
