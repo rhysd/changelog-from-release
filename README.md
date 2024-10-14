@@ -199,7 +199,8 @@ External reference with `GH-` prefix is also supported.
 > [!Note]
 > Custom autolinks are [configured][gh-config-autolink] on your repository. [The API to fetch the custom autolinks configuration][gh-api-autolink]
 > requires "Administration" repository permissions (read). When the permission lacks, `changelog-from-release`
-> ignores the custom autolinks.
+> ignores the custom autolinks. You need to set your personal access token to the `GITHUB_TOKEN` environment
+> variable.
 
 ### Issue URL
 

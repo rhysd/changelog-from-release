@@ -14,7 +14,19 @@ import (
 const version = "v3.7.2"
 
 func usage() {
-	fmt.Fprint(os.Stderr, "Usage: changelog-from-release [flags]\n\n")
+	fmt.Fprint(os.Stderr, `Usage: changelog-from-release [FLAGS]
+
+changelog-from-release is a (too) small command line tool to generate changelog
+from GitHub Releases. This tool fetches releases of the repository via GitHub
+API and generates the changelog to stdout in Markdown format. References like
+#123 or @rhysd are automatically linked.
+
+Please read the document for more details:
+
+https://github.com/rhysd/changelog-from-release#readme
+
+Flags:
+`)
 	flag.PrintDefaults()
 }
 
@@ -64,7 +76,7 @@ func main() {
 	ver := flag.Bool("v", false, "Output version to stdout")
 	heading := flag.Int("l", 1, "Heading level of each release section")
 	drafts := flag.Bool("d", true, "Include draft releases")
-	prerelease := flag.Bool("p", false, "Include prereleases")
+	prerelease := flag.Bool("p", false, "Include pre-releases")
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	remote := flag.String("r", "", "Remote repository URL to generate changelog")
