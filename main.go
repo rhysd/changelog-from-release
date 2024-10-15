@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const version = "v3.7.2"
+const version = "v3.8.0"
 
 func usage() {
 	fmt.Fprint(os.Stderr, `Usage: changelog-from-release [FLAGS]
