@@ -13,11 +13,11 @@
   - This follows the recommendation by [keep a changelog](https://keepachangelog.com/en/1.1.0/).
   - Previous format (e.g. `02 Jan 2006`) was not good because not all release notes are written in English.
 - Use `id` attribute instead of `name` attribute for `<a>` elements in a generated changelog because the `name` attribute is deprecated.
-- Fix releases are not correctly filtered when both `-d` and `-ignore`/`-extract` are specified.
+- Fix releases are not correctly filtered when both `-d` and `-i`/`-e` are specified.
 - Set 120 seconds timeout to GitHub API requests.
-- Fetch requests to GitHub in parallel to fetch repository data faster.
+- Send requests to GitHub in parallel to fetch repository data faster.
 - Add `-debug` flag and debug log. When something went wrong, enabling debug log helps to analyze what happened.
-- Checksums for each released archives are included in the release assets as `changelog-from-release_{version}_checksums.txt`.
+- Include checksums for each released archives in the release assets as `changelog-from-release_{version}_checksums.txt`.
 - Require Go 1.22 or later for build.
 - Update `go-github` dependency from v58 to v66.
 
