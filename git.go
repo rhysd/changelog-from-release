@@ -12,21 +12,27 @@ import (
 )
 
 // ResolveRedirect resolves URL redirects and returns parsed URL
-func ResolveRedirect(url string) (*url.URL, error) {
-	url = strings.TrimSuffix(url, ".git")
+func ResolveRedirect(u string) (*url.URL, error) {
+	u = strings.TrimSuffix(u, ".git")
 
-	res, err := http.Head(url)
+	res, err := http.Head(u)
 	if err != nil {
-		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %q for following repository redirect: %w", url, err)
+		return nil, fmt.Errorf("could not send HEAD request to Git remote URL %q for following repository redirect: %w", u, err)
 	}
 
 	// GitHub returns 404 when the repository is private. GHE would do the same since all GHE repositories
 	// basically require authentication. 403 may be returned as well. (#19)
 	if res.StatusCode != 200 && res.StatusCode != 404 && res.StatusCode != 403 {
-		return nil, fmt.Errorf("HEAD request to Git remote URL %q for following repository redirect was not successful: %s", url, res.Status)
+		return nil, fmt.Errorf("HEAD request to Git remote URL %q for following repository redirect was not successful: %s", u, res.Status)
 	}
 
-	slog.Debug("Resolved URL", "from", url, "to", res.Request.URL)
+	// GitHub Enterprise server redirects the repository access to the login page URL with 200 status.
+	if res.Request.URL.Path == "/login" && res.Request.URL.RawQuery != "" {
+		slog.Debug("URL was redirected to login page. Gave up resolving the redirect", "from", u, "to", res.Request.URL)
+		return url.Parse(u)
+	}
+
+	slog.Debug("Resolved URL", "from", u, "to", res.Request.URL)
 	return res.Request.URL, nil
 }
 
