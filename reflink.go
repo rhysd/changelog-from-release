@@ -222,15 +222,18 @@ func (l *Reflinker) linkGitHubRefs(start, stop int) {
 	}
 }
 
-// Parameters are corresponding to the API:
+// AddExtRef adds external refeerence. Parameters are corresponding to the API:
 // https://docs.github.com/en/rest/repos/autolinks?apiVersion=2022-11-28
 func (l *Reflinker) AddExtRef(prefix, url string, alphanumeric bool) {
+	prefix = regexp.QuoteMeta(prefix)
+
 	var r *regexp.Regexp
 	if alphanumeric {
 		r = regexp.MustCompile(`\b` + prefix + `[a-zA-Z0-9_]+`)
 	} else {
 		r = regexp.MustCompile(`\b` + prefix + `\d+\b`)
 	}
+
 	l.ext = append(l.ext, extRef{prefix, r, url})
 }
 
