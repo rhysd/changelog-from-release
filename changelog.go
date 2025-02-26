@@ -143,7 +143,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 
 			// Add this to the Contributors section
 			if len(usernames) > 0 {
-				fmt.Fprintf(&out, "\n\n## Contributors\n\n")
+				fmt.Fprintf(&out, "\n\n## Contributors\n")
 
 				// Sort usernames for consistent output
 				sort.Strings(usernames)
