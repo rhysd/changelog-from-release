@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -12,11 +15,12 @@ import (
 )
 
 type Config struct {
-	Level      int
-	Drafts     bool
-	Prerelease bool
-	Ignore     *regexp.Regexp
-	Extract    *regexp.Regexp
+	Level        int
+	Drafts       bool
+	Prerelease   bool
+	Contributors bool
+	Ignore       *regexp.Regexp
+	Extract      *regexp.Regexp
 }
 
 func (c *Config) filterReleases(rels []*github.RepositoryRelease) []*github.RepositoryRelease {
@@ -56,6 +60,8 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 	for _, l := range p.Autolinks {
 		linker.AddExtRef(*l.KeyPrefix, *l.URLTemplate, *l.IsAlphanumeric)
 	}
+
+	userExists := make(map[string]bool)
 
 	numRels := len(rels)
 	refs := make([]ref, 0, numRels)
@@ -102,9 +108,55 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", url, tag)
 		date := created.Format(time.DateOnly)
+		replacedBody := linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1))
 
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
-		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
+		fmt.Fprint(&out, replacedBody)
+
+		if c.Contributors {
+			// Extract GitHub usernames using regex
+			re := regexp.MustCompile(`\[@([a-zA-Z0-9-]+)\]\(https://github\.com/[a-zA-Z0-9-]+\)`)
+			matches := re.FindAllStringSubmatch(replacedBody, -1)
+
+			contributors := make(map[string]struct{})
+			for _, match := range matches {
+				if len(match) > 1 {
+					contributors[match[1]] = struct{}{}
+				}
+			}
+
+			usernames := make([]string, 0, len(contributors))
+			for username := range contributors {
+				if _, ok := userExists[username]; !ok {
+					// Check if the user still exists in case the user has been deleted
+					// This is to avoid 404 errors when fetching the user's profile image
+					_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
+					userExist := err == nil && resp.StatusCode == http.StatusOK
+					userExists[username] = userExist
+				}
+				if !userExists[username] {
+					// Skip non-existent users
+					continue
+				}
+				usernames = append(usernames, username)
+			}
+
+			// Add this to the Contributors section
+			if len(usernames) > 0 {
+				fmt.Fprintf(&out, "\n\n## Contributors\n\n")
+
+				// Sort usernames for consistent output
+				sort.Strings(usernames)
+
+				for _, username := range usernames {
+					// Add contributor with profile icon
+					fmt.Fprintf(&out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
+						username, username, username)
+				}
+				fmt.Fprint(&out, "\n")
+			}
+		}
+
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
 
 		refs = append(refs, ref{tag, compareURL})

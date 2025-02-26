@@ -15,6 +15,7 @@ import (
 )
 
 type Project struct {
+	GitHub    *GitHub
 	Releases  []*github.RepositoryRelease
 	Autolinks []*github.Autolink
 	Remote    *url.URL
@@ -116,6 +117,7 @@ func (gh *GitHub) Project() (*Project, error) {
 		Releases:  rs,
 		Autolinks: ls,
 		Remote:    gh.url,
+		GitHub:    gh,
 	}, nil
 }
 
