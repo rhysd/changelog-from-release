@@ -114,47 +114,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		fmt.Fprint(&out, replacedBody)
 
 		if c.Contributors {
-			// Extract GitHub usernames using regex
-			re := regexp.MustCompile(`\[@([a-zA-Z0-9-]+)\]\(https://github\.com/[a-zA-Z0-9-]+\)`)
-			matches := re.FindAllStringSubmatch(replacedBody, -1)
-
-			contributors := make(map[string]struct{})
-			for _, match := range matches {
-				if len(match) > 1 {
-					contributors[match[1]] = struct{}{}
-				}
-			}
-
-			usernames := make([]string, 0, len(contributors))
-			for username := range contributors {
-				if _, ok := userExists[username]; !ok {
-					// Check if the user still exists in case the user has been deleted
-					// This is to avoid 404 errors when fetching the user's profile image
-					_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
-					userExist := err == nil && resp.StatusCode == http.StatusOK
-					userExists[username] = userExist
-				}
-				if !userExists[username] {
-					// Skip non-existent users
-					continue
-				}
-				usernames = append(usernames, username)
-			}
-
-			// Add this to the Contributors section
-			if len(usernames) > 0 {
-				fmt.Fprintf(&out, "\n\n## Contributors\n")
-
-				// Sort usernames for consistent output
-				sort.Strings(usernames)
-
-				for _, username := range usernames {
-					// Add contributor with profile icon
-					fmt.Fprintf(&out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
-						username, username, username)
-				}
-				fmt.Fprint(&out, "\n")
-			}
+			processContributors(&out, replacedBody, p, userExists)
 		}
 
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
@@ -174,4 +134,46 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 	slog.Debug("Finish to generate release notes", "url", url)
 
 	return out.Bytes(), nil
+}
+
+// Extract and display contributors from release body
+func processContributors(out *bytes.Buffer, releaseBody string, p *Project, userExists map[string]bool) {
+	// Extract GitHub usernames using regex
+	re := regexp.MustCompile(`\[@([a-zA-Z0-9-]+)\]\(https://github\.com/[a-zA-Z0-9-]+\)`)
+	matches := re.FindAllStringSubmatch(releaseBody, -1)
+
+	// Build unique list of usernames
+	contributors := make(map[string]bool)
+	for _, match := range matches {
+		if len(match) > 1 {
+			username := match[1]
+			if _, checked := userExists[username]; !checked {
+				// Verify user exists to avoid 404 on image load
+				_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
+				userExists[username] = err == nil && resp.StatusCode == http.StatusOK
+			}
+			if userExists[username] {
+				contributors[username] = true
+			}
+		}
+	}
+
+	// Display contributors if any found
+	if len(contributors) > 0 {
+		fmt.Fprintf(out, "\n\n## Contributors\n")
+
+		// Get sorted list of usernames
+		usernames := make([]string, 0, len(contributors))
+		for username := range contributors {
+			usernames = append(usernames, username)
+		}
+		sort.Strings(usernames)
+
+		// Add profile images
+		for _, username := range usernames {
+			fmt.Fprintf(out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
+				username, username, username)
+		}
+		fmt.Fprint(out, "\n")
+	}
 }
