@@ -435,7 +435,7 @@ func (l *Reflinker) Link(input string) string {
 	return l.applyReplacements()
 }
 
-// Usernames returns all user names found in the markdown text.
+// Usernames returns all usernames found in the markdown text.
 func (l *Reflinker) Usernames() []string {
 	users := make([]string, 0, len(l.users))
 	for u := range l.users {
