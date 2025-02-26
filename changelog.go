@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
@@ -108,13 +107,12 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 
 		pageURL := fmt.Sprintf("%s/releases/tag/%s", url, tag)
 		date := created.Format(time.DateOnly)
-		replacedBody := linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1))
 
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
-		fmt.Fprint(&out, replacedBody)
+		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
 
 		if c.Contributors {
-			processContributors(&out, replacedBody, p, userExists)
+			processContributors(&out, linker.Usernames(), p, userExists)
 		}
 
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
@@ -137,43 +135,29 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 }
 
 // Extract and display contributors from release body
-func processContributors(out *bytes.Buffer, releaseBody string, p *Project, userExists map[string]bool) {
-	// Extract GitHub usernames using regex
-	re := regexp.MustCompile(`\[@([a-zA-Z0-9-]+)\]\(https://github\.com/[a-zA-Z0-9-]+\)`)
-	matches := re.FindAllStringSubmatch(releaseBody, -1)
-
-	// Build unique list of usernames
-	contributors := make(map[string]bool)
-	for _, match := range matches {
-		if len(match) > 1 {
-			username := match[1]
-			if _, checked := userExists[username]; !checked {
-				// Verify user exists to avoid 404 on image load
-				_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
-				userExists[username] = err == nil && resp.StatusCode == http.StatusOK
-			}
-			if userExists[username] {
-				contributors[username] = true
-			}
+func processContributors(out *bytes.Buffer, usernames []string, p *Project, userExists map[string]bool) {
+	var contributors []string
+	for _, username := range usernames {
+		if _, checked := userExists[username]; !checked {
+			// Verify user exists to avoid 404 on image load
+			_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
+			userExists[username] = err == nil && resp.StatusCode == http.StatusOK
+		}
+		if userExists[username] {
+			contributors = append(contributors, username)
 		}
 	}
 
-	// Display contributors if any found
-	if len(contributors) > 0 {
-		fmt.Fprintf(out, "\n\n## Contributors\n")
-
-		// Get sorted list of usernames
-		usernames := make([]string, 0, len(contributors))
-		for username := range contributors {
-			usernames = append(usernames, username)
-		}
-		sort.Strings(usernames)
-
-		// Add profile images
-		for _, username := range usernames {
-			fmt.Fprintf(out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
-				username, username, username)
-		}
-		fmt.Fprint(out, "\n")
+	if len(contributors) == 0 {
+		return
 	}
+
+	fmt.Fprintf(out, "\n\n## Contributors\n")
+
+	// Add profile images
+	for _, username := range contributors {
+		fmt.Fprintf(out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
+			username, username, username)
+	}
+	fmt.Fprint(out, "\n")
 }

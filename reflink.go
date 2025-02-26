@@ -48,11 +48,12 @@ type extRef struct {
 
 // Reflinker detects all references in markdown text and replaces them with links.
 type Reflinker struct {
-	repo string
-	home string
-	src  []byte
-	ext  []extRef
-	reps []replacement
+	repo  string
+	home  string
+	src   []byte
+	ext   []extRef
+	reps  []replacement
+	users map[string]struct{}
 }
 
 // NewReflinker creates Reflinker instance. repoURL is a repository URL of the service like
@@ -75,6 +76,7 @@ func NewReflinker(repoURL string) *Reflinker {
 func (l *Reflinker) reset(src []byte) {
 	l.src = src
 	l.reps = nil
+	l.users = make(map[string]struct{})
 }
 
 func (l *Reflinker) isBoundaryAt(idx int) bool {
@@ -167,6 +169,9 @@ func (l *Reflinker) linkUserRef(offset, start, end int) int {
 	}
 	slog.Debug("Found user reference autolink", "replacement", &rep, "offset", offset, "start", start, "end", end)
 	l.reps = append(l.reps, rep)
+
+	username := u[1:] // Remove '@'
+	l.users[string(username)] = struct{}{}
 
 	return e
 }
@@ -428,4 +433,14 @@ func (l *Reflinker) Link(input string) string {
 	}
 
 	return l.applyReplacements()
+}
+
+// Usernames returns all user names found in the markdown text.
+func (l *Reflinker) Usernames() []string {
+	users := make([]string, 0, len(l.users))
+	for u := range l.users {
+		users = append(users, u)
+	}
+	sort.Strings(users)
+	return users
 }
