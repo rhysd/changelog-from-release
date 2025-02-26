@@ -114,10 +114,10 @@ func (gh *GitHub) Project() (*Project, error) {
 	}
 
 	return &Project{
+		GitHub:    gh,
 		Releases:  rs,
 		Autolinks: ls,
 		Remote:    gh.url,
-		GitHub:    gh,
 	}, nil
 }
 
