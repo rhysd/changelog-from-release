@@ -110,9 +110,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
 		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
 
-		if c.Contributors {
-			processContributors(&out, linker.Usernames(), p, userExists)
-		}
+		processContributors(&out, linker.Usernames(), userExists, c)
 
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
 
@@ -134,7 +132,11 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 }
 
 // Extract and display contributors from release body
-func processContributors(out *bytes.Buffer, usernames []string, p *Project, userExists map[string]bool) {
+func processContributors(out *bytes.Buffer, usernames []string, userExists map[string]bool, c *Config) {
+	if !c.Contributors {
+		return
+	}
+
 	var contributors []string
 	for _, username := range usernames {
 		if _, checked := userExists[username]; !checked {
@@ -152,7 +154,7 @@ func processContributors(out *bytes.Buffer, usernames []string, p *Project, user
 		return
 	}
 
-	fmt.Fprintf(out, "\n\n## Contributors\n")
+	fmt.Fprintf(out, "\n\n%s Contributors\n\n", strings.Repeat("#", c.Level+1))
 
 	// Add profile images
 	for _, username := range contributors {
