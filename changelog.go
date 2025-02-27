@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -139,8 +138,9 @@ func processContributors(out *bytes.Buffer, usernames []string, p *Project, user
 	var contributors []string
 	for _, username := range usernames {
 		if _, checked := userExists[username]; !checked {
+			profileImageURL := fmt.Sprintf("https://github.com/%s.png", username)
+			resp, err := http.Get(profileImageURL)
 			// Verify user exists to avoid 404 on image load
-			_, resp, err := p.GitHub.api.Users.Get(context.TODO(), username)
 			userExists[username] = err == nil && resp.StatusCode == http.StatusOK
 		}
 		if userExists[username] {
