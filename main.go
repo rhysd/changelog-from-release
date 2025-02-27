@@ -80,6 +80,7 @@ func main() {
 	ignore := flag.String("i", "", "Pattern to ignore release tags in regular expression")
 	extract := flag.String("e", "", "Pattern to extract release tags in regular expression")
 	remote := flag.String("r", "", "Remote repository URL to generate changelog")
+	contrib := flag.Bool("c", false, "Include contributors section")
 	debug := flag.Bool("debug", false, "Enable debug log")
 	flag.Parse()
 
@@ -103,11 +104,12 @@ func main() {
 		fail(err)
 	}
 	cfg := &Config{
-		Level:      *heading,
-		Drafts:     *drafts,
-		Prerelease: *prerelease,
-		Ignore:     reIgnore,
-		Extract:    reExtract,
+		Level:        *heading,
+		Drafts:       *drafts,
+		Prerelease:   *prerelease,
+		Ignore:       reIgnore,
+		Extract:      reExtract,
+		Contributors: *contrib,
 	}
 	slog.Debug("Arguments parsed:", "config", cfg)
 
