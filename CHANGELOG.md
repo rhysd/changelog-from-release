@@ -1,7 +1,7 @@
 <a id="v3.8.1"></a>
 # [v3.8.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.8.1) - 2024-12-02
 
-- Fix resolving redirect of repository URL does not work when the repository is hosted on GitHub Enterprise server. changelog-from-release tries to resolve a repository URL because the repository may have been renamed. However GitHub Enterprise server redirects a repository URL to its login page when the request is not authenticated. Now changelog-from-release detects a login page URL and stops resolving the redirect.
+- Fix resolving redirect of repository URL does not work when the repository is hosted on a GitHub Enterprise server. changelog-from-release tries to resolve a repository URL because the repository may have been renamed. However GitHub Enterprise server redirects a repository URL to its login page when the request is not authenticated. Now changelog-from-release detects a login page URL and stops resolving the redirect.
 
 [Changes][v3.8.1]
 
