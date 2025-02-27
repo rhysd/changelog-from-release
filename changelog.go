@@ -139,7 +139,7 @@ func processContributors(out *bytes.Buffer, usernames []string, p *Project, user
 	for _, username := range usernames {
 		if _, checked := userExists[username]; !checked {
 			profileImageURL := fmt.Sprintf("https://github.com/%s.png", username)
-			resp, err := http.Get(profileImageURL)
+			resp, err := http.Head(profileImageURL)
 			// Verify user exists to avoid 404 on image load
 			userExists[username] = err == nil && resp.StatusCode == http.StatusOK
 		}
