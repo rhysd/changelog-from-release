@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -158,8 +159,13 @@ func processContributors(out *bytes.Buffer, usernames []string, userExists map[s
 
 	// Add profile images
 	for _, username := range contributors {
-		fmt.Fprintf(out, "<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=https://github.com/%s.png&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
-			username, username, username)
+		fmt.Fprintf(
+			out,
+			"<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
+			username,
+			url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", username)),
+			username,
+		)
 	}
 	fmt.Fprint(out, "\n")
 }
