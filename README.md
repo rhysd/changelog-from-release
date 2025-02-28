@@ -177,6 +177,13 @@ changelog file from Markdown into plain text.
 pandoc CHANGELOG.md -t plain -o CHANGELOG.txt --wrap=none
 ```
 
+### Can I generate 'Contributors' section?
+
+`c` option supports it. There are two notes on this feature:
+
+- To avoid false positives, this feature check the users actually exist by sending an HTTP request. If you're using it
+  with GHES and user profile pages are not accessible without authentication, this option does not work.
+- To make user icons circle, the option generates links to https://wsrv.nl instead of the direct profile images.
 
 ## Reference auto linking
 
