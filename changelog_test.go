@@ -153,8 +153,9 @@ func TestGenerateContributorsSection(t *testing.T) {
 	_ = l.Link("This is test for contributors section @rhysd @hello @world")
 	c := &Config{Contributors: true, Level: 2}
 
+	known := map[string]bool{"hello": true, "world": false}
 	var b bytes.Buffer
-	generateContributorsSection(&b, l, map[string]bool{"hello": true, "world": false}, c)
+	generateContributorsSection(&b, l, known, c)
 
 	have := b.String()
 	want := strings.Join([]string{
@@ -165,9 +166,13 @@ func TestGenerateContributorsSection(t *testing.T) {
 		`<a href="https://github.com/hello"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Fhello.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@hello"></a>`,
 		`<a href="https://github.com/rhysd"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Frhysd.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@rhysd"></a>`,
 	}, "\n")
-
 	if have != want {
 		t.Fatal(cmp.Diff(have, want))
+	}
+
+	yes, ok := known["rhysd"]
+	if !ok || !yes {
+		t.Fatal("@rhysd is not registered as known user:", known)
 	}
 }
 
