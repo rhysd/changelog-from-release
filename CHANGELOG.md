@@ -1,3 +1,18 @@
+<a id="v3.9.0"></a>
+# [v3.9.0](https://github.com/rhysd/changelog-from-release/releases/tag/v3.9.0) - 2025-02-28
+
+- Add `-c` option to generate "Contributors" section like below. Here is the [example of actionlint repository](https://gist.github.com/rhysd/fabe27f6c1610cd4fd84e85c134102d8) enabling the option. There are some notes on this option. Please read the [document](https://github.com/rhysd/changelog-from-release?tab=readme-ov-file#can-i-generate-contributors-section) for more details. ([#33](https://github.com/rhysd/changelog-from-release/issues/33), thanks [@yottahmd](https://github.com/yottahmd))
+  ```markdown
+  ## Contributors
+
+  <a href="https://github.com/rhysd"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Frhysd.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@rhysd"></a>
+  <a href="https://github.com/yottahmd"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Fyottahmd.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@yottahmd"></a>
+  ```
+- Fix crash when some external reference prefix contains a regex meta character.
+
+[Changes][v3.9.0]
+
+
 <a id="v3.8.1"></a>
 # [v3.8.1](https://github.com/rhysd/changelog-from-release/releases/tag/v3.8.1) - 2024-12-02
 
@@ -407,6 +422,7 @@ First release :tada:
 [Changes][v1.0.0]
 
 
+[v3.9.0]: https://github.com/rhysd/changelog-from-release/compare/v3.8.1...v3.9.0
 [v3.8.1]: https://github.com/rhysd/changelog-from-release/compare/v3.8.0...v3.8.1
 [v3.8.0]: https://github.com/rhysd/changelog-from-release/compare/v3.7.2...v3.8.0
 [v3.7.2]: https://github.com/rhysd/changelog-from-release/compare/v3.7.1...v3.7.2
