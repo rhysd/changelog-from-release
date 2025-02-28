@@ -45,11 +45,11 @@ archives:
         - LICENSE.txt
     id: nix
     builds: [macos, linux, freebsd]
-    format: tar.gz
+    formats: ['tar.gz']
   - <<: *archives_defaults
     id: windows
     builds: [windows]
-    format: zip
+    formats: ['zip']
 
 changelog:
   disable: true
