@@ -138,9 +138,10 @@ func generateContributorsSection(out *bytes.Buffer, linker *Reflinker, knownUser
 	}
 
 	var contributors []string
+	home := linker.HomeURL()
 	for _, n := range linker.Usernames() {
 		if _, checked := knownUsers[n]; !checked {
-			r, err := http.Head(fmt.Sprintf("https://github.com/%s.png", n))
+			r, err := http.Head(fmt.Sprintf("%s/%s.png", home, n))
 			// Verify user exists to avoid 404 on image load
 			knownUsers[n] = err == nil && r.StatusCode == http.StatusOK
 		}
@@ -158,7 +159,7 @@ func generateContributorsSection(out *bytes.Buffer, linker *Reflinker, knownUser
 
 	// Add profile image links
 	for _, n := range contributors {
-		u := url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", n))
-		fmt.Fprintf(out, "\n<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=128&h=128&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", n, u, n)
+		u := url.QueryEscape(fmt.Sprintf("%s/%s.png", home, n))
+		fmt.Fprintf(out, "\n<a href=\"%s/%s\"><img src=\"https://wsrv.nl/?url=%s&w=128&h=128&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", home, n, u, n)
 	}
 }

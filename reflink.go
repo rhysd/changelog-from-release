@@ -443,3 +443,8 @@ func (l *Reflinker) Usernames() []string {
 	sort.Strings(ret)
 	return ret
 }
+
+// HomeURL returns the home URL of the repository hosting service like "https://github.com"
+func (l *Reflinker) HomeURL() string {
+	return l.home
+}
