@@ -158,6 +158,6 @@ func generateContributorsSection(out *bytes.Buffer, names []string, knownUsers m
 	// Add profile images
 	for _, n := range contributors {
 		u := url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", n))
-		fmt.Fprintf(out, "\n<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", n, u, n)
+		fmt.Fprintf(out, "\n<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=128&h=128&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", n, u, n)
 	}
 }
