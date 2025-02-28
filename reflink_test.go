@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+)
 
 func TestLinkRefs(t *testing.T) {
 	tests := []struct {
@@ -655,5 +659,14 @@ func TestLinkCustomReferences(t *testing.T) {
 				t.Fatalf("wanted %q but got %q", tc.want, have)
 			}
 		})
+	}
+}
+
+func TestCollectUserNames(t *testing.T) {
+	l := NewReflinker("https://github.com/u/r")
+	l.Link("@foo-bar @world @hello")
+	u := l.Usernames()
+	if diff := cmp.Diff(u, []string{"foo-bar", "hello", "world"}); diff != "" {
+		t.Fatal(diff)
 	}
 }

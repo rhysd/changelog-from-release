@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -143,5 +145,41 @@ func TestConfigFilterReleases(t *testing.T) {
 				t.Fatal(cmp.Diff(have, tc.want), have)
 			}
 		})
+	}
+}
+
+func TestGenerateContributorsSection(t *testing.T) {
+	l := NewReflinker("https://github.com/u/r")
+	_ = l.Link("This is test for contributors section @rhysd @hello @world")
+	c := &Config{Contributors: true, Level: 2}
+
+	var b bytes.Buffer
+	generateContributorsSection(&b, l, map[string]bool{"hello": true, "world": false}, c)
+
+	have := b.String()
+	want := strings.Join([]string{
+		"",
+		"",
+		"### Contributors",
+		"",
+		`<a href="https://github.com/hello"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Fhello.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@hello"></a>`,
+		`<a href="https://github.com/rhysd"><img src="https://wsrv.nl/?url=https%3A%2F%2Fgithub.com%2Frhysd.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="@rhysd"></a>`,
+	}, "\n")
+
+	if have != want {
+		t.Fatal(cmp.Diff(have, want))
+	}
+}
+
+func TestDontGenerateContributorsSectionWithoutOption(t *testing.T) {
+	l := NewReflinker("https://github.com/u/r")
+	_ = l.Link("This is test for contributors section @rhysd @hello @world")
+	c := &Config{}
+
+	var b bytes.Buffer
+	generateContributorsSection(&b, l, map[string]bool{"hello": true, "world": false}, c)
+	out := b.String()
+	if len(out) != 0 {
+		t.Fatalf("contributors section should not be generated but got %q", out)
 	}
 }

@@ -111,7 +111,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
 		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
 
-		generateContributorsSection(&out, linker.Usernames(), knownUsers, c)
+		generateContributorsSection(&out, linker, knownUsers, c)
 
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
 
@@ -132,13 +132,13 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
-func generateContributorsSection(out *bytes.Buffer, names []string, knownUsers map[string]bool, c *Config) {
+func generateContributorsSection(out *bytes.Buffer, linker *Reflinker, knownUsers map[string]bool, c *Config) {
 	if !c.Contributors {
 		return
 	}
 
 	var contributors []string
-	for _, n := range names {
+	for _, n := range linker.Usernames() {
 		if _, checked := knownUsers[n]; !checked {
 			r, err := http.Head(fmt.Sprintf("https://github.com/%s.png", n))
 			// Verify user exists to avoid 404 on image load
@@ -153,9 +153,10 @@ func generateContributorsSection(out *bytes.Buffer, names []string, knownUsers m
 		return
 	}
 
+	slog.Debug("Generating a contributors section", "contributors", contributors)
 	fmt.Fprintf(out, "\n\n%s Contributors\n", strings.Repeat("#", c.Level+1))
 
-	// Add profile images
+	// Add profile image links
 	for _, n := range contributors {
 		u := url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", n))
 		fmt.Fprintf(out, "\n<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=128&h=128&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", n, u, n)
