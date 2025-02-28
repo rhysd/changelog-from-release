@@ -60,7 +60,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		linker.AddExtRef(*l.KeyPrefix, *l.URLTemplate, *l.IsAlphanumeric)
 	}
 
-	userExists := make(map[string]bool)
+	knownUsers := make(map[string]bool)
 
 	numRels := len(rels)
 	refs := make([]ref, 0, numRels)
@@ -111,7 +111,7 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 		fmt.Fprintf(&out, "%s [%s](%s) - %s\n\n", heading, title, pageURL, date)
 		fmt.Fprint(&out, linker.Link(strings.Replace(rel.GetBody(), "\r", "", -1)))
 
-		processContributors(&out, linker.Usernames(), userExists, c)
+		generateContributorsSection(&out, linker.Usernames(), knownUsers, c)
 
 		fmt.Fprintf(&out, "\n\n[Changes][%s]\n\n\n", tag)
 
@@ -132,22 +132,20 @@ func GenerateChangeLog(c *Config, p *Project) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
-// Extract and display contributors from release body
-func processContributors(out *bytes.Buffer, usernames []string, userExists map[string]bool, c *Config) {
+func generateContributorsSection(out *bytes.Buffer, names []string, knownUsers map[string]bool, c *Config) {
 	if !c.Contributors {
 		return
 	}
 
 	var contributors []string
-	for _, username := range usernames {
-		if _, checked := userExists[username]; !checked {
-			profileImageURL := fmt.Sprintf("https://github.com/%s.png", username)
-			resp, err := http.Head(profileImageURL)
+	for _, n := range names {
+		if _, checked := knownUsers[n]; !checked {
+			r, err := http.Head(fmt.Sprintf("https://github.com/%s.png", n))
 			// Verify user exists to avoid 404 on image load
-			userExists[username] = err == nil && resp.StatusCode == http.StatusOK
+			knownUsers[n] = err == nil && r.StatusCode == http.StatusOK
 		}
-		if userExists[username] {
-			contributors = append(contributors, username)
+		if knownUsers[n] {
+			contributors = append(contributors, n)
 		}
 	}
 
@@ -155,17 +153,11 @@ func processContributors(out *bytes.Buffer, usernames []string, userExists map[s
 		return
 	}
 
-	fmt.Fprintf(out, "\n\n%s Contributors\n\n", strings.Repeat("#", c.Level+1))
+	fmt.Fprintf(out, "\n\n%s Contributors\n", strings.Repeat("#", c.Level+1))
 
 	// Add profile images
-	for _, username := range contributors {
-		fmt.Fprintf(
-			out,
-			"<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a> ",
-			username,
-			url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", username)),
-			username,
-		)
+	for _, n := range contributors {
+		u := url.QueryEscape(fmt.Sprintf("https://github.com/%s.png", n))
+		fmt.Fprintf(out, "\n<a href=\"https://github.com/%s\"><img src=\"https://wsrv.nl/?url=%s&w=64&h=64&fit=cover&mask=circle\" width=\"64\" height=\"64\" alt=\"@%s\"></a>", n, u, n)
 	}
-	fmt.Fprint(out, "\n")
 }

@@ -170,8 +170,7 @@ func (l *Reflinker) linkUserRef(offset, start, end int) int {
 	slog.Debug("Found user reference autolink", "replacement", &rep, "offset", offset, "start", start, "end", end)
 	l.reps = append(l.reps, rep)
 
-	username := u[1:] // Remove '@'
-	l.users[string(username)] = struct{}{}
+	l.users[string(u[1:])] = struct{}{}
 
 	return e
 }
@@ -435,12 +434,12 @@ func (l *Reflinker) Link(input string) string {
 	return l.applyReplacements()
 }
 
-// Usernames returns all usernames found in the markdown text.
+// Usernames returns all user names found in the markdown text in sorted order.
 func (l *Reflinker) Usernames() []string {
-	users := make([]string, 0, len(l.users))
+	ret := make([]string, 0, len(l.users))
 	for u := range l.users {
-		users = append(users, u)
+		ret = append(ret, u)
 	}
-	sort.Strings(users)
-	return users
+	sort.Strings(ret)
+	return ret
 }
