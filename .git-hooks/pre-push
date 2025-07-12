@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e -o pipefail
+
+if [[ "$CI" != "" ]]; then
+    exit
+fi
+
+set -x
+
+go test
