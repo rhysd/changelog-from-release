@@ -44,11 +44,11 @@ archives:
         - CHANGELOG.md
         - LICENSE.txt
     id: nix
-    builds: [macos, linux, freebsd]
+    ids: [macos, linux, freebsd]
     formats: ['tar.gz']
   - <<: *archives_defaults
     id: windows
-    builds: [windows]
+    ids: [windows]
     formats: ['zip']
 
 changelog:
