@@ -15,7 +15,7 @@ if [ -z "$INPUT_VERSION" ]; then
     TAG_FROM_PAYLOAD="$(jq -r .release.tag_name < "$GITHUB_EVENT_PATH")"
     if [ "$TAG_FROM_PAYLOAD" = "null" ]; then
         git fetch --prune --depth=1 origin '+refs/tags/*:refs/tags/*'
-        INPUT_VERSION="$(git tag --list | tail -n 1)"
+        INPUT_VERSION="$(git tag --list --sort=version:refname | tail -n 1)"
         echo "::debug:: INPUT_VERSION was retrieved from git tags"
     else
         INPUT_VERSION="$TAG_FROM_PAYLOAD"
