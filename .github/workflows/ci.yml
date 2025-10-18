@@ -22,10 +22,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'bump up version:')"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: '>=1.22.0'
+          go-version: '>=1.25.0'
       - run: go build
       - run: go test -v
         env:
@@ -34,10 +34,10 @@ jobs:
     name: Run linters
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: '>=1.22.0'
+          go-version: '>=1.25.0'
       - name: Check Go sources are formatted
         run: |
           diffs="$(gofmt -d ./*.go)"
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip action check]') && !contains(github.event.head_commit.message, 'bump up version:')"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run action
         uses: ./action/
         with:
