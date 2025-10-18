@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v76/github"
 )
 
 func TestConfigFilterReleases(t *testing.T) {

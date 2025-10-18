@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v76/github"
 )
 
 type Config struct {
