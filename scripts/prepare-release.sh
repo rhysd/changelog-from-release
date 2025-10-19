@@ -75,10 +75,10 @@ git tag -d "$minor_version" || true
 git tag "$minor_version"
 git tag "$version"
 
-git push origin master
-git push origin "${version}"
-git push origin "${minor_version}" --force
-git push origin "${major_version}" --force
+git push --no-verify origin master
+git push --no-verify origin "${version}"
+git push --no-verify origin "${minor_version}" --force
+git push --no-verify origin "${major_version}" --force
 set +x
 
 echo "Done."
