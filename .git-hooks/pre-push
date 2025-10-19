@@ -9,3 +9,6 @@ fi
 set -x
 
 go test
+staticcheck
+go vet
+govulncheck

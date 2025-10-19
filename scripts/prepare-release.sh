@@ -59,6 +59,9 @@ files_include_version=( "main.go" "action/Dockerfile" )
 set -x
 go build
 go test
+go vet
+govulncheck
+staticcheck
 
 prev_version_pat="${prev_version//\./\\.}"
 sed -i '' -E "s/${prev_version_pat}/${version}/g" "${files_include_version[@]}"
