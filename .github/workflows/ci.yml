@@ -46,13 +46,15 @@ jobs:
             exit 1
           fi
       - run: go vet
-      - run: govulncheck
-      - name: Install staticcheck
+      - name: Install staticcheck and govulncheck
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
+          go install golang.org/x/vuln/cmd/govulncheck@latest
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
-          staticcheck --version
-      - run: staticcheck ./
+          staticcheck -version
+          govulncheck -version
+      - run: staticcheck
+      - run: govulncheck
   action:
     name: Check action
     runs-on: ubuntu-latest
