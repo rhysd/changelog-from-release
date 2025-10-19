@@ -5,27 +5,24 @@ set -e
 # TODO: Retrieve the {old-version} from `git tag --list | tail -n 1`
 
 # Arguments check
-if [[ "$#" != 2 ]] || [[ "$1" == '--help' ]]; then
-    echo 'Usage: prepare-release.sh {old-version} {new-version}' >&2
+if [[ "$#" != 1 ]] || [[ "$1" == '--help' ]]; then
+    echo 'Usage: prepare-release.sh {new-version}' >&2
     echo '' >&2
-    echo "  Release version must be in format 'v{major}.{minor}.{patch}'." >&2
-    echo '  After making changes, add --done option and run this script again. It will' >&2
-    echo '  push generated tags to remote for release.' >&2
+    echo '  This script creates/updates tags and pushes them to remote for the' >&2
+    echo '  new release. Release version value passsed to the first argument' >&2
+    echo "  must be in the format 'v{major}.{minor}.{patch}'." >&2
     echo '' >&2
     exit 1
 fi
 
-prev_version="$1"
-if [[ ! "$prev_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo 'Version string in {old-version} argument must match to ''v{major}.{minor}.{patch}'' like v1.2.3' >&2
-    exit 1
-fi
-
-version="$2"
+version="$1"
 if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo 'Version string in {new-version} argument must match to ''v{major}.{minor}.{patch}'' like v1.2.3' >&2
     exit 1
 fi
+
+prev_version="$(git tag --list --sort=version:refname | tail -n 1)"
+echo "Bumping the version from ${prev_version} to ${version}"
 
 minor_version="${version%.*}"
 major_version="${minor_version%.*}"
@@ -69,7 +66,7 @@ sed -i '' -E "s/${prev_version_pat}/${version}/g" "${files_include_version[@]}"
 sed -i '' -E "s/_${prev_version_pat#v}_/_${version#v}_/g" ./action/Dockerfile
 
 git add "${files_include_version[@]}"
-git commit -m "bump up version: ${prev_version} -> ${version}"
+git commit -m "bump version from ${prev_version} to ${version}"
 git show HEAD
 
 git tag -d "$major_version" || true
